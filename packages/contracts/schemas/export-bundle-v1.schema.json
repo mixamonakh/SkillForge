@@ -1,0 +1,269 @@
+{
+  "$ref": "#/definitions/ExportBundleV1",
+  "definitions": {
+    "ExportBundleV1": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "bundleId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "generatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "appVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "bundleType": {
+          "type": "string",
+          "enum": ["assessment-run", "session", "topic", "profile", "pending-review"]
+        },
+        "user": {
+          "type": "object",
+          "properties": {
+            "displayName": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "targetTrack": {
+              "$ref": "#/definitions/ExportBundleV1/properties/appVersion"
+            },
+            "locale": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 35
+            }
+          },
+          "required": ["displayName", "targetTrack", "locale"],
+          "additionalProperties": false
+        },
+        "scope": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/ExportBundleV1/properties/scope/additionalProperties"
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/definitions/ExportBundleV1/properties/scope/additionalProperties"
+                }
+              }
+            ]
+          }
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "$ref": "#/definitions/ExportBundleV1/properties/appVersion"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["UNKNOWN", "WEAK", "UNSTABLE", "SOLID", "MASTERED"]
+              },
+              "masteryEstimate": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "masteryConfidence": {
+                "$ref": "#/definitions/ExportBundleV1/properties/topics/items/properties/masteryEstimate/anyOf/0"
+              },
+              "evidenceCount": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": ["key", "status", "masteryEstimate", "masteryConfidence", "evidenceCount"],
+            "additionalProperties": false
+          },
+          "maxItems": 2000
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "attemptId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "taskKey": {
+                "$ref": "#/definitions/ExportBundleV1/properties/appVersion"
+              },
+              "taskVersion": {
+                "type": "integer",
+                "exclusiveMinimum": 0
+              },
+              "topicKey": {
+                "$ref": "#/definitions/ExportBundleV1/properties/appVersion"
+              },
+              "taskKind": {
+                "type": "string",
+                "enum": [
+                  "SINGLE_CHOICE",
+                  "MULTIPLE_CHOICE",
+                  "EXPLAIN",
+                  "PREDICT_OUTPUT",
+                  "FIND_BUG",
+                  "CODE",
+                  "COMPARE_SOLUTIONS",
+                  "AI_REVIEW",
+                  "FLASHCARD"
+                ]
+              },
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 250000
+              },
+              "answerText": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 250000
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "answerCode": {
+                "$ref": "#/definitions/ExportBundleV1/properties/attempts/items/properties/answerText"
+              },
+              "selfRating": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "confidence": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "helpLevel": {
+                "type": "string",
+                "enum": ["NONE", "NUDGE", "HINT", "MULTIPLE_HINTS", "SOLUTION_VIEWED"]
+              },
+              "deterministicEvaluation": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/definitions/ExportBundleV1/properties/scope/additionalProperties"
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "attemptId",
+              "taskKey",
+              "taskVersion",
+              "topicKey",
+              "taskKind",
+              "prompt",
+              "answerText",
+              "answerCode",
+              "selfRating",
+              "confidence",
+              "helpLevel",
+              "deterministicEvaluation"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 5000
+        },
+        "requestedAnalysis": {
+          "type": "object",
+          "properties": {
+            "contract": {
+              "type": "string",
+              "const": "skillforge-analysis-v1"
+            },
+            "language": {
+              "type": "string",
+              "const": "ru"
+            },
+            "instructions": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              },
+              "maxItems": 100
+            }
+          },
+          "required": ["contract", "language", "instructions"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "bundleId",
+        "generatedAt",
+        "appVersion",
+        "bundleType",
+        "user",
+        "scope",
+        "topics",
+        "attempts",
+        "requestedAnalysis"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

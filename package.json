@@ -1,0 +1,49 @@
+{
+  "name": "skillforge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Локальная evidence-based система калибровки инженерных навыков",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=24.0.0 <25",
+    "pnpm": ">=10.0.0 <11"
+  },
+  "scripts": {
+    "dev": "turbo dev --parallel",
+    "lint": "turbo lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test --filter=!@skillforge/e2e",
+    "test:coverage": "turbo test:coverage --filter=!@skillforge/e2e",
+    "test:integration": "turbo test:integration",
+    "test:e2e": "pnpm --dir e2e test",
+    "build": "turbo build",
+    "check": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build",
+    "content:validate": "pnpm --filter @skillforge/content-schema validate",
+    "content:import": "pnpm --filter @skillforge/db content:import",
+    "content:diff": "pnpm --filter @skillforge/db content:diff",
+    "content:export": "pnpm --filter @skillforge/db content:export",
+    "db:generate": "pnpm --filter @skillforge/db prisma:generate",
+    "db:migrate:deploy": "pnpm --filter @skillforge/db prisma:migrate:deploy",
+    "db:migrate:dev": "pnpm --filter @skillforge/db prisma:migrate:dev",
+    "db:seed": "pnpm --filter @skillforge/db seed",
+    "openapi:generate": "pnpm --filter @skillforge/api openapi:generate && pnpm --filter @skillforge/web api:types"
+  },
+  "dependencies": {
+    "@skillforge/content-schema": "workspace:*",
+    "@skillforge/db": "workspace:*"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@types/node": "24.10.1",
+    "@vitest/coverage-v8": "4.1.10",
+    "eslint": "9.39.2",
+    "prettier": "3.7.4",
+    "turbo": "2.10.4",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.48.1",
+    "vitest": "4.1.10"
+  }
+}

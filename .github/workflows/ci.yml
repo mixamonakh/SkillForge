@@ -1,0 +1,266 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: 'true'
+  NODE_VERSION: 24.18.0
+  PNPM_VERSION: 10.34.5
+  DATABASE_URL: postgresql://skillforge:skillforge@127.0.0.1:5432/skillforge?schema=public
+  AI_MODE: manual
+
+jobs:
+  lint:
+    name: Lint and formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      - run: pnpm lint
+      - run: pnpm format:check
+
+  typecheck:
+    name: Strict TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      - run: pnpm typecheck
+
+  unit:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      - run: pnpm test
+
+  coverage:
+    name: Critical coverage gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      - run: pnpm test:coverage
+
+  integration:
+    name: PostgreSQL integration tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: skillforge
+          POSTGRES_PASSWORD: skillforge
+          POSTGRES_DB: skillforge_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U skillforge -d skillforge_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://skillforge:skillforge@127.0.0.1:5432/skillforge_test?schema=public
+      DEFAULT_USER_NAME: Михаил
+      DEFAULT_LOCALE: ru
+      SEED_CONTENT_PACK: js-baseline-v1
+      AI_MODE: manual
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      - run: pnpm db:migrate:deploy
+      - run: pnpm db:seed
+      - run: pnpm content:import -- --pack js-baseline-v1
+      - run: pnpm test:integration
+
+  content:
+    name: Content validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm content:validate
+
+  openapi-drift:
+    name: OpenAPI drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      - name: Regenerate and compare the committed OpenAPI contract
+        run: |
+          git ls-files --error-unmatch apps/api/openapi.json
+          git ls-files --error-unmatch apps/web/src/shared/api/generated/openapi.ts
+          pnpm openapi:generate
+          git diff --exit-code -- apps/api/openapi.json apps/web/src/shared/api/generated/openapi.ts
+
+  build:
+    name: Production build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      - run: pnpm build
+
+  docker-build:
+    name: Docker images
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Validate operational manifests
+        run: |
+          docker compose config --quiet
+          bash -n scripts/backup.sh scripts/restore.sh
+          sh -n scripts/docker-entrypoint-api.sh
+      - run: docker compose build
+      - name: Verify application images are configured as non-root
+        run: |
+          for service in api web; do
+            image_id="$(docker compose images --quiet "$service")"
+            configured_user="$(docker image inspect "$image_id" --format '{{.Config.User}}')"
+            case "$configured_user" in
+              ''|root|root:*|0|0:*)
+                echo "$service image runs as root or has no explicit USER" >&2
+                exit 1
+                ;;
+            esac
+          done
+
+  e2e:
+    name: Playwright critical flow
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --dir e2e exec playwright install --with-deps chromium
+      - name: Start a clean production stack
+        run: |
+          docker compose down --volumes --remove-orphans
+          docker compose up --detach --build --wait --wait-timeout 300
+      - name: Verify runtime users are non-root
+        run: |
+          test "$(docker compose exec -T api id -u)" -ne 0
+          test "$(docker compose exec -T web id -u)" -ne 0
+      - name: Run critical flow and restart-persistence check
+        env:
+          E2E_COMPOSE_RESTART: '1'
+          E2E_EXPECT_CLEAN: '1'
+        run: pnpm test:e2e
+      - name: Verify timestamped PostgreSQL and content-manifest backup
+        run: ./scripts/backup.sh
+      - name: Collect Compose logs on failure
+        if: failure()
+        run: docker compose logs --no-color --timestamps db api web > compose.log
+      - name: Upload Playwright diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-diagnostics
+          path: |
+            e2e/playwright-report
+            e2e/test-results
+            compose.log
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Stop disposable stack
+        if: always()
+        run: docker compose down --volumes --remove-orphans
+
+  dependency-audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm audit --audit-level=high

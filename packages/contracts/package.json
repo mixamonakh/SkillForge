@@ -1,0 +1,37 @@
+{
+  "name": "@skillforge/contracts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./schemas/*": "./schemas/*"
+  },
+  "files": [
+    "dist",
+    "schemas"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "eslint src tests vitest.config.ts --max-warnings=0",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "schema:generate": "pnpm build && node scripts/write-json-schemas.mjs"
+  },
+  "dependencies": {
+    "zod": "3.25.76",
+    "zod-to-json-schema": "3.25.2"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "@vitest/coverage-v8": "4.1.10",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  }
+}

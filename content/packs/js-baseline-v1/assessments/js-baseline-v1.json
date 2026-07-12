@@ -1,0 +1,280 @@
+[
+  {
+    "key": "js-baseline",
+    "version": 1,
+    "title": "JavaScript Baseline v1",
+    "description": "Диагностика 18 базовых тем JavaScript: четыре сохраняемых блока по девять заданий без подсказок.",
+    "totalBlocks": 4,
+    "estimatedMin": 120,
+    "status": "active",
+    "selectionRules": {
+      "itemsPerBlock": 9,
+      "minimumItemsPerTopic": 2,
+      "noHints": true,
+      "snapshotTaskVersions": true,
+      "blockLabels": [
+        "Значения и основы выполнения",
+        "Функции и объектная модель",
+        "Асинхронность и ошибки",
+        "Инженерное применение"
+      ]
+    },
+    "items": [
+      {
+        "taskKey": "cs.values-and-references.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 0,
+        "position": 0,
+        "required": true
+      },
+      {
+        "taskKey": "cs.values-and-references.explain-001",
+        "taskVersion": 1,
+        "blockIndex": 0,
+        "position": 1,
+        "required": true
+      },
+      {
+        "taskKey": "cs.mutability.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 0,
+        "position": 2,
+        "required": true
+      },
+      {
+        "taskKey": "cs.mutability.find-bug-001",
+        "taskVersion": 1,
+        "blockIndex": 0,
+        "position": 3,
+        "required": true
+      },
+      {
+        "taskKey": "js.values.types.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 0,
+        "position": 4,
+        "required": true
+      },
+      {
+        "taskKey": "js.values.types.choice-001",
+        "taskVersion": 1,
+        "blockIndex": 0,
+        "position": 5,
+        "required": true
+      },
+      {
+        "taskKey": "js.coercion.equality.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 0,
+        "position": 6,
+        "required": true
+      },
+      {
+        "taskKey": "js.coercion.equality.explain-001",
+        "taskVersion": 1,
+        "blockIndex": 0,
+        "position": 7,
+        "required": true
+      },
+      {
+        "taskKey": "js.variables.scope.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 0,
+        "position": 8,
+        "required": true
+      },
+
+      {
+        "taskKey": "js.variables.scope.find-bug-001",
+        "taskVersion": 1,
+        "blockIndex": 1,
+        "position": 0,
+        "required": true
+      },
+      {
+        "taskKey": "js.functions.basics.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 1,
+        "position": 1,
+        "required": true
+      },
+      {
+        "taskKey": "js.functions.basics.code-001",
+        "taskVersion": 1,
+        "blockIndex": 1,
+        "position": 2,
+        "required": true
+      },
+      {
+        "taskKey": "js.functions.closures.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 1,
+        "position": 3,
+        "required": true
+      },
+      {
+        "taskKey": "js.functions.closures.explain-001",
+        "taskVersion": 1,
+        "blockIndex": 1,
+        "position": 4,
+        "required": true
+      },
+      {
+        "taskKey": "js.functions.this.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 1,
+        "position": 5,
+        "required": true
+      },
+      {
+        "taskKey": "js.functions.this.find-bug-001",
+        "taskVersion": 1,
+        "blockIndex": 1,
+        "position": 6,
+        "required": true
+      },
+      {
+        "taskKey": "js.objects.prototypes.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 1,
+        "position": 7,
+        "required": true
+      },
+      {
+        "taskKey": "js.objects.prototypes.compare-001",
+        "taskVersion": 1,
+        "blockIndex": 1,
+        "position": 8,
+        "required": true
+      },
+
+      {
+        "taskKey": "js.collections.arrays.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 2,
+        "position": 0,
+        "required": true
+      },
+      {
+        "taskKey": "js.collections.arrays.explain-001",
+        "taskVersion": 1,
+        "blockIndex": 2,
+        "position": 1,
+        "required": true
+      },
+      {
+        "taskKey": "js.collections.map-set.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 2,
+        "position": 2,
+        "required": true
+      },
+      {
+        "taskKey": "js.collections.map-set.find-bug-001",
+        "taskVersion": 1,
+        "blockIndex": 2,
+        "position": 3,
+        "required": true
+      },
+      {
+        "taskKey": "js.errors.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 2,
+        "position": 4,
+        "required": true
+      },
+      {
+        "taskKey": "js.errors.choice-001",
+        "taskVersion": 1,
+        "blockIndex": 2,
+        "position": 5,
+        "required": true
+      },
+      {
+        "taskKey": "js.async.promises.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 2,
+        "position": 6,
+        "required": true
+      },
+      {
+        "taskKey": "js.async.promises.explain-001",
+        "taskVersion": 1,
+        "blockIndex": 2,
+        "position": 7,
+        "required": true
+      },
+      {
+        "taskKey": "js.async.await.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 2,
+        "position": 8,
+        "required": true
+      },
+
+      {
+        "taskKey": "js.async.await.find-bug-001",
+        "taskVersion": 1,
+        "blockIndex": 3,
+        "position": 0,
+        "required": true
+      },
+      {
+        "taskKey": "js.runtime.event-loop.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 3,
+        "position": 1,
+        "required": true
+      },
+      {
+        "taskKey": "js.runtime.event-loop.ai-review-001",
+        "taskVersion": 1,
+        "blockIndex": 3,
+        "position": 2,
+        "required": true
+      },
+      {
+        "taskKey": "js.modules.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 3,
+        "position": 3,
+        "required": true
+      },
+      {
+        "taskKey": "js.modules.explain-001",
+        "taskVersion": 1,
+        "blockIndex": 3,
+        "position": 4,
+        "required": true
+      },
+      {
+        "taskKey": "js.browser.events.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 3,
+        "position": 5,
+        "required": true
+      },
+      {
+        "taskKey": "js.browser.events.find-bug-001",
+        "taskVersion": 1,
+        "blockIndex": 3,
+        "position": 6,
+        "required": true
+      },
+      {
+        "taskKey": "js.network.fetch.predict-001",
+        "taskVersion": 1,
+        "blockIndex": 3,
+        "position": 7,
+        "required": true
+      },
+      {
+        "taskKey": "js.network.fetch.choice-001",
+        "taskVersion": 1,
+        "blockIndex": 3,
+        "position": 8,
+        "required": true
+      }
+    ]
+  }
+]

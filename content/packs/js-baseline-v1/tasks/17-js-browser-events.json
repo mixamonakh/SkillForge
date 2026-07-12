@@ -1,0 +1,103 @@
+[
+  {
+    "stableKey": "js.browser.events.predict-001",
+    "version": 1,
+    "topicKey": "js.browser.events",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "В DOM `button` вложен в `div#parent`. Что выведет `button.click()`?\n\n```js\nbutton.addEventListener('click', (event) => {\n  console.log('button', event.target.tagName, event.currentTarget.tagName);\n});\nparent.addEventListener('click', (event) => {\n  console.log('parent', event.target.tagName, event.currentTarget.tagName);\n});\nbutton.click();\n```",
+    "expectedAnswer": { "output": ["button BUTTON BUTTON", "parent BUTTON DIV"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 55, "EXPLANATION": 45 } },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Сначала обработчик button, затем parent",
+      "target остаётся BUTTON",
+      "currentTarget меняется"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 6,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Learn_web_development/Core/Scripting/Event_bubbling"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.browser.events.explain-001",
+    "version": 1,
+    "topicKey": "js.browser.events",
+    "kind": "EXPLAIN",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Опиши capture, target и bubble phases. Различи `stopPropagation`, `stopImmediatePropagation` и `preventDefault`; почему они не взаимозаменяемы?",
+    "rubric": { "dimensions": { "EXPLANATION": 75, "EDGE_CASES": 25 } },
+    "hints": ["Propagation и default action — разные механизмы."],
+    "acceptanceCriteria": [
+      "Названы три фазы",
+      "Различены два stop-метода",
+      "preventDefault не назван остановкой bubbling"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 8,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/API/Event"]
+    }
+  },
+  {
+    "stableKey": "js.browser.events.find-bug-001",
+    "version": 1,
+    "topicKey": "js.browser.events",
+    "kind": "FIND_BUG",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Делегирование не срабатывает при клике по `span` внутри кнопки. Найди причину и добавь проверку границы списка.\n\n```js\nlist.addEventListener('click', (event) => {\n  if (event.target.matches('[data-action]')) run(event.target.dataset.action);\n});\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 55, "EDGE_CASES": 30, "EXPLANATION": 15 } },
+    "hints": ["Ищи ближайшего предка через closest и проверяй contains."],
+    "acceptanceCriteria": [
+      "Использован closest",
+      "Проверено, что найденный элемент внутри list",
+      "Обработан null"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 7,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/API/Element/closest"]
+    }
+  },
+  {
+    "stableKey": "js.browser.events.choice-001",
+    "version": 1,
+    "topicKey": "js.browser.events",
+    "kind": "SINGLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "В делегированном обработчике на списке что обычно означают `event.target` и `event.currentTarget`?",
+    "options": [
+      {
+        "id": "opt-a",
+        "text": "target — исходный узел события, currentTarget — список с текущим обработчиком"
+      },
+      { "id": "opt-b", "text": "Оба всегда равны списку" },
+      { "id": "opt-c", "text": "target — список, currentTarget — window" },
+      { "id": "opt-d", "text": "currentTarget — ближайшая кнопка независимо от listener" }
+    ],
+    "expectedAnswer": { "selectedOptionIds": ["opt-a"] },
+    "rubric": { "dimensions": { "RECALL": 65, "EXPLANATION": 35 } },
+    "hints": ["currentTarget привязан к выполняемому listener."],
+    "acceptanceCriteria": ["Выбран opt-a", "Различены источник и текущий listener"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 3,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/API/Event/currentTarget"]
+    }
+  }
+]

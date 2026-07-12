@@ -1,0 +1,35 @@
+{
+  "$ref": "#/definitions/RunnerRequest",
+  "definitions": {
+    "RunnerRequest": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "language": {
+          "type": "string",
+          "enum": ["javascript", "typescript"]
+        },
+        "source": {
+          "type": "string",
+          "maxLength": 51200
+        },
+        "harness": {
+          "type": "string",
+          "maxLength": 102400
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 2000
+        }
+      },
+      "required": ["requestId", "language", "source", "harness", "timeoutMs"],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

@@ -1,0 +1,108 @@
+[
+  {
+    "stableKey": "js.errors.predict-001",
+    "version": 1,
+    "topicKey": "js.errors",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Что выведет код и в каком порядке?\n\n```js\nfunction run() {\n  try {\n    return 'result';\n  } finally {\n    console.log('cleanup');\n  }\n}\nconsole.log(run());\n```",
+    "expectedAnswer": { "output": ["cleanup", "result"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 65, "EXPLANATION": 35 } },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Сначала cleanup, затем result",
+      "Объяснено выполнение finally до завершения return"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 4,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/try...catch"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.errors.explain-001",
+    "version": 1,
+    "topicKey": "js.errors",
+    "kind": "EXPLAIN",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Почему обычно лучше бросать `Error`, а не строку? Как добавить контекст на границе слоя, не потеряв исходную ошибку и stack?",
+    "rubric": { "dimensions": { "EXPLANATION": 75, "EDGE_CASES": 25 } },
+    "hints": ["Рассмотри `new Error(message, { cause })`."],
+    "acceptanceCriteria": [
+      "Упомянуты name/message/stack",
+      "Исходная причина сохраняется через cause или rethrow",
+      "Контекст не подменяет silently исходную ошибку"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 6,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error/Error"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.errors.find-bug-001",
+    "version": 1,
+    "topicKey": "js.errors",
+    "kind": "FIND_BUG",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Почему вызывающий код не может отличить пустой результат от сбоя? Предложи контракт.\n\n```js\nasync function loadUser() {\n  try {\n    return await repository.getUser();\n  } catch (error) {\n    console.log(error);\n    return null;\n  }\n}\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 55, "EXPLANATION": 30, "EDGE_CASES": 15 } },
+    "hints": ["Ошибка проглатывается и превращается в доменное значение."],
+    "acceptanceCriteria": [
+      "Обнаружено swallowing ошибки",
+      "Предложен rethrow/Result/явный контракт",
+      "Логирование не считается обработкой само по себе"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 7,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Control_flow_and_error_handling"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.errors.choice-001",
+    "version": 1,
+    "topicKey": "js.errors",
+    "kind": "SINGLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Какое утверждение о `finally` верно?",
+    "options": [
+      { "id": "opt-a", "text": "finally выполняется только если в try не было return" },
+      {
+        "id": "opt-b",
+        "text": "return или throw внутри finally может заменить исходный return или throw"
+      },
+      { "id": "opt-c", "text": "finally выполняется до catch" },
+      { "id": "opt-d", "text": "finally автоматически повторяет failed operation" }
+    ],
+    "expectedAnswer": { "selectedOptionIds": ["opt-b"] },
+    "rubric": { "dimensions": { "RECALL": 65, "EXPLANATION": 35 } },
+    "hints": ["Control flow из finally имеет приоритет при выходе."],
+    "acceptanceCriteria": ["Выбран opt-b", "Понимается риск return в finally"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 3,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/try...catch"
+      ]
+    }
+  }
+]

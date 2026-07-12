@@ -1,0 +1,97 @@
+[
+  {
+    "stableKey": "js.coercion.equality.predict-001",
+    "version": 1,
+    "topicKey": "js.coercion.equality",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Что выведет код и где происходит приведение?\n\n```js\nconsole.log('5' - 2, '5' + 2, Object.is(NaN, NaN));\n```",
+    "expectedAnswer": { "output": ["3 52 true"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 70, "EXPLANATION": 30 } },
+    "hints": [],
+    "acceptanceCriteria": ["Указан вывод 3 52 true", "Различено поведение - и + со строкой"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 4,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Addition"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.coercion.equality.explain-001",
+    "version": 1,
+    "topicKey": "js.coercion.equality",
+    "kind": "EXPLAIN",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Сравни `==`, `===` и `Object.is`. Приведи примеры с null/undefined, NaN и -0, где результаты различаются.",
+    "rubric": { "dimensions": { "EXPLANATION": 70, "EDGE_CASES": 30 } },
+    "hints": ["Object.is(NaN, NaN) и Object.is(0, -0)."],
+    "acceptanceCriteria": [
+      "Объяснено coercion в ==",
+      "=== описан без coercion",
+      "Разобраны NaN и знак нуля для Object.is"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 7,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Equality_comparisons_and_sameness"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.coercion.equality.find-bug-001",
+    "version": 1,
+    "topicKey": "js.coercion.equality",
+    "kind": "FIND_BUG",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Значение `0` — допустимый результат, но функция считает его отсутствующим. Найди причину и исправь контракт.\n\n```js\nfunction renderCount(input) {\n  if (!input) return 'нет данных';\n  return String(input);\n}\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 65, "EDGE_CASES": 35 } },
+    "hints": ["Falsy не равно nullish."],
+    "acceptanceCriteria": [
+      "Обнаружена falsy-проверка",
+      "Предложена явная проверка null/undefined",
+      "Сохранён корректный 0"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 5,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Glossary/Falsy"]
+    }
+  },
+  {
+    "stableKey": "js.coercion.equality.compare-001",
+    "version": 1,
+    "topicKey": "js.coercion.equality",
+    "kind": "COMPARE_SOLUTIONS",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Сравни проверки входа для контракта «только конечное положительное число»: `Number(value) > 0` и `typeof value === 'number' && Number.isFinite(value) && value > 0`. Какая точнее и какие значения различают решения?",
+    "rubric": { "dimensions": { "EXPLANATION": 55, "EDGE_CASES": 25, "COMPLEXITY_REASONING": 20 } },
+    "hints": ["Проверь строки, пробелы, Infinity и boolean."],
+    "acceptanceCriteria": [
+      "Выбрана строгая проверка для заданного контракта",
+      "Разобраны coercion строк/boolean",
+      "Упомянут Infinity"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 7,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number/isFinite"
+      ]
+    }
+  }
+]

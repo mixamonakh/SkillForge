@@ -1,0 +1,103 @@
+[
+  {
+    "stableKey": "js.network.fetch.predict-001",
+    "version": 1,
+    "topicKey": "js.network.fetch",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "В примере `fetch` возвращает fulfilled Response с HTTP 404. Что выведет код?\n\n```js\nasync function load() {\n  const response = await Promise.resolve({ ok: false, status: 404 });\n  if (!response.ok) return `http:${response.status}`;\n  return 'ok';\n}\nload().then((value) => console.log(value));\n```",
+    "expectedAnswer": { "output": ["http:404"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 60, "EXPLANATION": 40 } },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указан вывод http:404",
+      "HTTP error различён с rejected network Promise"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 4,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/API/Fetch_API/Using_Fetch"]
+    }
+  },
+  {
+    "stableKey": "js.network.fetch.explain-001",
+    "version": 1,
+    "topicKey": "js.network.fetch",
+    "kind": "EXPLAIN",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Какие сбои обычно отклоняют Promise `fetch`, а какие возвращают fulfilled Response? Опиши проверку status/body и отмену через AbortController.",
+    "rubric": { "dimensions": { "EXPLANATION": 70, "EDGE_CASES": 30 } },
+    "hints": ["404 сам по себе обычно не rejection."],
+    "acceptanceCriteria": [
+      "Различены network/abort и HTTP status",
+      "Проверяется response.ok",
+      "AbortSignal передаётся в fetch"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 7,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/API/Fetch_API/Using_Fetch"]
+    }
+  },
+  {
+    "stableKey": "js.network.fetch.find-bug-001",
+    "version": 1,
+    "topicKey": "js.network.fetch",
+    "kind": "FIND_BUG",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Функция возвращает error payload как успешного пользователя. Найди пропущенную проверку и учти не-JSON error body.\n\n```js\nasync function loadUser(id) {\n  const response = await fetch(`/api/users/${id}`);\n  return response.json();\n}\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 55, "EDGE_CASES": 30, "EXPLANATION": 15 } },
+    "hints": ["Проверь response.ok до принятия success-контракта body."],
+    "acceptanceCriteria": [
+      "Добавлена проверка response.ok",
+      "HTTP error превращён в явную ошибку/Result",
+      "Не предполагается JSON для любого error response"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 7,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/API/Response/ok"]
+    }
+  },
+  {
+    "stableKey": "js.network.fetch.choice-001",
+    "version": 1,
+    "topicKey": "js.network.fetch",
+    "kind": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Выбери верные утверждения о browser fetch.",
+    "options": [
+      { "id": "opt-http", "text": "Response с 404 обычно приходит как fulfilled Promise" },
+      {
+        "id": "opt-body",
+        "text": "Body stream обычно нельзя прочитать повторно тем же способом без clone"
+      },
+      { "id": "opt-abort", "text": "AbortController может передать signal для отмены" },
+      { "id": "opt-timeout", "text": "fetch всегда имеет встроенный timeout ровно 30 секунд" }
+    ],
+    "expectedAnswer": { "selectedOptionIds": ["opt-http", "opt-body", "opt-abort"] },
+    "rubric": { "dimensions": { "RECALL": 60, "EXPLANATION": 25, "EDGE_CASES": 15 } },
+    "hints": ["Стандартный timeout нужно проектировать явно."],
+    "acceptanceCriteria": [
+      "Выбраны HTTP, body и abort",
+      "Не выбран фиксированный встроенный timeout"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 4,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/API/Fetch_API/Using_Fetch"]
+    }
+  }
+]

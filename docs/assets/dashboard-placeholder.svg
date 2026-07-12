@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">SkillForge dashboard placeholder</title>
+  <desc id="desc">Placeholder до фиксации эталонного скриншота реализованного интерфейса.</desc>
+  <rect width="1280" height="720" fill="#ffffff"/>
+  <rect width="280" height="720" fill="#f2f7fd" stroke="#d8e2f0"/>
+  <rect x="280" width="1000" height="80" fill="#ffffff" stroke="#d8e2f0"/>
+  <text x="48" y="64" fill="#104ff2" font-family="monospace" font-size="28" font-weight="700">SkillForge</text>
+  <text x="328" y="150" fill="#0b1a2b" font-family="monospace" font-size="30" font-weight="700">Dashboard</text>
+  <rect x="328" y="190" width="880" height="280" rx="14" fill="#eaf4ff" stroke="#b7c8df"/>
+  <text x="376" y="270" fill="#0b1a2b" font-family="system-ui, sans-serif" font-size="26" font-weight="700">SkillForge готов к калибровке</text>
+  <text x="376" y="318" fill="#5f7590" font-family="system-ui, sans-serif" font-size="18">Эталонный screenshot добавляется только после визуальной приёмки.</text>
+  <rect x="376" y="370" width="340" height="56" rx="10" fill="#104ff2"/>
+  <text x="408" y="405" fill="#ffffff" font-family="system-ui, sans-serif" font-size="17">Начать диагностику JavaScript</text>
+  <text x="328" y="660" fill="#5f7590" font-family="system-ui, sans-serif" font-size="16">Placeholder — не подтверждение готовности UI</text>
+</svg>

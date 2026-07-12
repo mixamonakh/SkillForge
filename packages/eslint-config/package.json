@@ -1,0 +1,12 @@
+{
+  "name": "@skillforge/eslint-config",
+  "version": "1.0.0",
+  "private": true,
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "peerDependencies": {
+    "eslint": "^9.0.0",
+    "typescript-eslint": "^8.0.0"
+  }
+}

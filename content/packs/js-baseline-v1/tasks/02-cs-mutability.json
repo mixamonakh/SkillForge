@@ -1,0 +1,97 @@
+[
+  {
+    "stableKey": "cs.mutability.predict-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Что выведет код? Объясни границу shallow copy.\n\n```js\nconst source = { nested: { value: 1 } };\nconst copy = { ...source };\ncopy.nested.value = 2;\nconsole.log(source.nested.value, copy === source, copy.nested === source.nested);\n```",
+    "expectedAnswer": { "output": ["2 false true"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 65, "EXPLANATION": 35 } },
+    "hints": [],
+    "acceptanceCriteria": ["Указан вывод 2 false true", "Объяснено сохранение ссылки на nested"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 4,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Glossary/Shallow_copy"]
+    }
+  },
+  {
+    "stableKey": "cs.mutability.explain-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "EXPLAIN",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Почему spread недостаточен для произвольного deep clone? Опиши безопасное неизменяемое обновление `state.user.profile.city` без копирования несвязанных веток глубже необходимого.",
+    "rubric": { "dimensions": { "EXPLANATION": 70, "EDGE_CASES": 30 } },
+    "hints": ["Копируй контейнеры вдоль изменяемого пути."],
+    "acceptanceCriteria": [
+      "Объяснён shallow copy",
+      "Скопированы state, user и profile",
+      "Не обещан универсальный JSON clone"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 7,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Glossary/Deep_copy"]
+    }
+  },
+  {
+    "stableKey": "cs.mutability.find-bug-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "FIND_BUG",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Функция должна вернуть отсортированное представление, не меняя данные вызывающего кода. Найди нарушение контракта.\n\n```js\nfunction sortedNames(names) {\n  return names.sort();\n}\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 75, "EXPLANATION": 25 } },
+    "hints": ["Проверь, мутирует ли Array.prototype.sort receiver."],
+    "acceptanceCriteria": [
+      "Указано, что sort мутирует массив",
+      "Предложено копирование перед sort или toSorted"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 5,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/sort"
+      ]
+    }
+  },
+  {
+    "stableKey": "cs.mutability.choice-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "SINGLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Какое выражение неизменяемо обновляет `user.profile.city`, сохраняя остальные поля?",
+    "options": [
+      { "id": "opt-a", "text": "user.profile.city = city; return user" },
+      { "id": "opt-b", "text": "return { ...user, profile: { ...user.profile, city } }" },
+      { "id": "opt-c", "text": "return { ...user, city }" },
+      { "id": "opt-d", "text": "return Object.assign(user.profile, { city })" }
+    ],
+    "expectedAnswer": { "selectedOptionIds": ["opt-b"] },
+    "rubric": { "dimensions": { "RECALL": 60, "EXPLANATION": 40 } },
+    "hints": ["Нужна новая ссылка для каждого изменяемого контейнера пути."],
+    "acceptanceCriteria": ["Выбран вариант opt-b", "Понимается необходимость копии profile"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 3,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Spread_syntax"
+      ]
+    }
+  }
+]

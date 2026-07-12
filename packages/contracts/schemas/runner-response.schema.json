@@ -1,0 +1,77 @@
+{
+  "$ref": "#/definitions/RunnerResponse",
+  "definitions": {
+    "RunnerResponse": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "status": {
+          "type": "string",
+          "enum": ["passed", "failed", "runtime-error", "timeout"]
+        },
+        "tests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "passed": {
+                "type": "boolean"
+              },
+              "message": {
+                "type": "string",
+                "maxLength": 16384
+              }
+            },
+            "required": ["name", "passed"],
+            "additionalProperties": false
+          },
+          "maxItems": 500
+        },
+        "console": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "maxItems": 200
+        },
+        "durationMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "message": {
+              "type": "string",
+              "maxLength": 16384
+            },
+            "stack": {
+              "type": "string",
+              "maxLength": 16384
+            }
+          },
+          "required": ["name", "message"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["requestId", "status", "tests", "console", "durationMs"],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

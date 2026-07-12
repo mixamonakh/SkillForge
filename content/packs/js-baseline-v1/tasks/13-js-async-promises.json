@@ -1,0 +1,115 @@
+[
+  {
+    "stableKey": "js.async.promises.predict-001",
+    "version": 1,
+    "topicKey": "js.async.promises",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Что выведет код и в каком порядке?\n\n```js\nPromise.resolve('A')\n  .then((value) => { console.log(value); throw new Error('x'); })\n  .catch(() => 'B')\n  .then((value) => console.log(value));\nconsole.log('C');\n```",
+    "expectedAnswer": { "output": ["C", "A", "B"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 60, "EXPLANATION": 40 } },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указан порядок C, A, B",
+      "catch восстанавливает fulfillment значением B",
+      "Promise callbacks отнесены к microtasks"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 6,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Using_promises"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.async.promises.explain-001",
+    "version": 1,
+    "topicKey": "js.async.promises",
+    "kind": "EXPLAIN",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Что возвращает `.then`? Объясни, как цепочка обрабатывает обычное значение, возвращённый Promise, thrown error и отсутствие return в callback.",
+    "rubric": { "dimensions": { "EXPLANATION": 80, "EDGE_CASES": 20 } },
+    "hints": ["Каждый then создаёт новый Promise."],
+    "acceptanceCriteria": [
+      "Указан новый Promise",
+      "Различены return value, returned Promise и throw",
+      "Отсутствие return даёт fulfillment undefined"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 7,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise/then"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.async.promises.find-bug-001",
+    "version": 1,
+    "topicKey": "js.async.promises",
+    "kind": "FIND_BUG",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Почему второй `then` получает undefined раньше завершения `save`?\n\n```js\nloadUser()\n  .then((user) => { saveUser(user); })\n  .then((saved) => console.log(saved));\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 65, "EXPLANATION": 35 } },
+    "hints": ["Первый callback ничего не возвращает."],
+    "acceptanceCriteria": [
+      "Обнаружен отсутствующий return",
+      "Promise saveUser возвращается из callback",
+      "Объяснено ожидание returned Promise цепочкой"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 5,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Using_promises#chaining"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.async.promises.choice-001",
+    "version": 1,
+    "topicKey": "js.async.promises",
+    "kind": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Выбери верные утверждения о `Promise.all`.",
+    "options": [
+      {
+        "id": "opt-order",
+        "text": "Результаты сохраняют порядок входного iterable, а не порядок завершения"
+      },
+      {
+        "id": "opt-reject",
+        "text": "Returned Promise отклоняется при первом наблюдаемом rejection входа"
+      },
+      {
+        "id": "opt-cancel",
+        "text": "После rejection Promise.all автоматически отменяет остальные операции"
+      },
+      { "id": "opt-values", "text": "Обычные значения во входе принимаются как fulfilled" }
+    ],
+    "expectedAnswer": { "selectedOptionIds": ["opt-order", "opt-reject", "opt-values"] },
+    "rubric": { "dimensions": { "RECALL": 65, "EXPLANATION": 20, "EDGE_CASES": 15 } },
+    "hints": ["Promise не определяет общий механизм отмены операции."],
+    "acceptanceCriteria": ["Выбраны order, reject и values", "Не заявлена автоматическая отмена"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 4,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise/all"
+      ]
+    }
+  }
+]

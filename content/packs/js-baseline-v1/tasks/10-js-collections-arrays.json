@@ -1,0 +1,99 @@
+[
+  {
+    "stableKey": "js.collections.arrays.predict-001",
+    "version": 1,
+    "topicKey": "js.collections.arrays",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Что выведет код и изменится ли исходный массив?\n\n```js\nconst values = [1, 2, 3];\nconst result = values.map((value) => value * 2).filter((value) => value > 3);\nconsole.log(result.join(','), values.length);\n```",
+    "expectedAnswer": { "output": ["4,6 3"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 75, "EXPLANATION": 25 } },
+    "hints": [],
+    "acceptanceCriteria": ["Указан вывод 4,6 3", "map/filter описаны как создающие новые массивы"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 4,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/map"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.collections.arrays.explain-001",
+    "version": 1,
+    "topicKey": "js.collections.arrays",
+    "kind": "EXPLAIN",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Когда выбирать map, filter и reduce? Для каждого назови выходной контракт, мутацию исходного массива и один edge case, включая sparse array или отсутствие initialValue у reduce.",
+    "rubric": { "dimensions": { "EXPLANATION": 65, "EDGE_CASES": 35 } },
+    "hints": ["Не своди все преобразования к reduce без причины."],
+    "acceptanceCriteria": [
+      "Различены назначения трёх методов",
+      "Не приписана мутация исходного массива",
+      "Разобран хотя бы один корректный edge case"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 8,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.collections.arrays.find-bug-001",
+    "version": 1,
+    "topicKey": "js.collections.arrays",
+    "kind": "FIND_BUG",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Почему функция падает на пустом массиве и как исправить?\n\n```js\nfunction sum(values) {\n  return values.reduce((total, value) => total + value);\n}\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 70, "EDGE_CASES": 30 } },
+    "hints": ["У reduce нет первого accumulator для пустого массива."],
+    "acceptanceCriteria": [
+      "Обнаружено отсутствие initialValue",
+      "Добавлено начальное значение 0",
+      "Пустой массив возвращает 0"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 4,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.collections.arrays.ai-review-001",
+    "version": 1,
+    "topicKey": "js.collections.arrays",
+    "kind": "AI_REVIEW",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Проверь ответ AI: «`map` меняет каждый элемент исходного массива на месте и всегда сохраняет все индексы как обычные значения». Найди обе проблемы формулировки и дай точный контракт map, включая sparse slots.",
+    "rubric": { "dimensions": { "AI_REVIEW": 55, "EXPLANATION": 25, "EDGE_CASES": 20 } },
+    "hints": ["map возвращает новый массив, но callback может сам мутировать внешние данные."],
+    "acceptanceCriteria": [
+      "Опровергнута встроенная мутация исходного массива",
+      "Указан новый массив",
+      "Отмечено сохранение empty slots без вызова callback"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 6,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/map"
+      ]
+    }
+  }
+]

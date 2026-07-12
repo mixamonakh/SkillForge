@@ -1,0 +1,101 @@
+[
+  {
+    "stableKey": "js.values.types.predict-001",
+    "version": 1,
+    "topicKey": "js.values.types",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Что выведет код?\n\n```js\nconsole.log(typeof null, typeof NaN, Number.isNaN(NaN));\n```",
+    "expectedAnswer": { "output": ["object number true"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 80, "EXPLANATION": 20 } },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указан вывод object number true",
+      "typeof null отмечен как историческая особенность"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 3,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/typeof"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.values.types.explain-001",
+    "version": 1,
+    "topicKey": "js.values.types",
+    "kind": "EXPLAIN",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Перечисли семь primitive types JavaScript и объясни, почему `typeof` недостаточно для надёжного распознавания `null`, массива и NaN.",
+    "rubric": { "dimensions": { "RECALL": 55, "EXPLANATION": 45 } },
+    "hints": ["Для массива существует Array.isArray."],
+    "acceptanceCriteria": [
+      "Названы string, number, bigint, boolean, undefined, symbol, null",
+      "Указаны отдельные проверки null, Array.isArray и Number.isNaN"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 6,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.values.types.find-bug-001",
+    "version": 1,
+    "topicKey": "js.values.types",
+    "kind": "FIND_BUG",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Почему функция падает на допустимом входе `null` и как уточнить guard?\n\n```js\nfunction keys(value) {\n  if (typeof value === 'object') return Object.keys(value);\n  return [];\n}\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 70, "EDGE_CASES": 30 } },
+    "hints": ["typeof null возвращает object."],
+    "acceptanceCriteria": ["Назван typeof null", "Добавлена явная проверка value !== null"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 4,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/typeof"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.values.types.choice-001",
+    "version": 1,
+    "topicKey": "js.values.types",
+    "kind": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Выбери все primitive values.",
+    "options": [
+      { "id": "opt-symbol", "text": "Symbol('id')" },
+      { "id": "opt-bigint", "text": "10n" },
+      { "id": "opt-array", "text": "[]" },
+      { "id": "opt-undefined", "text": "undefined" },
+      { "id": "opt-object", "text": "{}" }
+    ],
+    "expectedAnswer": { "selectedOptionIds": ["opt-symbol", "opt-bigint", "opt-undefined"] },
+    "rubric": { "dimensions": { "RECALL": 80, "EXPLANATION": 20 } },
+    "hints": ["Массив является объектом."],
+    "acceptanceCriteria": ["Выбраны Symbol, BigInt и undefined", "Не выбраны массив и объект"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 3,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ]
+    }
+  }
+]

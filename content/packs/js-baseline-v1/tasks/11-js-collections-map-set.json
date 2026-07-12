@@ -1,0 +1,129 @@
+[
+  {
+    "stableKey": "js.collections.map-set.predict-001",
+    "version": 1,
+    "topicKey": "js.collections.map-set",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Что выведет код? Объясни equality для ключей и значений коллекций.\n\n```js\nconst set = new Set([NaN, NaN, 0, -0]);\nconst map = new Map([[{}, 1], [{}, 2]]);\nconsole.log(set.size, map.size);\n```",
+    "expectedAnswer": { "output": ["2 2"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 60, "EXPLANATION": 40 } },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указан вывод 2 2",
+      "NaN дедуплицирован в Set",
+      "Два object literals распознаны разными ключами"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 4,
+      "estimatedMinutes": 5,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.collections.map-set.explain-001",
+    "version": 1,
+    "topicKey": "js.collections.map-set",
+    "kind": "EXPLAIN",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Выбери между Object, Map и Set для трёх случаев: индекс по object key, множество уникальных primitive ID и JSON-совместимая запись. Объясни выбор и ограничения.",
+    "rubric": { "dimensions": { "EXPLANATION": 65, "COMPLEXITY_REASONING": 20, "EDGE_CASES": 15 } },
+    "hints": ["Object keys обычно строки/symbol, Map принимает объект как ключ."],
+    "acceptanceCriteria": [
+      "Map выбран для object keys",
+      "Set выбран для membership/unique IDs",
+      "Для JSON учтена сериализация Object"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 4,
+      "estimatedMinutes": 7,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.collections.map-set.find-bug-001",
+    "version": 1,
+    "topicKey": "js.collections.map-set",
+    "kind": "FIND_BUG",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Функция должна оставить по одному объекту на `id`, но дубликаты остаются. Почему?\n\n```js\nfunction uniqueUsers(users) {\n  return [...new Set(users)];\n}\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 65, "COMPLEXITY_REASONING": 20, "EDGE_CASES": 15 } },
+    "hints": ["Set сравнивает объекты по identity, а не по полю id."],
+    "acceptanceCriteria": [
+      "Объяснена reference equality объектов",
+      "Предложен Set/Map по id",
+      "Сохранение первого/последнего явно оговорено"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 4,
+      "estimatedMinutes": 6,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.collections.map-set.code-001",
+    "version": 1,
+    "topicKey": "js.collections.map-set",
+    "kind": "CODE",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Реализуй `uniqueBy(items, getKey)`: оставь первое значение для каждого ключа, сохрани порядок и не мутируй входной массив. Требуемая сложность — O(n) в среднем.",
+    "starterCode": "export function uniqueBy(items, getKey) {\n  // твой код\n}",
+    "language": "javascript",
+    "rubric": {
+      "dimensions": { "CODE_CORRECTNESS": 65, "EDGE_CASES": 20, "COMPLEXITY_REASONING": 15 }
+    },
+    "hints": ["Храни встреченные ключи в Set."],
+    "acceptanceCriteria": [
+      "Сохраняется первое значение",
+      "Порядок стабилен",
+      "Пустой массив поддержан",
+      "Вход не мутируется"
+    ],
+    "testCases": [
+      {
+        "name": "удаляет дубликаты по ключу",
+        "input": [[{ "id": 1 }, { "id": 1 }, { "id": 2 }]],
+        "expected": [{ "id": 1 }, { "id": 2 }],
+        "testCode": "assert.deepEqual(uniqueBy([{ id: 1 }, { id: 1 }, { id: 2 }], (item) => item.id), [{ id: 1 }, { id: 2 }]);",
+        "hidden": false,
+        "position": 1
+      },
+      {
+        "name": "поддерживает пустой массив",
+        "testCode": "assert.deepEqual(uniqueBy([], (item) => item), []);",
+        "hidden": true,
+        "position": 2
+      },
+      {
+        "name": "не мутирует вход",
+        "testCode": "const input = [{ id: 2 }, { id: 1 }]; const snapshot = JSON.stringify(input); uniqueBy(input, (item) => item.id); assert.equal(JSON.stringify(input), snapshot);",
+        "hidden": true,
+        "position": 3
+      }
+    ],
+    "metadata": {
+      "yandexRelevance": 4,
+      "estimatedMinutes": 12,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set"
+      ]
+    }
+  }
+]

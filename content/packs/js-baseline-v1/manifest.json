@@ -1,0 +1,35 @@
+{
+  "key": "js-baseline-v1",
+  "version": "1.0.0",
+  "locale": "ru",
+  "createdAt": "2026-07-11",
+  "status": "active",
+  "requiresAppSchema": ">=1.0.0 <2.0.0",
+  "tracks": ["cs-foundation", "javascript-core"],
+  "counts": {
+    "topics": 18,
+    "tasks": 72,
+    "assessments": 1
+  },
+  "requirements": {
+    "baselineItems": 36,
+    "blocks": 4,
+    "itemsPerBlock": 9,
+    "minimumTaskKinds": 5,
+    "minimumDeterministicTasks": 12,
+    "minimumExplanationTasks": 8,
+    "minimumDebuggingTasks": 6,
+    "minimumAiReviewOrCompareTasks": 4,
+    "minimumMixedTasks": 6
+  },
+  "sources": [
+    {
+      "title": "MDN JavaScript Guide",
+      "url": "https://developer.mozilla.org/docs/Web/JavaScript/Guide"
+    },
+    {
+      "title": "MDN JavaScript Reference",
+      "url": "https://developer.mozilla.org/docs/Web/JavaScript/Reference"
+    }
+  ]
+}

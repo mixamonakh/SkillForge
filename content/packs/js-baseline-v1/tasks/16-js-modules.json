@@ -1,0 +1,122 @@
+[
+  {
+    "stableKey": "js.modules.predict-001",
+    "version": 1,
+    "topicKey": "js.modules",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Даны два ESM-файла. Что выведет main.js и почему?\n\n```js\n// counter.js\nexport let value = 0;\nexport function increment() { value += 1; }\n\n// main.js\nimport { value, increment } from './counter.js';\nconsole.log(value);\nincrement();\nconsole.log(value);\n```",
+    "expectedAnswer": { "output": ["0", "1"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 60, "EXPLANATION": 40 } },
+    "hints": [],
+    "acceptanceCriteria": ["Указаны 0 и 1", "Import описан как live binding, а не snapshot"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 4,
+      "estimatedMinutes": 5,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/JavaScript/Guide/Modules"]
+    }
+  },
+  {
+    "stableKey": "js.modules.explain-001",
+    "version": 1,
+    "topicKey": "js.modules",
+    "kind": "EXPLAIN",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Сравни static `import`, dynamic `import()` и CommonJS-like runtime require только на уровне модели: когда строится dependency graph, что возвращается и зачем нужен dynamic import.",
+    "rubric": { "dimensions": { "EXPLANATION": 75, "EDGE_CASES": 25 } },
+    "hints": ["Dynamic import возвращает Promise module namespace."],
+    "acceptanceCriteria": [
+      "Static import описан как top-level/static",
+      "Dynamic import описан как Promise и lazy boundary",
+      "Не смешаны default и namespace values"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 4,
+      "estimatedMinutes": 7,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/import"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.modules.find-bug-001",
+    "version": 1,
+    "topicKey": "js.modules",
+    "kind": "FIND_BUG",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Модуль экспортирует `export const parse = ...`, но consumer не собирается. Найди mismatch.\n\n```js\nimport parse from './parser.js';\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 75, "EXPLANATION": 25 } },
+    "hints": ["Сравни named и default export."],
+    "acceptanceCriteria": [
+      "Обнаружен default/named mismatch",
+      "Предложен import { parse } или default export",
+      "Контракт экспорта выбран явно"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 4,
+      "estimatedMinutes": 4,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/import"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.modules.code-001",
+    "version": 1,
+    "topicKey": "js.modules",
+    "kind": "CODE",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Реализуй `pickNamedExports(namespace, names)`: верни новый plain object только с собственными свойствами namespace, перечисленными в names; повторные имена не меняют результат, входы не мутируются.",
+    "starterCode": "export function pickNamedExports(namespace, names) {\n  // твой код\n}",
+    "language": "javascript",
+    "rubric": {
+      "dimensions": { "CODE_CORRECTNESS": 65, "EDGE_CASES": 25, "COMPLEXITY_REASONING": 10 }
+    },
+    "hints": ["Проверяй собственное свойство через Object.hasOwn."],
+    "acceptanceCriteria": [
+      "Копируются только запрошенные own properties",
+      "Отсутствующие имена пропускаются",
+      "Входы не мутируются"
+    ],
+    "testCases": [
+      {
+        "name": "выбирает named exports",
+        "input": [{ "parse": 1, "format": 2 }, ["format"]],
+        "expected": { "format": 2 },
+        "testCode": "assert.deepEqual(pickNamedExports({ parse: 1, format: 2 }, ['format']), { format: 2 });",
+        "hidden": false,
+        "position": 1
+      },
+      {
+        "name": "не берёт inherited property",
+        "testCode": "const namespace = Object.create({ inherited: 1 }); namespace.own = 2; assert.deepEqual(pickNamedExports(namespace, ['inherited', 'own']), { own: 2 });",
+        "hidden": true,
+        "position": 2
+      },
+      {
+        "name": "не мутирует список имён",
+        "testCode": "const names = ['parse', 'parse']; pickNamedExports({ parse: 1 }, names); assert.deepEqual(names, ['parse', 'parse']);",
+        "hidden": true,
+        "position": 3
+      }
+    ],
+    "metadata": {
+      "yandexRelevance": 4,
+      "estimatedMinutes": 12,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/export"
+      ]
+    }
+  }
+]

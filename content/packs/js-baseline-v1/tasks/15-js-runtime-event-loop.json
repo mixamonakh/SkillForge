@@ -1,0 +1,97 @@
+[
+  {
+    "stableKey": "js.runtime.event-loop.predict-001",
+    "version": 1,
+    "topicKey": "js.runtime.event-loop",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Что будет выведено и почему?\n\n```js\nconsole.log('A');\nsetTimeout(() => console.log('B'), 0);\nPromise.resolve().then(() => console.log('C'));\nconsole.log('D');\n```",
+    "expectedAnswer": { "output": ["A", "D", "C", "B"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 70, "EXPLANATION": 30 } },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указан порядок A, D, C, B",
+      "Объяснена очередь microtasks",
+      "setTimeout отнесён к следующей task"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 5,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/JavaScript/Event_loop"]
+    }
+  },
+  {
+    "stableKey": "js.runtime.event-loop.explain-001",
+    "version": 1,
+    "topicKey": "js.runtime.event-loop",
+    "kind": "EXPLAIN",
+    "difficulty": "HARD",
+    "status": "active",
+    "promptMarkdown": "Опиши один turn браузерного event loop: call stack текущей task, microtask checkpoint и возможность render. Почему длинная task и бесконечная цепочка microtasks обе мешают отзывчивости?",
+    "rubric": { "dimensions": { "EXPLANATION": 65, "COMPLEXITY_REASONING": 20, "EDGE_CASES": 15 } },
+    "hints": ["Рендер не обязан происходить после каждой microtask."],
+    "acceptanceCriteria": [
+      "Разделены task и microtask",
+      "Указано опустошение microtask queue",
+      "Объяснена блокировка render/main thread"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 8,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/JavaScript/Event_loop"]
+    }
+  },
+  {
+    "stableKey": "js.runtime.event-loop.find-bug-001",
+    "version": 1,
+    "topicKey": "js.runtime.event-loop",
+    "kind": "FIND_BUG",
+    "difficulty": "HARD",
+    "status": "active",
+    "promptMarkdown": "Почему timer и render могут долго не получить управление? Предложи безопасный способ порционной обработки.\n\n```js\nfunction drain() {\n  queueMicrotask(drain);\n}\ndrain();\nsetTimeout(() => console.log('timer'), 0);\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 50, "EXPLANATION": 30, "COMPLEXITY_REASONING": 20 } },
+    "hints": ["Microtask checkpoint опустошает очередь, включая добавленные microtasks."],
+    "acceptanceCriteria": [
+      "Названа microtask starvation",
+      "Предложена конечность или yield через task",
+      "Не предлагается новая бесконечная microtask"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 8,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/API/HTML_DOM_API/Microtask_guide"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.runtime.event-loop.ai-review-001",
+    "version": 1,
+    "topicKey": "js.runtime.event-loop",
+    "kind": "AI_REVIEW",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Проверь ответ AI: «`setTimeout(fn, 0)` вызывает fn немедленно и раньше любого `.then`, потому что timeout равен нулю». Найди ошибки и сформулируй модель без обещания точного времени.",
+    "rubric": { "dimensions": { "AI_REVIEW": 55, "EXPLANATION": 35, "EDGE_CASES": 10 } },
+    "hints": ["Timer ставит task после минимальной задержки; Promise reaction — microtask."],
+    "acceptanceCriteria": [
+      "Опровергнута немедленность",
+      "Promise microtask выполняется до следующей timer task после текущего script",
+      "Не обещана точная wall-clock задержка"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 6,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/API/Window/setTimeout"]
+    }
+  }
+]

@@ -1,0 +1,33 @@
+import type { NextConfig } from 'next';
+
+const apiInternalUrl = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
+
+const nextConfig: NextConfig = {
+  output: 'standalone',
+  poweredByHeader: false,
+  reactStrictMode: true,
+  transpilePackages: ['@skillforge/ui', '@skillforge/contracts'],
+  async rewrites() {
+    return [
+      {
+        source: '/api/v1/:path*',
+        destination: `${apiInternalUrl}/api/v1/:path*`,
+      },
+    ];
+  },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'Referrer-Policy', value: 'same-origin' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+        ],
+      },
+    ];
+  },
+};
+
+export default nextConfig;

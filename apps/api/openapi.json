@@ -1,0 +1,1004 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/profile": {
+      "get": {
+        "operationId": "ProfileController_getProfile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Локальный профиль и runtime configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Получить локальный профиль и настройки",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/profile/settings": {
+      "patch": {
+        "operationId": "ProfileController_updateSettings",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Обновлённый профиль",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Обновить настройки профиля",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/profile/reset-preview": {
+      "post": {
+        "operationId": "ProfileController_resetPreview",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Счётчики данных и confirmation phrase",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Предпросмотр destructive reset без изменения данных",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/profile/reset-confirm": {
+      "post": {
+        "operationId": "ProfileController_resetConfirm",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Подтверждение завершённого reset",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Удалить пользовательские данные после typed confirmation",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/tracks": {
+      "get": {
+        "operationId": "CurriculumController_tracks",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Список активных треков с coverage",
+        "tags": [
+          "curriculum"
+        ]
+      }
+    },
+    "/api/v1/tracks/{trackKey}": {
+      "get": {
+        "operationId": "CurriculumController_track",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Детали трека",
+        "tags": [
+          "curriculum"
+        ]
+      }
+    },
+    "/api/v1/topics": {
+      "get": {
+        "operationId": "CurriculumController_topics",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Карта тем из БД",
+        "tags": [
+          "curriculum"
+        ]
+      }
+    },
+    "/api/v1/topics/{topicKey}": {
+      "get": {
+        "operationId": "CurriculumController_topic",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Topic Detail с evidence и content",
+        "tags": [
+          "curriculum"
+        ]
+      }
+    },
+    "/api/v1/topics/{topicKey}/evidence": {
+      "get": {
+        "operationId": "CurriculumController_evidence",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Evidence темы с provenance",
+        "tags": [
+          "curriculum"
+        ]
+      }
+    },
+    "/api/v1/content": {
+      "get": {
+        "operationId": "CurriculumController_content",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Read-only Content Library",
+        "tags": [
+          "curriculum"
+        ]
+      }
+    },
+    "/api/v1/assessments": {
+      "get": {
+        "operationId": "AssessmentController_catalog",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Каталог assessment blueprints",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Каталог versioned assessment blueprints",
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/assessments/{key}": {
+      "get": {
+        "operationId": "AssessmentController_getAssessment",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Описание assessment blueprint",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Описание assessment blueprint",
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/assessments/{key}/runs": {
+      "post": {
+        "operationId": "AssessmentController_createRun",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Assessment run с immutable snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Создать durable assessment snapshot и linked session",
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/assessment-runs/{runId}": {
+      "get": {
+        "operationId": "AssessmentController_getRun",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Assessment run и сохранённые attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/assessment-runs/{runId}/start": {
+      "post": {
+        "operationId": "AssessmentController_start",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Запущенный assessment run",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/assessment-runs/{runId}/pause": {
+      "post": {
+        "operationId": "AssessmentController_pause",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Assessment run на паузе",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/assessment-runs/{runId}/resume": {
+      "post": {
+        "operationId": "AssessmentController_resume",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Возобновлённый assessment run",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/assessment-runs/{runId}/complete-block": {
+      "post": {
+        "operationId": "AssessmentController_completeBlock",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Assessment run на следующем блоке",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/assessment-runs/{runId}/complete": {
+      "post": {
+        "operationId": "AssessmentController_complete",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Завершённый assessment run",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/sessions/{sessionId}/items/{itemId}/attempt": {
+      "put": {
+        "operationId": "AssessmentController_autosave",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Сохранённая server copy attempt с новой revision",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Optimistic autosave attempt; stale revision → 409",
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/attempts/{attemptId}/submit": {
+      "post": {
+        "operationId": "AssessmentController_submit",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Submitted attempt и доступная deterministic evaluation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Submit и deterministic evaluation без оценки free text",
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/attempts/{attemptId}/run-code": {
+      "post": {
+        "operationId": "AssessmentController_runCode",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Attempt с сохранённым runner result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Сохранить schema-validated результат browser worker",
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/attempts/{attemptId}/evaluations": {
+      "get": {
+        "operationId": "AssessmentController_evaluations",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Immutable evaluations попытки",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/sessions/recommendation": {
+      "get": {
+        "operationId": "SessionsController_recommendation",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Одна primary recommendation из pure learning engine",
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/v1/sessions/plan": {
+      "post": {
+        "operationId": "SessionsController_plan",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Проверить и нормализовать план сессии",
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/v1/sessions": {
+      "post": {
+        "operationId": "SessionsController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Создать session snapshot, items и attempts",
+        "tags": [
+          "sessions"
+        ]
+      },
+      "get": {
+        "operationId": "SessionsController_history",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/v1/sessions/{sessionId}": {
+      "get": {
+        "operationId": "SessionsController_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/v1/sessions/{sessionId}/start": {
+      "post": {
+        "operationId": "SessionsController_start",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/v1/sessions/{sessionId}/pause": {
+      "post": {
+        "operationId": "SessionsController_pause",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/v1/sessions/{sessionId}/complete": {
+      "post": {
+        "operationId": "SessionsController_complete",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/v1/metrics/dashboard": {
+      "get": {
+        "operationId": "MetricsController_dashboard",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Dashboard без fake readiness и с одной рекомендацией",
+        "tags": [
+          "metrics"
+        ]
+      }
+    },
+    "/api/v1/metrics/topics": {
+      "get": {
+        "operationId": "MetricsController_topics",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "metrics"
+        ]
+      }
+    },
+    "/api/v1/metrics/readiness/{targetKey}": {
+      "get": {
+        "operationId": "MetricsController_readiness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "metrics"
+        ]
+      }
+    },
+    "/api/v1/metrics/calibration": {
+      "get": {
+        "operationId": "MetricsController_calibration",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "metrics"
+        ]
+      }
+    },
+    "/api/v1/metrics/misconceptions": {
+      "get": {
+        "operationId": "MetricsController_misconceptions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "metrics"
+        ]
+      }
+    },
+    "/api/v1/exports": {
+      "post": {
+        "operationId": "ImportExportController_createExport",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Export bundle, strict JSON и Markdown wrapper",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Создать immutable strict JSON + Markdown export",
+        "tags": [
+          "import-export"
+        ]
+      }
+    },
+    "/api/v1/exports/{bundleId}": {
+      "get": {
+        "operationId": "ImportExportController_getExport",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Сохранённый export bundle",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "import-export"
+        ]
+      }
+    },
+    "/api/v1/exports/{bundleId}/download": {
+      "get": {
+        "operationId": "ImportExportController_download",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "import-export"
+        ]
+      }
+    },
+    "/api/v1/imports/validate": {
+      "post": {
+        "operationId": "ImportExportController_validateImport",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Validation result и normalized JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Strict fenced/raw JSON validation с лимитами",
+        "tags": [
+          "import-export"
+        ]
+      }
+    },
+    "/api/v1/imports/{importId}/preview": {
+      "post": {
+        "operationId": "ImportExportController_preview",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Preview diff без записи evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Симуляция learning engine без изменения TopicState",
+        "tags": [
+          "import-export"
+        ]
+      }
+    },
+    "/api/v1/imports/{importId}/apply": {
+      "post": {
+        "operationId": "ImportExportController_apply",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Результат атомарного import apply",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Atomic idempotent import apply после preview",
+        "tags": [
+          "import-export"
+        ]
+      }
+    },
+    "/api/v1/imports/{importId}/rollback": {
+      "post": {
+        "operationId": "ImportExportController_rollback",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Результат атомарной отмены imported evaluations/evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Компенсирующая отмена последнего применённого import",
+        "tags": [
+          "import-export"
+        ]
+      }
+    },
+    "/api/v1/imports": {
+      "get": {
+        "operationId": "ImportExportController_listImports",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "История import batches",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "import-export"
+        ]
+      }
+    },
+    "/api/v1/imports/{importId}": {
+      "get": {
+        "operationId": "ImportExportController_getImport",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Import batch, preview и normalized JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "import-export"
+        ]
+      }
+    },
+    "/api/v1/external-artifacts": {
+      "post": {
+        "operationId": "BattleEvidenceController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Создать external artifact без автоматического mastery",
+        "tags": [
+          "battle-evidence"
+        ]
+      },
+      "get": {
+        "operationId": "BattleEvidenceController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "battle-evidence"
+        ]
+      }
+    },
+    "/api/v1/external-artifacts/{id}": {
+      "get": {
+        "operationId": "BattleEvidenceController_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "battle-evidence"
+        ]
+      },
+      "patch": {
+        "operationId": "BattleEvidenceController_update",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "battle-evidence"
+        ]
+      },
+      "delete": {
+        "operationId": "BattleEvidenceController_remove",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "battle-evidence"
+        ]
+      }
+    },
+    "/api/v1/external-artifacts/{id}/create-evidence": {
+      "post": {
+        "operationId": "BattleEvidenceController_createEvidence",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Создать idempotent BATTLE/TRANSFER evidence после явного подтверждения",
+        "tags": [
+          "battle-evidence"
+        ]
+      }
+    },
+    "/api/v1/health/live": {
+      "get": {
+        "operationId": "HealthController_live",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Процесс API работает",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Liveness процесса без проверки внешних зависимостей",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/api/v1/health/ready": {
+      "get": {
+        "operationId": "HealthController_ready",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "DB, migrations и content готовы",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Readiness PostgreSQL, Prisma migrations и content pack",
+        "tags": [
+          "health"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "SkillForge API",
+    "description": "Локальный evidence-based learning API. AI mode по умолчанию manual.",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {}
+  }
+}

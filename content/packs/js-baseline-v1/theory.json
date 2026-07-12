@@ -1,0 +1,164 @@
+[
+  {
+    "stableKey": "cs.values-and-references.note-001",
+    "version": 1,
+    "topicKey": "cs.values-and-references",
+    "kind": "THEORY",
+    "title": "Binding и объект — разные вещи",
+    "bodyMarkdown": "Переменная хранит значение. Для объекта этим значением является ссылка на объект: копирование binding не копирует сам объект. Две переменные могут наблюдать одну мутацию.",
+    "status": "active"
+  },
+  {
+    "stableKey": "cs.mutability.note-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "THEORY",
+    "title": "Shallow copy",
+    "bodyMarkdown": "Spread и Object.assign создают новый внешний контейнер, но сохраняют ссылки на вложенные объекты. Для неизменяемого обновления нужно копировать весь изменяемый путь.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.values.types.note-001",
+    "version": 1,
+    "topicKey": "js.values.types",
+    "kind": "THEORY",
+    "title": "Primitive values",
+    "bodyMarkdown": "JavaScript имеет семь primitive types. null исторически возвращает object из typeof; NaN имеет тип number и проверяется Number.isNaN.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.coercion.equality.note-001",
+    "version": 1,
+    "topicKey": "js.coercion.equality",
+    "kind": "THEORY",
+    "title": "Сравнение без догадок",
+    "bodyMarkdown": "=== не выполняет числовое приведение. Object.is отличается для NaN и знака нуля. При == применяется алгоритм abstract equality, который нужно разбирать по шагам.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.variables.scope.note-001",
+    "version": 1,
+    "topicKey": "js.variables.scope",
+    "kind": "THEORY",
+    "title": "Создание и инициализация binding",
+    "bodyMarkdown": "Binding let/const существует с начала блока, но недоступен до инициализации — это TDZ. var имеет function scope и получает undefined при создании execution context.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.functions.basics.note-001",
+    "version": 1,
+    "topicKey": "js.functions.basics",
+    "kind": "THEORY",
+    "title": "Функция как значение",
+    "bodyMarkdown": "Функцию можно передать, вернуть и хранить. Higher-order function должна явно определять аргументы callback, порядок вызовов и возвращаемое значение.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.functions.closures.note-001",
+    "version": 1,
+    "topicKey": "js.functions.closures",
+    "kind": "THEORY",
+    "title": "Замыкание хранит binding",
+    "bodyMarkdown": "Функция сохраняет доступ к lexical environment места создания. Она читает текущее значение binding, а не всегда снимок значения на момент создания.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.functions.this.note-001",
+    "version": 1,
+    "topicKey": "js.functions.this",
+    "kind": "THEORY",
+    "title": "this определяется вызовом",
+    "bodyMarkdown": "Для обычной функции this зависит от call-site. Стрелочная функция не создаёт собственный this и использует lexical this окружающего контекста.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.objects.prototypes.note-001",
+    "version": 1,
+    "topicKey": "js.objects.prototypes",
+    "kind": "THEORY",
+    "title": "Prototype chain lookup",
+    "bodyMarkdown": "Если собственного свойства нет, lookup продолжается по [[Prototype]] до null. class задаёт знакомый синтаксис поверх той же прототипной модели.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.collections.arrays.note-001",
+    "version": 1,
+    "topicKey": "js.collections.arrays",
+    "kind": "THEORY",
+    "title": "Преобразование массивов",
+    "bodyMarkdown": "map создаёт массив результатов, filter выбирает элементы, reduce сворачивает состояние. Нужно отдельно учитывать мутацию, sparse slots и начальное значение reduce.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.collections.map-set.note-001",
+    "version": 1,
+    "topicKey": "js.collections.map-set",
+    "kind": "THEORY",
+    "title": "Map, Set и семантика ключей",
+    "bodyMarkdown": "Map принимает ключи любого типа и сохраняет порядок вставки. Set хранит уникальные значения по SameValueZero и удобен для membership checks.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.errors.note-001",
+    "version": 1,
+    "topicKey": "js.errors",
+    "kind": "THEORY",
+    "title": "Ошибка как структурированное значение",
+    "bodyMarkdown": "Бросайте Error с контекстом и сохраняйте исходную причину через cause. finally выполняется после try/catch и может опасно заменить return или throw.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.async.promises.note-001",
+    "version": 1,
+    "topicKey": "js.async.promises",
+    "kind": "THEORY",
+    "title": "Цепочка Promise",
+    "bodyMarkdown": "Каждый then возвращает новый Promise. Возвращённое значение становится fulfillment, thrown error — rejection, а возвращённый Promise ассимилируется цепочкой.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.async.await.note-001",
+    "version": 1,
+    "topicKey": "js.async.await",
+    "kind": "THEORY",
+    "title": "await не означает последовательность всегда",
+    "bodyMarkdown": "await приостанавливает только текущую async function. Независимые операции можно запустить до ожидания и собрать Promise.all.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.runtime.event-loop.note-001",
+    "version": 1,
+    "topicKey": "js.runtime.event-loop",
+    "kind": "THEORY",
+    "title": "Microtask checkpoint",
+    "bodyMarkdown": "После текущего script task среда опустошает очередь microtasks, затем может перейти к следующей task. Promise reactions выполняются как microtasks.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.modules.note-001",
+    "version": 1,
+    "topicKey": "js.modules",
+    "kind": "THEORY",
+    "title": "ESM связывает модули статически",
+    "bodyMarkdown": "Static imports анализируются до выполнения. Named exports являются live bindings: импорт видит изменение экспортируемого binding.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.browser.events.note-001",
+    "version": 1,
+    "topicKey": "js.browser.events",
+    "kind": "THEORY",
+    "title": "Путь DOM event",
+    "bodyMarkdown": "Событие проходит capture, target и bubble, если тип bubbling. target — исходный узел, currentTarget — узел текущего обработчика.",
+    "status": "active"
+  },
+  {
+    "stableKey": "js.network.fetch.note-001",
+    "version": 1,
+    "topicKey": "js.network.fetch",
+    "kind": "THEORY",
+    "title": "Два класса ошибок fetch",
+    "bodyMarkdown": "fetch отклоняется при сетевой ошибке или abort. HTTP 404/500 обычно возвращают fulfilled Response, поэтому response.ok проверяется явно до чтения контракта body.",
+    "status": "active"
+  }
+]

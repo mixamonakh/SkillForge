@@ -1,0 +1,105 @@
+[
+  {
+    "stableKey": "js.functions.basics.predict-001",
+    "version": 1,
+    "topicKey": "js.functions.basics",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Что выведет код и какую роль играет `apply`?\n\n```js\nconst apply = (operation, value) => operation(value);\nconst double = (value) => value * 2;\nconsole.log(apply(double, 3));\n```",
+    "expectedAnswer": { "output": ["6"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 75, "EXPLANATION": 25 } },
+    "hints": [],
+    "acceptanceCriteria": ["Указан вывод 6", "apply распознан как higher-order function"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 3,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/JavaScript/Guide/Functions"]
+    }
+  },
+  {
+    "stableKey": "js.functions.basics.explain-001",
+    "version": 1,
+    "topicKey": "js.functions.basics",
+    "kind": "EXPLAIN",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Объясни разницу между передачей callback `onDone` и передачей результата вызова `onDone()`. В каком случае callback выполнится немедленно?",
+    "rubric": { "dimensions": { "EXPLANATION": 80, "RECALL": 20 } },
+    "hints": ["Сравни значение-функцию и результат expression вызова."],
+    "acceptanceCriteria": [
+      "onDone передаёт функцию",
+      "onDone() вызывает её сразу и передаёт результат"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 4,
+      "mixedEvidence": false,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Glossary/Callback_function"]
+    }
+  },
+  {
+    "stableKey": "js.functions.basics.find-bug-001",
+    "version": 1,
+    "topicKey": "js.functions.basics",
+    "kind": "FIND_BUG",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Найди ошибку: `format` должен вызываться для каждого элемента.\n\n```js\nconst format = (value) => String(value).trim();\nconst result = items.map(format());\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 75, "EXPLANATION": 25 } },
+    "hints": ["Что возвращает format() без аргумента и что ожидает map?"],
+    "acceptanceCriteria": ["Передана ссылка format без вызова", "Объяснён callback-контракт map"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 4,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/map"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.functions.basics.code-001",
+    "version": 1,
+    "topicKey": "js.functions.basics",
+    "kind": "CODE",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Реализуй `pipe2(first, second)`. Она возвращает функцию, которая принимает одно значение и передаёт результат `first` в `second`.",
+    "starterCode": "export function pipe2(first, second) {\n  // твой код\n}",
+    "language": "javascript",
+    "rubric": { "dimensions": { "CODE_CORRECTNESS": 80, "EDGE_CASES": 20 } },
+    "hints": ["Верни новую функцию."],
+    "acceptanceCriteria": [
+      "first вызывается раньше second",
+      "Результат first передан в second",
+      "Возвращается результат second"
+    ],
+    "testCases": [
+      {
+        "name": "композирует две функции",
+        "input": [3],
+        "expected": 8,
+        "testCode": "const operation = pipe2((value) => value + 1, (value) => value * 2); assert.equal(operation(3), 8);",
+        "hidden": false,
+        "position": 1
+      },
+      {
+        "name": "передаёт промежуточное значение",
+        "testCode": "const seen = []; const operation = pipe2((value) => { seen.push('first'); return value; }, (value) => { seen.push('second'); return value; }); operation('x'); assert.deepEqual(seen, ['first', 'second']);",
+        "hidden": true,
+        "position": 2
+      }
+    ],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 8,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/JavaScript/Guide/Functions"]
+    }
+  }
+]

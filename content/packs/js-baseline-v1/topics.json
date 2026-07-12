@@ -1,0 +1,332 @@
+[
+  {
+    "key": "cs.values-and-references",
+    "trackKey": "cs-foundation",
+    "title": "Значения и ссылки",
+    "shortDescription": "Различать копирование значения и совместный доступ к объекту.",
+    "whyImportant": "Ошибки с aliasing приводят к неожиданным изменениям данных и нестабильным контрактам функций.",
+    "atWork": "Нужно при проектировании DTO, state updates и API между модулями.",
+    "atInterview": "Проверяется через трассировку присваиваний и изменения вложенных объектов.",
+    "position": 1,
+    "defaultHalfLifeDays": 90,
+    "status": "active",
+    "prerequisites": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ]
+    }
+  },
+  {
+    "key": "cs.mutability",
+    "trackKey": "cs-foundation",
+    "title": "Мутабельность и копирование",
+    "shortDescription": "Понимать поверхностное копирование, мутацию и неизменяемые обновления.",
+    "whyImportant": "Корректная работа с состоянием требует понимать границы shallow copy.",
+    "atWork": "Встречается в reducer, кешах, React state и преобразовании ответов API.",
+    "atInterview": "Проверяется задачами на spread, вложенные структуры и побочные эффекты.",
+    "position": 2,
+    "defaultHalfLifeDays": 90,
+    "status": "active",
+    "prerequisites": ["cs.values-and-references"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Glossary/Shallow_copy"]
+    }
+  },
+  {
+    "key": "js.values.types",
+    "trackKey": "javascript-core",
+    "title": "Примитивы и типы",
+    "shortDescription": "Знать primitive types, typeof и особые значения JavaScript.",
+    "whyImportant": "Тип значения определяет сравнение, преобразование и допустимые операции.",
+    "atWork": "Нужно для runtime validation, nullable данных и безопасных API-контрактов.",
+    "atInterview": "Часто проверяются typeof null, NaN, Symbol и BigInt.",
+    "position": 1,
+    "defaultHalfLifeDays": 90,
+    "status": "active",
+    "prerequisites": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ]
+    }
+  },
+  {
+    "key": "js.coercion.equality",
+    "trackKey": "javascript-core",
+    "title": "Приведение и сравнение",
+    "shortDescription": "Предсказывать ToPrimitive, truthiness и различия == / === / Object.is.",
+    "whyImportant": "Неявное приведение может менять ветвление и давать труднообнаружимые ошибки.",
+    "atWork": "Важно при обработке форм, query params и данных из внешних систем.",
+    "atInterview": "Проверяется выводом выражений и объяснением алгоритма сравнения.",
+    "position": 2,
+    "defaultHalfLifeDays": 75,
+    "status": "active",
+    "prerequisites": ["js.values.types"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Equality_comparisons_and_sameness"
+      ]
+    }
+  },
+  {
+    "key": "js.variables.scope",
+    "trackKey": "javascript-core",
+    "title": "Переменные, scope и TDZ",
+    "shortDescription": "Различать let, const, var, lexical scope, hoisting и TDZ.",
+    "whyImportant": "Модель областей видимости определяет доступность и время инициализации bindings.",
+    "atWork": "Нужно для безопасного рефакторинга, модулей и callback-кода.",
+    "atInterview": "Проверяется трассировкой hoisting, блоков и shadowing.",
+    "position": 3,
+    "defaultHalfLifeDays": 75,
+    "status": "active",
+    "prerequisites": ["js.values.types"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Grammar_and_types#declarations"
+      ]
+    }
+  },
+  {
+    "key": "js.functions.basics",
+    "trackKey": "javascript-core",
+    "title": "Функции, callbacks и HOF",
+    "shortDescription": "Работать с функциями как значениями и контрактами вызова.",
+    "whyImportant": "Callbacks и higher-order functions лежат в основе современного JavaScript API.",
+    "atWork": "Используется в обработчиках, коллекциях, middleware и dependency injection.",
+    "atInterview": "Проверяется композиция функций и корректность callback-контрактов.",
+    "position": 4,
+    "defaultHalfLifeDays": 90,
+    "status": "active",
+    "prerequisites": ["js.variables.scope"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/JavaScript/Guide/Functions"]
+    }
+  },
+  {
+    "key": "js.functions.closures",
+    "trackKey": "javascript-core",
+    "title": "Замыкания",
+    "shortDescription": "Объяснять lexical environment и сохранение bindings после вызова.",
+    "whyImportant": "Замыкания формируют приватное состояние, фабрики и обработчики.",
+    "atWork": "Встречается в hooks, memoization, конфигураторах и event handlers.",
+    "atInterview": "Проверяется циклом callbacks, фабриками и временем чтения binding.",
+    "position": 5,
+    "defaultHalfLifeDays": 75,
+    "status": "active",
+    "prerequisites": ["js.functions.basics", "js.variables.scope"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/JavaScript/Guide/Closures"]
+    }
+  },
+  {
+    "key": "js.functions.this",
+    "trackKey": "javascript-core",
+    "title": "this, bind/call/apply и arrow",
+    "shortDescription": "Определять this по форме вызова и понимать lexical this стрелки.",
+    "whyImportant": "Потеря receiver остаётся частой причиной ошибок в callbacks и классах.",
+    "atWork": "Нужно при передаче методов, интеграции библиотек и legacy-коде.",
+    "atInterview": "Проверяется detached method, bind и constructor calls.",
+    "position": 6,
+    "defaultHalfLifeDays": 60,
+    "status": "active",
+    "prerequisites": ["js.functions.basics"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/this"
+      ]
+    }
+  },
+  {
+    "key": "js.objects.prototypes",
+    "trackKey": "javascript-core",
+    "title": "Объекты, прототипы и классы",
+    "shortDescription": "Понимать lookup по prototype chain и синтаксическую роль class.",
+    "whyImportant": "Объектная модель влияет на наследование, методы и проверку собственных свойств.",
+    "atWork": "Встречается в моделях, библиотечных объектах и анализе неожиданного lookup.",
+    "atInterview": "Проверяется Object.create, prototype chain и class methods.",
+    "position": 7,
+    "defaultHalfLifeDays": 75,
+    "status": "active",
+    "prerequisites": ["cs.values-and-references", "js.functions.this"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Inheritance_and_the_prototype_chain"
+      ]
+    }
+  },
+  {
+    "key": "js.collections.arrays",
+    "trackKey": "javascript-core",
+    "title": "Массивы и методы",
+    "shortDescription": "Выбирать map/filter/reduce и учитывать sparse arrays и мутацию.",
+    "whyImportant": "Преобразование коллекций составляет значительную часть frontend-кода.",
+    "atWork": "Используется в view models, нормализации данных и вычислениях UI.",
+    "atInterview": "Проверяется реализация операций за O(n) и edge cases.",
+    "position": 8,
+    "defaultHalfLifeDays": 90,
+    "status": "active",
+    "prerequisites": ["js.functions.basics", "cs.mutability"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array"
+      ]
+    }
+  },
+  {
+    "key": "js.collections.map-set",
+    "trackKey": "javascript-core",
+    "title": "Map и Set",
+    "shortDescription": "Выбирать коллекцию по семантике ключей, уникальности и итерации.",
+    "whyImportant": "Правильная структура данных упрощает код и улучшает сложность.",
+    "atWork": "Нужно для индексов, deduplication, кешей и графов.",
+    "atInterview": "Проверяется выбор структуры и оценка сложности операций.",
+    "position": 9,
+    "defaultHalfLifeDays": 90,
+    "status": "active",
+    "prerequisites": ["js.collections.arrays"],
+    "metadata": {
+      "yandexRelevance": 4,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map"
+      ]
+    }
+  },
+  {
+    "key": "js.errors",
+    "trackKey": "javascript-core",
+    "title": "Error, throw и try/catch/finally",
+    "shortDescription": "Различать ошибки, корректно пробрасывать их и понимать finally.",
+    "whyImportant": "Ошибки являются частью контракта операции, а не только текстом в console.",
+    "atWork": "Нужно для API clients, boundaries, retry и наблюдаемости.",
+    "atInterview": "Проверяется control flow с return/throw/finally и сохранение cause.",
+    "position": 10,
+    "defaultHalfLifeDays": 75,
+    "status": "active",
+    "prerequisites": ["js.functions.basics"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Control_flow_and_error_handling"
+      ]
+    }
+  },
+  {
+    "key": "js.async.promises",
+    "trackKey": "javascript-core",
+    "title": "Promise chaining",
+    "shortDescription": "Понимать settlement, chaining, recovery и Promise combinators.",
+    "whyImportant": "Ошибочная цепочка Promise теряет результат или превращает failure в success.",
+    "atWork": "Используется в запросах, загрузке ресурсов и оркестрации async операций.",
+    "atInterview": "Проверяется порядок then/catch и возвращаемые значения callbacks.",
+    "position": 11,
+    "defaultHalfLifeDays": 60,
+    "status": "active",
+    "prerequisites": ["js.functions.basics", "js.errors"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Using_promises"
+      ]
+    }
+  },
+  {
+    "key": "js.async.await",
+    "trackKey": "javascript-core",
+    "title": "async/await и ошибки",
+    "shortDescription": "Строить последовательный и параллельный async control flow.",
+    "whyImportant": "await упрощает синтаксис, но не отменяет Promise semantics и error propagation.",
+    "atWork": "Нужно для сервисных функций, загрузки данных и отменяемых сценариев.",
+    "atInterview": "Проверяется параллелизм, try/catch и возвращаемый Promise.",
+    "position": 12,
+    "defaultHalfLifeDays": 60,
+    "status": "active",
+    "prerequisites": ["js.async.promises"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/async_function"
+      ]
+    }
+  },
+  {
+    "key": "js.runtime.event-loop",
+    "trackKey": "javascript-core",
+    "title": "Call stack, tasks и microtasks",
+    "shortDescription": "Предсказывать выполнение sync-кода, microtasks и tasks.",
+    "whyImportant": "Event loop определяет отзывчивость UI и порядок async callbacks.",
+    "atWork": "Нужно для race conditions, batching, timers и производительности интерфейса.",
+    "atInterview": "Проверяется точный порядок console output и starvation.",
+    "position": 13,
+    "defaultHalfLifeDays": 45,
+    "status": "active",
+    "prerequisites": ["js.async.promises"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/JavaScript/Event_loop"]
+    }
+  },
+  {
+    "key": "js.modules",
+    "trackKey": "javascript-core",
+    "title": "ESM import/export",
+    "shortDescription": "Понимать static imports, live bindings и границы модулей.",
+    "whyImportant": "Модульный контракт определяет dependency graph и tree shaking.",
+    "atWork": "Используется во всех современных frontend-сборках и Node ESM.",
+    "atInterview": "Проверяется live binding, default/named exports и циклы.",
+    "position": 14,
+    "defaultHalfLifeDays": 90,
+    "status": "active",
+    "prerequisites": ["js.variables.scope"],
+    "metadata": {
+      "yandexRelevance": 4,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/JavaScript/Guide/Modules"]
+    }
+  },
+  {
+    "key": "js.browser.events",
+    "trackKey": "javascript-core",
+    "title": "DOM events и делегирование",
+    "shortDescription": "Различать capture, target, bubble и безопасно делегировать события.",
+    "whyImportant": "Событийная модель определяет взаимодействие динамического UI.",
+    "atWork": "Нужно для обработчиков списков, composed paths и предотвращения default action.",
+    "atInterview": "Проверяется propagation, target/currentTarget и delegation.",
+    "position": 15,
+    "defaultHalfLifeDays": 75,
+    "status": "active",
+    "prerequisites": ["js.functions.basics", "js.objects.prototypes"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Learn_web_development/Core/Scripting/Event_bubbling"
+      ]
+    }
+  },
+  {
+    "key": "js.network.fetch",
+    "trackKey": "javascript-core",
+    "title": "fetch, Response и HTTP errors",
+    "shortDescription": "Различать network rejection и HTTP error status, отменять запросы.",
+    "whyImportant": "fetch не отклоняет Promise только из-за 404/500, поэтому контракт нужно проверять явно.",
+    "atWork": "Используется в API clients, обработке JSON, abort и retry policy.",
+    "atInterview": "Проверяется response.ok, body consumption и AbortController.",
+    "position": 16,
+    "defaultHalfLifeDays": 60,
+    "status": "active",
+    "prerequisites": ["js.async.await", "js.errors"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/API/Fetch_API/Using_Fetch"]
+    }
+  }
+]

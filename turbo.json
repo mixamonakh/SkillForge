@@ -1,0 +1,58 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "AI_MODE",
+    "AI_MONTHLY_BUDGET_USD",
+    "API_INTERNAL_URL",
+    "APP_URL",
+    "CODE_RUNNER_TIMEOUT_MS",
+    "DATABASE_URL",
+    "DEFAULT_LOCALE",
+    "DEFAULT_USER_NAME",
+    "IMPORT_MAX_BYTES",
+    "LOG_LEVEL",
+    "NEXT_PUBLIC_API_BASE_PATH",
+    "NODE_ENV",
+    "PORT",
+    "RESUME_THRESHOLD_DAYS",
+    "SEED_CONTENT_PACK"
+  ],
+  "globalPassThroughEnv": ["OPENAI_API_KEY", "SENTRY_DSN"],
+  "tasks": {
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "outputs": []
+    },
+    "typecheck": {
+      "dependsOn": ["^build", "^typecheck"],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "test:coverage": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"]
+    },
+    "test:integration": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "outputs": []
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+    },
+    "openapi:generate": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "outputs": ["openapi.json"]
+    }
+  }
+}

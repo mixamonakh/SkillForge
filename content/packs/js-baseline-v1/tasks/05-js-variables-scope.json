@@ -1,0 +1,99 @@
+[
+  {
+    "stableKey": "js.variables.scope.predict-001",
+    "version": 1,
+    "topicKey": "js.variables.scope",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Что выведет код? Объясни создание и инициализацию bindings.\n\n```js\nconsole.log(value);\nvar value = 2;\n{\n  let value = 3;\n  console.log(value);\n}\n```",
+    "expectedAnswer": { "output": ["undefined", "3"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 65, "EXPLANATION": 35 } },
+    "hints": [],
+    "acceptanceCriteria": ["Указаны undefined и 3", "Объяснены var hoisting и block-scoped let"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 5,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Grammar_and_types#variable_hoisting"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.variables.scope.explain-001",
+    "version": 1,
+    "topicKey": "js.variables.scope",
+    "kind": "EXPLAIN",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Объясни TDZ без формулировки «let не hoistится». Когда binding создаётся, когда инициализируется и что произойдёт при чтении до объявления?",
+    "rubric": { "dimensions": { "EXPLANATION": 85, "RECALL": 15 } },
+    "hints": ["Создание binding и присвоение начального значения — разные этапы."],
+    "acceptanceCriteria": [
+      "Binding существует с начала блока",
+      "До инициализации чтение даёт ReferenceError",
+      "Не утверждается отсутствие hoisting"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 6,
+      "mixedEvidence": false,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/let#temporal_dead_zone_tdz"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.variables.scope.find-bug-001",
+    "version": 1,
+    "topicKey": "js.variables.scope",
+    "kind": "FIND_BUG",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Почему callbacks печатают одно и то же число? Дай минимальное исправление и объясни его.\n\n```js\nfor (var index = 0; index < 3; index += 1) {\n  setTimeout(() => console.log(index), 0);\n}\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 60, "EXPLANATION": 40 } },
+    "hints": ["У var один function-scoped binding."],
+    "acceptanceCriteria": [
+      "Ожидаемый текущий вывод описан как 3, 3, 3",
+      "Использован let или отдельный binding",
+      "Объяснено время выполнения callback"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 6,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/let"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.variables.scope.ai-review-001",
+    "version": 1,
+    "topicKey": "js.variables.scope",
+    "kind": "AI_REVIEW",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Проверь ответ AI: «`const` делает объект неизменяемым, поэтому `const settings = {}; settings.theme = 'dark'` выбросит TypeError». Найди ошибку, сформулируй верное правило и назови способ runtime-защиты объекта верхнего уровня.",
+    "rubric": { "dimensions": { "AI_REVIEW": 55, "EXPLANATION": 30, "EDGE_CASES": 15 } },
+    "hints": ["const относится к повторному присваиванию binding."],
+    "acceptanceCriteria": [
+      "Опровергнута неизменяемость объекта",
+      "Различены reassignment и mutation",
+      "Назван Object.freeze с оговоркой shallow"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 6,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/const"
+      ]
+    }
+  }
+]

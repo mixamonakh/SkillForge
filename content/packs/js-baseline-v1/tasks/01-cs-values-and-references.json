@@ -1,0 +1,114 @@
+[
+  {
+    "stableKey": "cs.values-and-references.predict-001",
+    "version": 1,
+    "topicKey": "cs.values-and-references",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Что выведет код? Объясни, почему изменение видно через обе переменные.\n\n```js\nconst first = { count: 1 };\nconst second = first;\nsecond.count += 1;\nconsole.log(first.count, second === first);\n```",
+    "expectedAnswer": { "output": ["2 true"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 70, "EXPLANATION": 30 } },
+    "hints": [],
+    "acceptanceCriteria": ["Указан вывод 2 true", "Объяснена общая ссылка на один объект"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 4,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ]
+    }
+  },
+  {
+    "stableKey": "cs.values-and-references.explain-001",
+    "version": 1,
+    "topicKey": "cs.values-and-references",
+    "kind": "EXPLAIN",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Объясни своими словами, чем присваивание примитива отличается от присваивания объекта. Приведи по одному короткому примеру, где последующее изменение даёт разный результат.",
+    "rubric": { "dimensions": { "EXPLANATION": 80, "EDGE_CASES": 20 } },
+    "hints": ["Отдели значение переменной от объекта, на который оно указывает."],
+    "acceptanceCriteria": [
+      "Различены копирование primitive value и копирование ссылки",
+      "Примеры не утверждают, что переменная хранит объект напрямую"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 5,
+      "mixedEvidence": false,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ]
+    }
+  },
+  {
+    "stableKey": "cs.values-and-references.find-bug-001",
+    "version": 1,
+    "topicKey": "cs.values-and-references",
+    "kind": "FIND_BUG",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Найди побочный эффект и предложи исправление.\n\n```js\nconst defaults = { retries: 2 };\nfunction withNoRetries(config = defaults) {\n  config.retries = 0;\n  return config;\n}\nwithNoRetries();\nconsole.log(defaults.retries);\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 70, "EXPLANATION": 30 } },
+    "hints": ["Что именно получает параметр config при вызове без аргумента?"],
+    "acceptanceCriteria": [
+      "Обнаружена мутация defaults",
+      "Исправление возвращает новый объект или не мутирует параметр"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 6,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ]
+    }
+  },
+  {
+    "stableKey": "cs.values-and-references.code-001",
+    "version": 1,
+    "topicKey": "cs.values-and-references",
+    "kind": "CODE",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Реализуй `renameUser(user, name)`: верни новый объект с новым именем, сохрани остальные собственные enumerable-поля и не изменяй входной объект.",
+    "starterCode": "export function renameUser(user, name) {\n  // твой код\n}",
+    "language": "javascript",
+    "rubric": { "dimensions": { "CODE_CORRECTNESS": 75, "EDGE_CASES": 25 } },
+    "hints": ["Создай новый внешний объект."],
+    "acceptanceCriteria": [
+      "Результат имеет новую ссылку",
+      "Входной объект не изменён",
+      "Остальные поля сохранены"
+    ],
+    "testCases": [
+      {
+        "name": "меняет имя в копии",
+        "input": [{ "id": 1, "name": "Аня" }, "Михаил"],
+        "expected": { "id": 1, "name": "Михаил" },
+        "testCode": "assert.deepEqual(renameUser({ id: 1, name: 'Аня' }, 'Михаил'), { id: 1, name: 'Михаил' });",
+        "hidden": false,
+        "position": 1
+      },
+      {
+        "name": "не возвращает исходную ссылку",
+        "testCode": "const input = { id: 1, name: 'Аня' }; const result = renameUser(input, 'Михаил'); assert.notEqual(result, input); assert.equal(input.name, 'Аня');",
+        "hidden": true,
+        "position": 2
+      }
+    ],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 8,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Spread_syntax"
+      ]
+    }
+  }
+]

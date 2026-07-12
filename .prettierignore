@@ -1,0 +1,10 @@
+.next
+.lh
+coverage
+dist
+generated
+node_modules
+pnpm-lock.yaml
+apps/web/public/runner.worker.js
+apps/api/openapi.json
+apps/web/next-env.d.ts

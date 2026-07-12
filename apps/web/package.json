@@ -1,0 +1,49 @@
+{
+  "name": "@skillforge/web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0 --port 3000",
+    "lint": "eslint src --max-warnings=0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:integration": "vitest run --passWithNoTests",
+    "build": "next build",
+    "api:types": "openapi-typescript ../api/openapi.json -o src/shared/api/generated/openapi.ts",
+    "start": "next start --hostname 0.0.0.0 --port 3000"
+  },
+  "dependencies": {
+    "@codemirror/commands": "6.10.4",
+    "@codemirror/lang-javascript": "6.2.5",
+    "@codemirror/state": "6.7.1",
+    "@codemirror/view": "6.43.6",
+    "@fontsource-variable/inter": "5.2.8",
+    "@fontsource-variable/jetbrains-mono": "5.2.8",
+    "@hookform/resolvers": "5.4.0",
+    "@skillforge/contracts": "workspace:*",
+    "@skillforge/ui": "workspace:*",
+    "@tanstack/react-query": "5.101.2",
+    "lucide-react": "1.24.0",
+    "next": "16.2.10",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "react-hook-form": "7.81.0",
+    "recharts": "3.9.2",
+    "sonner": "2.0.7",
+    "typescript": "5.9.3",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.2",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.3",
+    "jsdom": "27.4.0",
+    "openapi-typescript": "7.13.0",
+    "postcss": "8.5.16",
+    "tailwindcss": "4.3.2"
+  }
+}

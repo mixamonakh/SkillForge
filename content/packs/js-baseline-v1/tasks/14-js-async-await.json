@@ -1,0 +1,103 @@
+[
+  {
+    "stableKey": "js.async.await.predict-001",
+    "version": 1,
+    "topicKey": "js.async.await",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Что выведет код и в каком порядке?\n\n```js\nasync function run() {\n  console.log('A');\n  await Promise.resolve();\n  console.log('B');\n}\nconsole.log('C');\nrun();\nconsole.log('D');\n```",
+    "expectedAnswer": { "output": ["C", "A", "D", "B"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 60, "EXPLANATION": 40 } },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указан порядок C, A, D, B",
+      "Код до первого await выполняется синхронно",
+      "Продолжение выполняется как microtask"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 5,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/await"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.async.await.explain-001",
+    "version": 1,
+    "topicKey": "js.async.await",
+    "kind": "EXPLAIN",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Как выполнить два независимых async-запроса параллельно с `async/await`? Сравни запуск Promise до await и последовательные await, включая обработку ошибок.",
+    "rubric": { "dimensions": { "EXPLANATION": 65, "COMPLEXITY_REASONING": 20, "EDGE_CASES": 15 } },
+    "hints": ["Сначала создай оба Promise, затем ожидай Promise.all."],
+    "acceptanceCriteria": [
+      "Операции запускаются до ожидания",
+      "Использован Promise.all или эквивалент",
+      "Семантика rejection оговорена"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 7,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise/all"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.async.await.find-bug-001",
+    "version": 1,
+    "topicKey": "js.async.await",
+    "kind": "FIND_BUG",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Запросы независимы, но выполняются последовательно. Найди bottleneck и предложи bounded исправление.\n\n```js\nconst users = [];\nfor (const id of ids) {\n  users.push(await loadUser(id));\n}\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 50, "COMPLEXITY_REASONING": 30, "EDGE_CASES": 20 } },
+    "hints": ["Создай Promise для нескольких id до await."],
+    "acceptanceCriteria": [
+      "Обнаружена последовательность await в цикле",
+      "Предложен Promise.all для небольшого набора или concurrency limit",
+      "Не проигнорирован риск неограниченной нагрузки"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 7,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/async_function"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.async.await.compare-001",
+    "version": 1,
+    "topicKey": "js.async.await",
+    "kind": "COMPARE_SOLUTIONS",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Сравни `const a = await loadA(); const b = await loadB();` и `const [a, b] = await Promise.all([loadA(), loadB()]);`. Когда каждый вариант корректен? Обсуди зависимости, latency, rejection и side effects.",
+    "rubric": { "dimensions": { "EXPLANATION": 45, "COMPLEXITY_REASONING": 35, "EDGE_CASES": 20 } },
+    "hints": ["Параллельность безопасна только при независимых операциях."],
+    "acceptanceCriteria": [
+      "Последовательность выбрана для зависимости",
+      "Promise.all выбран для независимости",
+      "Разобраны failure и уже запущенные side effects"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 8,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise/all"
+      ]
+    }
+  }
+]

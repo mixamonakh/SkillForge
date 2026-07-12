@@ -1,0 +1,56 @@
+{
+  "name": "@skillforge/db",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./content": {
+      "types": "./dist/src/content/index.d.ts",
+      "import": "./dist/src/content/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "generated",
+    "prisma"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "content:diff": "pnpm --filter @skillforge/content-schema build && pnpm build && tsx ../../scripts/content-diff.ts",
+    "content:export": "pnpm --filter @skillforge/content-schema build && pnpm build && tsx ../../scripts/content-export.ts",
+    "content:import": "pnpm --filter @skillforge/content-schema build && pnpm build && tsx ../../scripts/content-import.ts",
+    "content:import:runtime": "tsx ../../scripts/content-import.ts",
+    "lint": "eslint .",
+    "postinstall": "prisma generate",
+    "prisma:format": "prisma format",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "seed": "prisma db seed",
+    "test": "pnpm --filter @skillforge/content-schema build && vitest run",
+    "test:coverage": "pnpm --filter @skillforge/content-schema build && vitest run --coverage",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "7.8.0",
+    "@prisma/client": "7.8.0",
+    "@skillforge/content-schema": "workspace:*",
+    "dotenv": "17.4.2",
+    "pg": "8.22.0",
+    "prisma": "7.8.0",
+    "tsx": "4.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "@types/pg": "8.20.0",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  }
+}

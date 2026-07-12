@@ -1,0 +1,99 @@
+[
+  {
+    "stableKey": "js.objects.prototypes.predict-001",
+    "version": 1,
+    "topicKey": "js.objects.prototypes",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Что выведет код после удаления собственного свойства?\n\n```js\nconst base = { value: 1 };\nconst child = Object.create(base);\nchild.value = 2;\ndelete child.value;\nconsole.log(child.value, Object.hasOwn(child, 'value'));\n```",
+    "expectedAnswer": { "output": ["1 false"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 65, "EXPLANATION": 35 } },
+    "hints": [],
+    "acceptanceCriteria": ["Указан вывод 1 false", "Объяснён fallback по prototype chain"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 5,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Inheritance_and_the_prototype_chain"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.objects.prototypes.explain-001",
+    "version": 1,
+    "topicKey": "js.objects.prototypes",
+    "kind": "EXPLAIN",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Как JavaScript ищет `object.property`? Различи own и inherited property и объясни, какую роль играет `class` в прототипной модели.",
+    "rubric": { "dimensions": { "EXPLANATION": 80, "RECALL": 20 } },
+    "hints": ["Поиск заканчивается на null в prototype chain."],
+    "acceptanceCriteria": [
+      "Описан lookup от own property вверх",
+      "Отмечено завершение на null",
+      "class не назван отдельной моделью наследования"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 7,
+      "mixedEvidence": false,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Inheritance_and_the_prototype_chain"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.objects.prototypes.find-bug-001",
+    "version": 1,
+    "topicKey": "js.objects.prototypes",
+    "kind": "FIND_BUG",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Код должен работать с любым dictionary object, включая `Object.create(null)`. Найди ошибку.\n\n```js\nfunction contains(dictionary, key) {\n  return dictionary.hasOwnProperty(key);\n}\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 70, "EDGE_CASES": 30 } },
+    "hints": ["У объекта может не быть унаследованного метода."],
+    "acceptanceCriteria": [
+      "Учтён null prototype",
+      "Предложен Object.hasOwn",
+      "Не вызывается потенциально переопределённый метод объекта"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 5,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwn"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.objects.prototypes.compare-001",
+    "version": 1,
+    "topicKey": "js.objects.prototypes",
+    "kind": "COMPARE_SOLUTIONS",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Сравни метод класса `handle() {}` на prototype и поле экземпляра `handle = () => {}`. Обсуди общий экземплярами function object, lexical this, передачу callback и стоимость памяти. Не объявляй один вариант универсально лучшим.",
+    "rubric": { "dimensions": { "EXPLANATION": 50, "COMPLEXITY_REASONING": 30, "EDGE_CASES": 20 } },
+    "hints": ["Prototype method обычно один, arrow field создаётся на экземпляр."],
+    "acceptanceCriteria": [
+      "Сравнено размещение функций",
+      "Разобрана потеря this у prototype method",
+      "Выбор привязан к контексту"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 8,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Classes/Public_class_fields"
+      ]
+    }
+  }
+]

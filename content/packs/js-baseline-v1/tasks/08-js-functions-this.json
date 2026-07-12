@@ -1,0 +1,106 @@
+[
+  {
+    "stableKey": "js.functions.this.predict-001",
+    "version": 1,
+    "topicKey": "js.functions.this",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Код выполняется как ESM. Что он выведет и почему?\n\n```js\nconst item = {\n  value: 2,\n  regular() { return this.value; },\n  arrow: () => this?.value,\n};\nconsole.log(item.regular(), item.arrow());\n```",
+    "expectedAnswer": { "output": ["2 undefined"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 60, "EXPLANATION": 40 } },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указан вывод 2 undefined",
+      "Обычный method получает receiver",
+      "Arrow использует lexical this ESM"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 5,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/this"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.functions.this.explain-001",
+    "version": 1,
+    "topicKey": "js.functions.this",
+    "kind": "EXPLAIN",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Объясни правило определения `this` по call-site для method call, detached function, `call`/`apply`, `bind`, constructor call и arrow function.",
+    "rubric": { "dimensions": { "EXPLANATION": 85, "RECALL": 15 } },
+    "hints": ["Начинай с формы конкретного вызова, а не места объявления обычной функции."],
+    "acceptanceCriteria": [
+      "Разобран receiver method call",
+      "Разобраны explicit binding и new",
+      "Arrow описан как lexical this"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 8,
+      "mixedEvidence": false,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/this"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.functions.this.find-bug-001",
+    "version": 1,
+    "topicKey": "js.functions.this",
+    "kind": "FIND_BUG",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Почему callback теряет имя и как исправить без изменения `schedule`?\n\n```js\nconst user = {\n  name: 'Михаил',\n  greet() { return `Привет, ${this.name}`; },\n};\nschedule(user.greet);\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 65, "EXPLANATION": 35 } },
+    "hints": ["Метод передаётся без receiver."],
+    "acceptanceCriteria": [
+      "Обнаружен detached method",
+      "Предложен bind или wrapper",
+      "Объяснён новый call-site"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 6,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Function/bind"
+      ]
+    }
+  },
+  {
+    "stableKey": "js.functions.this.choice-001",
+    "version": 1,
+    "topicKey": "js.functions.this",
+    "kind": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Какие варианты могут явно вызвать обычную функцию `fn` с `this === context`?",
+    "options": [
+      { "id": "opt-call", "text": "fn.call(context, value)" },
+      { "id": "opt-apply", "text": "fn.apply(context, [value])" },
+      { "id": "opt-bind", "text": "fn.bind(context)(value)" },
+      { "id": "opt-arrow", "text": "(() => fn)(context, value)" }
+    ],
+    "expectedAnswer": { "selectedOptionIds": ["opt-call", "opt-apply", "opt-bind"] },
+    "rubric": { "dimensions": { "RECALL": 75, "EXPLANATION": 25 } },
+    "hints": ["Arrow wrapper сам по себе не передаёт receiver в fn."],
+    "acceptanceCriteria": ["Выбраны call, apply и bind", "Не выбран arrow wrapper"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 3,
+      "mixedEvidence": true,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Function/call"
+      ]
+    }
+  }
+]

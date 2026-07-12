@@ -1,0 +1,96 @@
+[
+  {
+    "stableKey": "js.functions.closures.predict-001",
+    "version": 1,
+    "topicKey": "js.functions.closures",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Что выведет код? Объясни независимость lexical environments.\n\n```js\nfunction createCounter() {\n  let value = 0;\n  return () => ++value;\n}\nconst first = createCounter();\nconst second = createCounter();\nconsole.log(first(), first(), second());\n```",
+    "expectedAnswer": { "output": ["1 2 1"] },
+    "rubric": { "dimensions": { "PREDICT_OUTPUT": 65, "EXPLANATION": 35 } },
+    "hints": [],
+    "acceptanceCriteria": ["Указан вывод 1 2 1", "Объяснены два независимых bindings value"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 5,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/JavaScript/Guide/Closures"]
+    }
+  },
+  {
+    "stableKey": "js.functions.closures.explain-001",
+    "version": 1,
+    "topicKey": "js.functions.closures",
+    "kind": "EXPLAIN",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Почему точнее говорить, что closure сохраняет доступ к binding, а не копию значения? Приведи пример, где закрытая функция увидит более позднее изменение.",
+    "rubric": { "dimensions": { "EXPLANATION": 80, "RECALL": 20 } },
+    "hints": ["Измени let-переменную после создания функции."],
+    "acceptanceCriteria": [
+      "Различены binding и snapshot",
+      "Пример действительно изменяет тот же binding"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 6,
+      "mixedEvidence": false,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/JavaScript/Guide/Closures"]
+    }
+  },
+  {
+    "stableKey": "js.functions.closures.find-bug-001",
+    "version": 1,
+    "topicKey": "js.functions.closures",
+    "kind": "FIND_BUG",
+    "difficulty": "MEDIUM",
+    "status": "active",
+    "promptMarkdown": "Кеш должен сохранять и возвращать результат `0`, но вычисление повторяется. Найди ошибку состояния closure.\n\n```js\nfunction memoizeOnce(calculate) {\n  let cached;\n  return () => cached || (cached = calculate());\n}\n```",
+    "rubric": { "dimensions": { "DEBUGGING": 65, "EDGE_CASES": 35 } },
+    "hints": ["0 — falsy, но может быть валидным кешем."],
+    "acceptanceCriteria": [
+      "Обнаружена falsy-проверка cached",
+      "Добавлен отдельный флаг или sentinel",
+      "Учтены false/пустая строка при общем контракте"
+    ],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 7,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/JavaScript/Guide/Closures"]
+    }
+  },
+  {
+    "stableKey": "js.functions.closures.choice-001",
+    "version": 1,
+    "topicKey": "js.functions.closures",
+    "kind": "SINGLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "active",
+    "promptMarkdown": "Какое утверждение о closure верно?",
+    "options": [
+      { "id": "opt-a", "text": "Closure копирует все видимые значения при каждом вызове" },
+      {
+        "id": "opt-b",
+        "text": "Closure сохраняет доступ к lexical environment места создания функции"
+      },
+      { "id": "opt-c", "text": "Closure существует только у arrow functions" },
+      { "id": "opt-d", "text": "Closure всегда удерживает весь global object" }
+    ],
+    "expectedAnswer": { "selectedOptionIds": ["opt-b"] },
+    "rubric": { "dimensions": { "RECALL": 70, "EXPLANATION": 30 } },
+    "hints": ["Важен lexical scope места создания."],
+    "acceptanceCriteria": ["Выбран opt-b", "Не перепутан closure со snapshot"],
+    "testCases": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "estimatedMinutes": 3,
+      "mixedEvidence": true,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/JavaScript/Guide/Closures"]
+    }
+  }
+]

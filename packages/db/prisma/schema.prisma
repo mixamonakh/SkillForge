@@ -1,0 +1,669 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../generated/client"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TopicStatus {
+  UNKNOWN
+  WEAK
+  UNSTABLE
+  SOLID
+  MASTERED
+}
+
+enum SessionMode {
+  ASSESSMENT
+  TRAINING
+  REVIEW
+  INTERVIEW
+  RETURN
+  BATTLE
+}
+
+enum LoadMode {
+  MINIMAL
+  NORMAL
+  DEEP
+  RETURN
+}
+
+enum RunStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum TaskKind {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  EXPLAIN
+  PREDICT_OUTPUT
+  FIND_BUG
+  CODE
+  COMPARE_SOLUTIONS
+  AI_REVIEW
+  FLASHCARD
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum HelpLevel {
+  NONE
+  NUDGE
+  HINT
+  MULTIPLE_HINTS
+  SOLUTION_VIEWED
+}
+
+enum EvaluatorType {
+  EXACT_MATCH
+  TEST_RUNNER
+  MANUAL
+  EXTERNAL_AI
+  API_AI
+  SELF_REPORT
+}
+
+enum EvidenceKind {
+  RECALL
+  EXPLANATION
+  PREDICT_OUTPUT
+  DEBUGGING
+  CODE_CORRECTNESS
+  EDGE_CASES
+  COMPLEXITY_REASONING
+  INTERVIEW_RESPONSE
+  TRANSFER
+  BATTLE
+  AI_REVIEW
+  SELF_REPORT
+}
+
+enum ImportStatus {
+  RECEIVED
+  VALIDATED
+  PREVIEWED
+  APPLIED
+  REJECTED
+}
+
+enum ContentStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+model User {
+  id                String             @id @default(uuid()) @db.Uuid
+  displayName       String
+  locale            String             @default("ru")
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  settings          UserSettings?
+  topicStates       TopicState[]
+  assessmentRuns    AssessmentRun[]
+  sessions          LearningSession[]
+  attempts          Attempt[]
+  evaluations       Evaluation[]
+  evidence          Evidence[]
+  reviewSchedules   ReviewSchedule[]
+  externalArtifacts ExternalArtifact[]
+  exportBundles     ExportBundle[]
+  importBatches     ImportBatch[]
+  metricSnapshots   MetricSnapshot[]
+}
+
+model UserSettings {
+  id                  String   @id @default(uuid()) @db.Uuid
+  userId              String   @unique @db.Uuid
+  targetTrackKey      String   @default("yandex-frontend-2026")
+  defaultLoadMode     LoadMode @default(NORMAL)
+  codeLanguage        String   @default("typescript")
+  aiMode              String   @default("manual")
+  apiMonthlyBudgetUsd Decimal  @default(0) @db.Decimal(8, 2)
+  resumeThresholdDays Int      @default(7)
+  theme               String   @default("light")
+  reducedMotion       Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ContentPack {
+  id         String        @id @default(uuid()) @db.Uuid
+  key        String
+  version    String
+  locale     String
+  status     ContentStatus @default(ACTIVE)
+  checksum   String
+  manifest   Json
+  importedAt DateTime      @default(now())
+  createdAt  DateTime      @default(now())
+
+  @@unique([key, version])
+  @@index([key, status])
+}
+
+model Track {
+  id            String            @id @default(uuid()) @db.Uuid
+  key           String            @unique
+  title         String
+  description   String
+  position      Int
+  status        ContentStatus     @default(ACTIVE)
+  sourcePack    String
+  sourceVersion String
+  topics        Topic[]
+  targetRules   TargetTrackRule[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+model Topic {
+  id                    String                  @id @default(uuid()) @db.Uuid
+  key                   String                  @unique
+  trackId               String                  @db.Uuid
+  title                 String
+  shortDescription      String
+  whyImportant          String
+  atWork                String
+  atInterview           String
+  position              Int
+  defaultHalfLifeDays   Int                     @default(90)
+  status                ContentStatus           @default(ACTIVE)
+  sourcePack            String
+  sourceVersion         String
+  metadata              Json?
+  track                 Track                   @relation(fields: [trackId], references: [id])
+  prerequisites         TopicDependency[]       @relation("TopicDependent")
+  dependents            TopicDependency[]       @relation("TopicPrerequisite")
+  contentItems          ContentItem[]
+  tasks                 Task[]
+  topicStates           TopicState[]
+  evidence              Evidence[]
+  reviewSchedules       ReviewSchedule[]
+  misconceptionLinks    TopicMisconception[]
+  externalArtifactLinks ExternalArtifactTopic[]
+  targetRules           TargetTrackRule[]
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+
+  @@index([trackId, position])
+  @@index([status])
+}
+
+model TopicDependency {
+  topicId        String @db.Uuid
+  prerequisiteId String @db.Uuid
+  weight         Float  @default(1)
+  topic          Topic  @relation("TopicDependent", fields: [topicId], references: [id], onDelete: Cascade)
+  prerequisite   Topic  @relation("TopicPrerequisite", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+
+  @@id([topicId, prerequisiteId])
+  @@index([prerequisiteId])
+}
+
+model TopicState {
+  id                String      @id @default(uuid()) @db.Uuid
+  userId            String      @db.Uuid
+  topicId           String      @db.Uuid
+  status            TopicStatus @default(UNKNOWN)
+  masteryEstimate   Float?
+  masteryConfidence Float       @default(0)
+  evidenceWeight    Float       @default(0)
+  evidenceCount     Int         @default(0)
+  independentDays   Int         @default(0)
+  taskKindCount     Int         @default(0)
+  needsReview       Boolean     @default(false)
+  lastEvidenceAt    DateTime?
+  nextReviewAt      DateTime?
+  algorithmVersion  String
+  explanation       Json?
+  updatedAt         DateTime    @updatedAt
+  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic             Topic       @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, topicId])
+  @@index([userId, status])
+  @@index([userId, nextReviewAt])
+}
+
+model ContentItem {
+  id            String        @id @default(uuid()) @db.Uuid
+  stableKey     String
+  version       Int
+  topicId       String        @db.Uuid
+  kind          String
+  title         String
+  bodyMarkdown  String?
+  payload       Json?
+  sourcePack    String
+  sourceVersion String
+  checksum      String
+  status        ContentStatus @default(ACTIVE)
+  topic         Topic         @relation(fields: [topicId], references: [id])
+  createdAt     DateTime      @default(now())
+
+  @@unique([stableKey, version])
+  @@index([topicId, kind])
+}
+
+model Task {
+  id         String        @id @default(uuid()) @db.Uuid
+  stableKey  String        @unique
+  topicId    String        @db.Uuid
+  kind       TaskKind
+  difficulty Difficulty
+  status     ContentStatus @default(ACTIVE)
+  topic      Topic         @relation(fields: [topicId], references: [id])
+  versions   TaskVersion[]
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@index([topicId, kind])
+  @@index([status])
+}
+
+model TaskVersion {
+  id                 String                    @id @default(uuid()) @db.Uuid
+  taskId             String                    @db.Uuid
+  version            Int
+  promptMarkdown     String
+  starterCode        String?
+  language           String?
+  options            Json?
+  expectedAnswer     Json?
+  rubric             Json
+  hints              Json
+  acceptanceCriteria Json
+  metadata           Json?
+  sourcePack         String
+  sourceVersion      String
+  checksum           String
+  publishedAt        DateTime?
+  task               Task                      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  testCases          TaskTestCase[]
+  blueprintItems     AssessmentBlueprintItem[]
+  sessionItems       SessionItem[]
+  attempts           Attempt[]
+
+  @@unique([taskId, version])
+  @@index([checksum])
+}
+
+model TaskTestCase {
+  id            String      @id @default(uuid()) @db.Uuid
+  taskVersionId String      @db.Uuid
+  name          String
+  input         Json?
+  expected      Json?
+  testCode      String?
+  hidden        Boolean     @default(true)
+  position      Int
+  taskVersion   TaskVersion @relation(fields: [taskVersionId], references: [id], onDelete: Cascade)
+
+  @@unique([taskVersionId, position])
+}
+
+model AssessmentBlueprint {
+  id             String                    @id @default(uuid()) @db.Uuid
+  key            String
+  version        Int
+  title          String
+  description    String
+  totalBlocks    Int
+  estimatedMin   Int
+  selectionRules Json
+  sourcePack     String
+  sourceVersion  String
+  checksum       String
+  status         ContentStatus             @default(ACTIVE)
+  items          AssessmentBlueprintItem[]
+  runs           AssessmentRun[]
+  createdAt      DateTime                  @default(now())
+
+  @@unique([key, version])
+  @@index([status])
+}
+
+model AssessmentBlueprintItem {
+  id               String              @id @default(uuid()) @db.Uuid
+  blueprintId      String              @db.Uuid
+  taskVersionId    String              @db.Uuid
+  blockIndex       Int
+  position         Int
+  required         Boolean             @default(true)
+  dimensionWeights Json?
+  blueprint        AssessmentBlueprint @relation(fields: [blueprintId], references: [id], onDelete: Cascade)
+  taskVersion      TaskVersion         @relation(fields: [taskVersionId], references: [id])
+
+  @@unique([blueprintId, blockIndex, position])
+  @@index([taskVersionId])
+}
+
+model AssessmentRun {
+  id              String              @id @default(uuid()) @db.Uuid
+  userId          String              @db.Uuid
+  blueprintId     String              @db.Uuid
+  status          RunStatus           @default(DRAFT)
+  currentBlock    Int                 @default(0)
+  currentPosition Int                 @default(0)
+  startedAt       DateTime?
+  pausedAt        DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  snapshot        Json
+  user            User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blueprint       AssessmentBlueprint @relation(fields: [blueprintId], references: [id])
+  session         LearningSession?
+
+  @@index([userId, status])
+  @@index([userId, createdAt])
+  @@index([blueprintId, status])
+}
+
+model LearningSession {
+  id              String         @id @default(uuid()) @db.Uuid
+  userId          String         @db.Uuid
+  assessmentRunId String?        @unique @db.Uuid
+  mode            SessionMode
+  loadMode        LoadMode
+  title           String
+  goal            String
+  status          RunStatus      @default(DRAFT)
+  planSnapshot    Json
+  startedAt       DateTime?
+  pausedAt        DateTime?
+  completedAt     DateTime?
+  durationSec     Int            @default(0)
+  loadFeedback    String?
+  summary         String?
+  lastStepLabel   String?
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assessmentRun   AssessmentRun? @relation(fields: [assessmentRunId], references: [id])
+  items           SessionItem[]
+  attempts        Attempt[]
+
+  @@index([userId, status])
+  @@index([userId, completedAt])
+}
+
+model SessionItem {
+  id            String          @id @default(uuid()) @db.Uuid
+  sessionId     String          @db.Uuid
+  taskVersionId String          @db.Uuid
+  position      Int
+  purpose       String
+  required      Boolean         @default(true)
+  session       LearningSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  taskVersion   TaskVersion     @relation(fields: [taskVersionId], references: [id])
+  attempts      Attempt[]
+
+  @@unique([sessionId, position])
+  @@index([taskVersionId])
+}
+
+model Attempt {
+  id              String          @id @default(uuid()) @db.Uuid
+  userId          String          @db.Uuid
+  sessionId       String          @db.Uuid
+  sessionItemId   String?         @db.Uuid
+  taskVersionId   String          @db.Uuid
+  sequence        Int             @default(1)
+  revision        Int             @default(0)
+  answerText      String?
+  answerCode      String?
+  selectedOptions Json?
+  runnerOutput    Json?
+  selfRating      Int?
+  confidence      Int?
+  helpLevel       HelpLevel       @default(NONE)
+  hintsUsed       Json?
+  durationMs      Int?
+  submittedAt     DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session         LearningSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionItem     SessionItem?    @relation(fields: [sessionItemId], references: [id])
+  taskVersion     TaskVersion     @relation(fields: [taskVersionId], references: [id])
+  evaluations     Evaluation[]
+
+  @@unique([sessionId, sessionItemId, sequence])
+  @@index([userId, taskVersionId])
+  @@index([sessionId, sessionItemId])
+  @@index([submittedAt])
+}
+
+model Evaluation {
+  id                    String                    @id @default(uuid()) @db.Uuid
+  attemptId             String                    @db.Uuid
+  userId                String                    @db.Uuid
+  importBatchId         String?                   @db.Uuid
+  evaluatorType         EvaluatorType
+  evaluatorVersion      String
+  rawScore              Float?
+  passed                Boolean?
+  reliability           Float
+  dimensionScores       Json
+  feedbackMarkdown      String?
+  rubricResult          Json?
+  externalReference     String?
+  supersedesId          String?                   @unique @db.Uuid
+  createdAt             DateTime                  @default(now())
+  attempt               Attempt                   @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  user                  User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  importBatch           ImportBatch?              @relation(fields: [importBatchId], references: [id], onDelete: SetNull)
+  supersedes            Evaluation?               @relation("EvaluationSupersession", fields: [supersedesId], references: [id], onDelete: SetNull)
+  supersededBy          Evaluation?               @relation("EvaluationSupersession")
+  evidence              Evidence[]
+  misconceptionFindings EvaluationMisconception[]
+
+  @@unique([importBatchId, attemptId])
+  @@index([attemptId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model Evidence {
+  id                 String            @id @default(uuid()) @db.Uuid
+  userId             String            @db.Uuid
+  topicId            String            @db.Uuid
+  evaluationId       String?           @db.Uuid
+  externalArtifactId String?           @db.Uuid
+  kind               EvidenceKind
+  rawScore           Float
+  normalizedScore    Float
+  weight             Float
+  occurredAt         DateTime
+  provenance         Json
+  createdAt          DateTime          @default(now())
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic              Topic             @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  evaluation         Evaluation?       @relation(fields: [evaluationId], references: [id], onDelete: Restrict)
+  externalArtifact   ExternalArtifact? @relation(fields: [externalArtifactId], references: [id], onDelete: Restrict)
+
+  @@unique([evaluationId, topicId, kind])
+  @@unique([externalArtifactId, topicId, kind])
+  @@index([userId, topicId, occurredAt])
+  @@index([evaluationId])
+  @@index([externalArtifactId])
+}
+
+model Misconception {
+  id          String                    @id @default(uuid()) @db.Uuid
+  key         String                    @unique
+  title       String
+  description String
+  remediation String
+  topics      TopicMisconception[]
+  findings    EvaluationMisconception[]
+}
+
+model TopicMisconception {
+  topicId         String        @db.Uuid
+  misconceptionId String        @db.Uuid
+  topic           Topic         @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  misconception   Misconception @relation(fields: [misconceptionId], references: [id], onDelete: Cascade)
+
+  @@id([topicId, misconceptionId])
+  @@index([misconceptionId])
+}
+
+model EvaluationMisconception {
+  evaluationId    String        @db.Uuid
+  misconceptionId String        @db.Uuid
+  evidence        String
+  remediation     String
+  evaluation      Evaluation    @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  misconception   Misconception @relation(fields: [misconceptionId], references: [id], onDelete: Cascade)
+
+  @@id([evaluationId, misconceptionId])
+  @@index([misconceptionId])
+}
+
+model ReviewSchedule {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @db.Uuid
+  topicId          String    @db.Uuid
+  dueAt            DateTime
+  reason           String
+  intervalDays     Int
+  algorithmVersion String
+  completedAt      DateTime?
+  createdAt        DateTime  @default(now())
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic            Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@index([userId, dueAt])
+  @@index([userId, topicId, completedAt])
+}
+
+model ExternalArtifact {
+  id                 String                  @id @default(uuid()) @db.Uuid
+  userId             String                  @db.Uuid
+  title              String
+  sourceType         String
+  projectName        String?
+  repositoryUrl      String?
+  resultUrl          String?
+  description        String
+  acceptanceCriteria Json
+  beforeNotes        String?
+  afterNotes         String?
+  aiUsageNotes       String?
+  payload            Json?
+  occurredAt         DateTime
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  user               User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evidence           Evidence[]
+  topicLinks         ExternalArtifactTopic[]
+
+  @@index([userId, occurredAt])
+}
+
+model ExternalArtifactTopic {
+  externalArtifactId String           @db.Uuid
+  topicId            String           @db.Uuid
+  externalArtifact   ExternalArtifact @relation(fields: [externalArtifactId], references: [id], onDelete: Cascade)
+  topic              Topic            @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([externalArtifactId, topicId])
+  @@index([topicId])
+}
+
+model ExportBundle {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @db.Uuid
+  schemaVersion String
+  bundleType    String
+  scope         Json
+  checksum      String
+  payload       Json
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, checksum])
+  @@index([userId, createdAt])
+}
+
+model ImportBatch {
+  id               String       @id @default(uuid()) @db.Uuid
+  userId           String       @db.Uuid
+  schemaVersion    String
+  source           String
+  sourceBundleId   String?
+  status           ImportStatus @default(RECEIVED)
+  checksum         String
+  rawPayload       Json
+  normalized       Json?
+  preview          Json?
+  validationErrors Json?
+  appliedAt        DateTime?
+  createdAt        DateTime     @default(now())
+  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluations      Evaluation[]
+
+  @@unique([userId, checksum])
+  @@index([userId, createdAt])
+  @@index([status])
+}
+
+model MetricSnapshot {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @db.Uuid
+  algorithmVersion String
+  scope            String
+  values           Json
+  createdAt        DateTime @default(now())
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, scope, createdAt])
+}
+
+model TargetTrack {
+  id          String            @id @default(uuid()) @db.Uuid
+  key         String
+  version     Int
+  title       String
+  description String
+  sources     Json
+  status      ContentStatus     @default(ACTIVE)
+  rules       TargetTrackRule[]
+  createdAt   DateTime          @default(now())
+
+  @@unique([key, version])
+  @@index([status])
+}
+
+model TargetTrackRule {
+  id            String      @id @default(uuid()) @db.Uuid
+  targetTrackId String      @db.Uuid
+  trackId       String?     @db.Uuid
+  topicId       String?     @db.Uuid
+  weight        Float
+  minimum       Float?
+  gate          Boolean     @default(false)
+  metadata      Json?
+  targetTrack   TargetTrack @relation(fields: [targetTrackId], references: [id], onDelete: Cascade)
+  track         Track?      @relation(fields: [trackId], references: [id])
+  topic         Topic?      @relation(fields: [topicId], references: [id])
+
+  @@index([targetTrackId])
+  @@index([trackId])
+  @@index([topicId])
+}

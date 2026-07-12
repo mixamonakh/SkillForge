@@ -4,21 +4,23 @@ Runtime source of truth схем находится в `packages/content-schema`
 
 ## Manifest
 
-```yaml
-key: js-baseline
-version: 1.0.0
-locale: ru
-createdAt: 2026-07-11
-status: active
-requiresAppSchema: '>=1.0.0 <2.0.0'
-tracks: [cs-foundation, javascript-core]
-counts:
-  topics: 18
-  tasks: 72
-  assessments: 1
-sources:
-  - title: MDN JavaScript Guide
-    url: https://developer.mozilla.org/docs/Web/JavaScript/Guide
+```json
+{
+  "key": "js-baseline",
+  "version": "1.0.0",
+  "locale": "ru",
+  "createdAt": "2026-07-11",
+  "status": "active",
+  "requiresAppSchema": ">=1.0.0 <2.0.0",
+  "tracks": ["cs-foundation", "javascript-core"],
+  "counts": { "topics": 18, "tasks": 72, "assessments": 1 },
+  "sources": [
+    {
+      "title": "MDN JavaScript Guide",
+      "url": "https://developer.mozilla.org/docs/Web/JavaScript/Guide"
+    }
+  ]
+}
 ```
 
 `counts` сверяется с фактическими files. `requiresAppSchema` проверяется до import. Content status: `draft`, `active`, `archived`.
@@ -29,26 +31,20 @@ sources:
 
 ## Task
 
-```yaml
-stableKey: js.runtime.event-loop.predict-001
-version: 1
-topicKey: js.runtime.event-loop
-kind: PREDICT_OUTPUT
-difficulty: MEDIUM
-promptMarkdown: |
-  Что будет выведено и почему?
-expectedAnswer:
-  output: [A, D, C, B]
-rubric:
-  dimensions:
-    PREDICT_OUTPUT: 70
-    EXPLANATION: 30
-hints: []
-acceptanceCriteria:
-  - Указан правильный порядок
-metadata:
-  yandexRelevance: 5
-  estimatedMinutes: 4
+```json
+{
+  "stableKey": "js.runtime.event-loop.predict-001",
+  "version": 1,
+  "topicKey": "js.runtime.event-loop",
+  "kind": "PREDICT_OUTPUT",
+  "difficulty": "MEDIUM",
+  "promptMarkdown": "Что будет выведено и почему?",
+  "expectedAnswer": { "output": ["A", "D", "C", "B"] },
+  "rubric": { "dimensions": { "PREDICT_OUTPUT": 70, "EXPLANATION": 30 } },
+  "hints": [],
+  "acceptanceCriteria": ["Указан правильный порядок"],
+  "metadata": { "yandexRelevance": 5, "estimatedMinutes": 4 }
+}
 ```
 
 Task kinds: `SINGLE_CHOICE`, `MULTIPLE_CHOICE`, `EXPLAIN`, `PREDICT_OUTPUT`, `FIND_BUG`, `CODE`, `COMPARE_SOLUTIONS`, `AI_REVIEW`, `FLASHCARD`. Difficulty: `EASY`, `MEDIUM`, `HARD`.
@@ -59,15 +55,15 @@ Code task дополнительно содержит `starterCode`, `language`,
 
 Blueprint содержит stable `key`, integer `version`, title/description, `totalBlocks`, `estimatedMin`, selection rules/status и упорядоченные items:
 
-```yaml
-- taskKey: js.runtime.event-loop.predict-001
-  taskVersion: 1
-  blockIndex: 2
-  position: 3
-  required: true
-  dimensionWeights:
-    PREDICT_OUTPUT: 0.7
-    EXPLANATION: 0.3
+```json
+{
+  "taskKey": "js.runtime.event-loop.predict-001",
+  "taskVersion": 1,
+  "blockIndex": 2,
+  "position": 3,
+  "required": true,
+  "dimensionWeights": { "PREDICT_OUTPUT": 0.7, "EXPLANATION": 0.3 }
+}
 ```
 
 Run создаёт snapshot, поэтому subsequent content release не меняет активное прохождение.
@@ -76,7 +72,7 @@ Run создаёт snapshot, поэтому subsequent content release не ме
 
 Validator проверяет:
 
-- YAML/JSON schema и enum;
+- JSON schema и enum;
 - duplicate stable key + version;
 - missing track/topic/task references;
 - prerequisite cycles/self-edge;

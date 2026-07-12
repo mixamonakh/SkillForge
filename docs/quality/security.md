@@ -8,7 +8,7 @@
 
 ## Input и rendering
 
-- HTTP DTO, IDs, enums, env, YAML и JSON валидируются runtime schemas;
+- HTTP DTO, IDs, enums, env и JSON валидируются runtime schemas;
 - import default max 5 MiB, depth/array/string limits;
 - Markdown/HTML sanitizes allowlist; unsafe URL/event/script запрещены;
 - no raw `dangerouslySetInnerHTML`;

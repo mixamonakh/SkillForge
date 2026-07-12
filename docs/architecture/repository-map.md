@@ -9,7 +9,7 @@ skillforge/
 │   ├── db/                   Prisma schema/client/migrations/repositories
 │   ├── contracts/            versioned public runtime contracts
 │   ├── learning-engine/      pure mastery/review/recommendation functions
-│   ├── content-schema/       YAML/JSON content validation
+│   ├── content-schema/       JSON content validation
 │   ├── ui/                   shared design tokens/components
 │   ├── eslint-config/        shared lint policy
 │   └── tsconfig/             shared strict TypeScript configs

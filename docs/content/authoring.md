@@ -15,7 +15,7 @@
 ## Workflow
 
 1. Изучить [schema](schema.md), существующие темы и prerequisites.
-2. Добавить/изменить YAML в pack; не редактировать imported DB вручную.
+2. Добавить/изменить JSON в pack; не редактировать imported DB вручную.
 3. Для новой задачи дать конкретный prompt, topic, kind, difficulty, rubric, acceptance criteria, provenance/source.
 4. Для code task добавить deterministic tests; обозначить visible/hidden.
 5. Запустить validation и diff.

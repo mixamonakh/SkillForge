@@ -9,6 +9,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Matches,
   Max,
   MaxLength,
   Min,
@@ -38,6 +39,24 @@ export class SessionPlanDto {
   @ApiProperty({ enum: ['javascript', 'typescript'] })
   @IsIn(['javascript', 'typescript'])
   public codeLanguage!: 'javascript' | 'typescript';
+
+  @ApiPropertyOptional({ enum: ['ACQUISITION', 'CONSOLIDATION', 'TRANSFER'] })
+  @IsOptional()
+  @IsIn(['ACQUISITION', 'CONSOLIDATION', 'TRANSFER'])
+  public learningPhase?: 'ACQUISITION' | 'CONSOLIDATION' | 'TRANSFER';
+
+  @ApiPropertyOptional({ maxLength: 160, pattern: '^[a-z0-9]+(?:[.-][a-z0-9]+)*$' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(160)
+  @Matches(/^[a-z0-9]+(?:[.-][a-z0-9]+)*$/)
+  public sequenceKey?: string;
+
+  @ApiPropertyOptional({ minimum: 1 })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  public sequenceVersion?: number;
 
   @ApiPropertyOptional({ format: 'uuid' })
   @ValidateIf(

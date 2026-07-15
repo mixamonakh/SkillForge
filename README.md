@@ -2,7 +2,7 @@
 
 SkillForge — локальная система калибровки и усиления инженерных компетенций на основе проверяемых доказательств. Она сохраняет реальные ответы и код, отделяет самооценку от оценки навыка и предлагает один следующий полезный шаг. Это не LMS, не трекер привычек и не AI-чат.
 
-В MVP реализуется законченный контур JavaScript: диагностика → autosave и pause/resume → детерминированная проверка → экспорт для внешнего ChatGPT → предварительный просмотр и транзакционный импорт анализа → пересчёт карты знаний.
+Рабочий контур JavaScript включает legacy baseline, короткую adaptive pre-baseline, capability profile, объяснимую recommendation v2 и versioned learning sequences. Ответы переживают autosave/pause/resume; локальная проверка отделена от manual и bounded API-assisted review. AI создаёт только preview-candidate; Apply идёт через обычные `Evaluation`/`Evidence`, а не пишет mastery или `TopicStatus` напрямую.
 
 Визуальный placeholder до фиксации первого эталонного снимка: [`docs/assets/dashboard-placeholder.svg`](docs/assets/dashboard-placeholder.svg).
 
@@ -27,7 +27,7 @@ docker compose up --build
 - OpenAPI JSON: <http://localhost:4000/api/openapi.json>;
 - readiness probe: <http://localhost:4000/api/v1/health/ready>.
 
-Первый запуск ожидает PostgreSQL, применяет сохранённые миграции, создаёт одного локального пользователя и идемпотентно импортирует `js-baseline-v1`. Новый пользователь видит состояние «Профиль не откалиброван»: SkillForge не показывает придуманный mastery до достаточных evidence. Bundled JS-only content не создаёт `TargetTrack`, поэтому readiness честно остаётся в состоянии «Целевой профиль не настроен» с `value: null`.
+Первый запуск ожидает PostgreSQL, применяет сохранённые миграции, создаёт одного локального пользователя и идемпотентно импортирует `js-baseline-v1` и `js-prebaseline-v1`. Старый baseline остаётся расширенной диагностикой; pre-baseline честно помечен DRAFT до human review. Новый пользователь видит «Профиль не откалиброван»: SkillForge не показывает придуманный mastery до достаточных evidence. Bundled JS-only content не создаёт `TargetTrack`, поэтому readiness честно остаётся «не настроен» с `value: null`.
 
 Остановить сервисы без удаления данных:
 
@@ -60,6 +60,9 @@ pnpm dev
 | `pnpm content:import -- --pack js-baseline-v1`       | идемпотентный импорт baseline-контента           |
 | `pnpm content:diff -- --pack js-baseline-v1`         | diff content pack и БД                           |
 | `pnpm content:export -- --out ./backup/content.json` | экспорт контента                                 |
+| `pnpm content:ai-review -- --pack <key>`              | bounded AI-review report без auto-edit          |
+| `pnpm ai:calibrate`                                   | технический evaluator gold report                 |
+| `pnpm ai:usage`                                       | сводка AI budget за текущий месяц          |
 
 Точная подготовка окружения описана в [локальной разработке](docs/operations/local-development.md), контейнерный запуск — в [Docker-инструкции](docs/operations/docker.md).
 
@@ -73,6 +76,7 @@ pnpm dev
 - `packages/contracts` — версионированные runtime-схемы и публичные типы;
 - `packages/learning-engine` — чистые детерминированные расчёты mastery, review и рекомендаций;
 - `packages/content-schema` — валидация content packs;
+- `packages/ai-provider` — strict AI contracts, prompts, provider adapters, cost routing и calibration CLI;
 - `packages/ui` — дизайн-токены и общие компоненты;
 - `content/packs` — Git source of truth для учебного контента.
 
@@ -80,7 +84,9 @@ Web не обращается к PostgreSQL и не рассчитывает mas
 
 ## Контент
 
-Курируемый контент версионируется в Git и импортируется по stable key, version и checksum. Задействованная в попытке `TaskVersion` неизменяема. Перед импортом запускайте:
+Курируемый контент версионируется в `content/packs` и импортируется в PostgreSQL по stable key, version и checksum. Повторный импорт того же checksum восстанавливает canonical release-status, но не переписывает задействованные `TaskVersion`, answers, evaluations, evidence и snapshots.
+
+`js-baseline-v1` — совместимый v1 source. `js-prebaseline-v1` и `js-core-training-v1` используют v2 metadata; оба остаются DRAFT/`NEEDS_HUMAN_REVIEW` до реального user trial. Задействованная в попытке `TaskVersion` неизменяема. Перед импортом запускайте:
 
 ```bash
 pnpm content:validate
@@ -114,21 +120,23 @@ pnpm test:integration
 pnpm build
 pnpm test:e2e
 docker compose build
+docker compose up -d
+docker compose ps
 ```
 
 Наличие команды в README не является подтверждением её успешного результата в конкретном checkout. Фактические результаты фиксируются в CI и в отчёте запуска. Тестовая стратегия: [docs/quality/testing.md](docs/quality/testing.md).
 
 ## Режимы AI
 
-- `manual` — режим MVP по умолчанию: JSON/Markdown экспортируется во внешний ChatGPT, а ответ импортируется через строгую схему, preview и транзакцию;
-- `hybrid` / `api-assisted` — архитектурно предусмотрены, но не являются условием запуска;
+- `manual` — штатный режим по умолчанию: JSON/Markdown export и strict preview/apply импорта полностью работают без API key;
+- `api-assisted` — отдельные feature flags для attempt review и one-nudge, strict Structured Outputs, preview/Apply/Reject/compensating Rollback, cache и atomic monthly budget. OpenAI provider требует серверный key и явные тарифы; fake provider разрешён только явно для тестов;
 - встроенного AI-чата нет;
 - пустой `OPENAI_API_KEY` является штатной конфигурацией.
 
 ## Известные ограничения MVP
 
 - один локальный пользователь, без login при bind на localhost;
-- только полноценный JavaScript baseline; TypeScript, React, алгоритмы и инфраструктура находятся в roadmap;
+- JavaScript baseline активен; pre-baseline и первый training pack технически проверены, но не объявлены педагогически успешными до human trial;
 - browser Web Worker — граница отказа и UX для локального доверенного пользователя, а не security sandbox для multi-user запуска;
 - hidden tests в браузере нельзя считать секретными;
 - свободный текст не получает выдуманную локальную оценку и остаётся pending до ручного/внешнего анализа;
@@ -149,6 +157,7 @@ docker compose build
 - [эксплуатационный runbook](docs/operations/runbook.md);
 - [security](SECURITY.md);
 - [ADR](docs/adr/0001-monorepo.md).
+- [ADR capability model](docs/adr/0010-capability-model.md) и [AI-assisted evaluation](docs/adr/0011-ai-assisted-evaluation.md).
 
 ## Диагностика проблем
 

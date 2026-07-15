@@ -1,0 +1,115 @@
+[
+  {
+    "stableKey": "cs.mutability.trace-shallow-copy-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Напиши две строки, которые выведет код. Объяснение не требуется. Если не знаешь, ответ «Не знаю» допустим.\n\n```js\nconst original = { profile: { name: 'А' } };\nconst copy = { ...original };\ncopy.profile.name = 'Б';\n\nconsole.log(original.profile.name);\nconsole.log(copy.profile === original.profile);\n```",
+    "expectedAnswer": {
+      "output": ["Б", "true"]
+    },
+    "rubric": {
+      "dimensions": {
+        "PREDICT_OUTPUT": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указаны две строки: Б и true в этом порядке"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["TRACE"],
+      "cognitiveLevel": "CANONICAL_MECHANISM",
+      "productionLoad": "NONE",
+      "transferLevel": "NONE",
+      "supportLevel": "NONE",
+      "familyKey": "mutability.shallow-copy",
+      "learningOutcomeKeys": ["mutability.trace.shallow-copy"],
+      "misconceptionTags": ["mutability.spread-copies-nested-values"],
+      "estimatedMinutes": 1,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Glossary/Shallow_copy"
+      ],
+      "mixedEvidence": false
+    }
+  },
+  {
+    "stableKey": "cs.mutability.debug-sort-mutation-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "FIND_BUG",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Функция должна вернуть имена по алфавиту и не менять входной массив. Сейчас после вызова порядок `users` меняется. Найди причину и предложи исправленный код. Если не знаешь, так и напиши: «Не знаю».\n\n```js\nfunction sortedNames(users) {\n  return users\n    .sort((a, b) => a.name.localeCompare(b.name))\n    .map((user) => user.name);\n}\n```",
+    "rubric": {
+      "dimensions": {
+        "DEBUGGING": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указано, что Array.prototype.sort меняет исходный массив",
+      "Исправление сортирует копию массива или использует немутирующий способ",
+      "Результат остаётся массивом имён в алфавитном порядке"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["DEBUG"],
+      "cognitiveLevel": "COMPOSITE_MECHANISM",
+      "productionLoad": "LOW",
+      "transferLevel": "NONE",
+      "supportLevel": "NONE",
+      "familyKey": "mutability.array-sort",
+      "learningOutcomeKeys": ["mutability.debug.array-sort"],
+      "misconceptionTags": ["mutability.sort-is-nonmutating"],
+      "estimatedMinutes": 2,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/sort"
+      ],
+      "mixedEvidence": false
+    }
+  },
+  {
+    "stableKey": "cs.mutability.transfer-ui-state-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "FIND_BUG",
+    "difficulty": "MEDIUM",
+    "status": "draft",
+    "promptMarkdown": "UI перерисовывает список пользователей только когда `next.users !== previous.users`. Функция возвращает новый внешний объект, но список не обновляется. Исправь функцию так, чтобы она не меняла `state` и создавала новые ссылки только для изменённых частей. Если не знаешь, так и напиши: «Не знаю».\n\n```js\nfunction renameFirst(state, newName) {\n  state.users[0].name = newName;\n  return { ...state };\n}\n```",
+    "rubric": {
+      "dimensions": {
+        "TRANSFER": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Исходные state, users и первый user не мутируются",
+      "Возвращены новый state, новый users и новый первый user",
+      "Неизменённые пользователи могут сохранить прежние ссылки"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["TRANSFER"],
+      "cognitiveLevel": "TRANSFER_INTERVIEW",
+      "productionLoad": "MEDIUM",
+      "transferLevel": "WORK_LIKE",
+      "supportLevel": "NONE",
+      "familyKey": "mutability.ui-state-update",
+      "learningOutcomeKeys": ["mutability.transfer.ui-state-update"],
+      "misconceptionTags": ["mutability.outer-copy-is-enough"],
+      "estimatedMinutes": 2,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Glossary/Shallow_copy",
+        "https://react.dev/learn/updating-arrays-in-state"
+      ],
+      "mixedEvidence": false
+    }
+  }
+]

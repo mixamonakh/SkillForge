@@ -4,6 +4,44 @@ export const MASTERY_ALGORITHM_VERSION = 'mastery-v1.0' as const;
 export const REVIEW_ALGORITHM_VERSION = 'review-v1.0' as const;
 export const READINESS_ALGORITHM_VERSION = 'readiness-v1.0' as const;
 export const RECOMMENDATION_ALGORITHM_VERSION = 'recommendation-v1.0' as const;
+export const RECOMMENDATION_V2_ALGORITHM_VERSION = 'recommendation-v2.0' as const;
+export const CAPABILITY_PROFILE_ALGORITHM_VERSION = 'capability-profile-v1.0' as const;
+
+export const LEARNING_PHASES = ['CALIBRATION', 'ACQUISITION', 'CONSOLIDATION', 'TRANSFER'] as const;
+
+export const SEQUENCE_LEARNING_PHASES = ['ACQUISITION', 'CONSOLIDATION', 'TRANSFER'] as const;
+
+export const RECOMMENDATION_V2_CONFIG = Object.freeze({
+  missingFamilyBonus: 20,
+  consistentIndependentSignalsToStop: 2,
+  repeatedMisconceptionErrorsToStop: 2,
+  adjacentNoAnswerLevelsToStop: 2,
+});
+
+export const CAPABILITY_FAMILIES = [
+  'TERM',
+  'MECHANISM',
+  'TRACE',
+  'DEBUG',
+  'CODE_PRODUCTION',
+  'TRANSFER',
+  'CALIBRATION',
+] as const;
+
+export const CAPABILITY_PROFILE_CONFIG = Object.freeze({
+  priorScore: 50,
+  priorWeight: 1.5,
+  minimumReliableWeight: 1.5,
+  minimumScoredEvidenceCount: 2,
+  defaultHalfLifeDays: 90,
+  successScore: 70,
+  delayedEvidenceDays: 7,
+  confidenceWeightFactor: 20,
+  confidenceIndependentDayFactor: 8,
+  confidenceTaskKindFactor: 6,
+  confidenceDelayedBonus: 10,
+  confidenceNoHelpBonus: 5,
+});
 
 export const AUTONOMY_FACTORS: Readonly<Record<HelpLevel, number>> = Object.freeze({
   NONE: 1,

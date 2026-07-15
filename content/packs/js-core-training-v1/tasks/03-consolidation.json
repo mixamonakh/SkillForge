@@ -1,0 +1,110 @@
+[
+  {
+    "stableKey": "cs.mutability.training.filters-delayed-trace-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "MEDIUM",
+    "status": "draft",
+    "promptMarkdown": "Delayed retrieval: без запуска кода напиши четыре строки вывода и одной короткой фразой объясни, почему ссылка на `user` сохранилась, а ссылка на `filters` — нет.\n\n```js\nconst state = {\n  filters: { tags: ['js'] },\n  user: { id: 7 },\n};\n\nconst next = {\n  ...state,\n  filters: {\n    ...state.filters,\n    tags: [...state.filters.tags, 'web'],\n  },\n};\n\nconsole.log(state.filters.tags.length);\nconsole.log(next.filters.tags.join(','));\nconsole.log(next.filters === state.filters);\nconsole.log(next.user === state.user);\n```",
+    "expectedAnswer": {
+      "output": ["1", "js,web", "false", "true"]
+    },
+    "rubric": {
+      "dimensions": {
+        "PREDICT_OUTPUT": 70,
+        "EXPLANATION": 30
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указаны четыре строки вывода в правильном порядке",
+      "Объяснение связывает новые ссылки с изменённым путём и прежнюю user со structural sharing"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["TRACE", "MECHANISM"],
+      "cognitiveLevel": "COMPOSITE_MECHANISM",
+      "productionLoad": "NONE",
+      "transferLevel": "NEAR",
+      "supportLevel": "NONE",
+      "familyKey": "mutability.reference-boundaries",
+      "learningOutcomeKeys": ["mutability.retrieve.changed-path-identity"],
+      "misconceptionTags": [
+        "mutability.unchanged-branch-must-copy",
+        "mutability.nested-spread-mutates-source"
+      ],
+      "estimatedMinutes": 3,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Glossary/Shallow_copy",
+        "https://react.dev/learn/updating-arrays-in-state"
+      ],
+      "mixedEvidence": true
+    }
+  },
+  {
+    "stableKey": "cs.mutability.training.append-notification-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "CODE",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Реализуй короткую функцию `appendNotification(state, notification)`: верни новое состояние с уведомлением в конце нового массива `notifications`, не мутируй вход и сохрани ссылку на неизменившийся `user`.",
+    "starterCode": "export function appendNotification(state, notification) {\n  // твой код\n}",
+    "language": "javascript",
+    "rubric": {
+      "dimensions": {
+        "CODE_CORRECTNESS": 85,
+        "EDGE_CASES": 15
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Уведомление добавлено в конец массива",
+      "Возвращены новые state и notifications",
+      "Вход не мутирован",
+      "Ссылка на user сохранена",
+      "Пустой исходный массив поддержан"
+    ],
+    "testCases": [
+      {
+        "name": "добавляет уведомление в конец",
+        "input": [
+          { "user": { "id": 1 }, "notifications": [{ "id": "old" }] },
+          { "id": "new" }
+        ],
+        "expected": {
+          "user": { "id": 1 },
+          "notifications": [{ "id": "old" }, { "id": "new" }]
+        },
+        "testCode": "const state = { user: { id: 1 }, notifications: [{ id: 'old' }] }; assert.deepEqual(appendNotification(state, { id: 'new' }), { user: { id: 1 }, notifications: [{ id: 'old' }, { id: 'new' }] });",
+        "hidden": false,
+        "position": 1
+      },
+      {
+        "name": "сохраняет вход и незатронутую ветвь",
+        "testCode": "const state = { user: { id: 1 }, notifications: [] }; const snapshot = JSON.stringify(state); const result = appendNotification(state, { id: 'new' }); assert.notEqual(result, state); assert.notEqual(result.notifications, state.notifications); assert.equal(result.user, state.user); assert.equal(JSON.stringify(state), snapshot);",
+        "hidden": true,
+        "position": 2
+      }
+    ],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["CODE_PRODUCTION"],
+      "cognitiveLevel": "CONSTRAINED_PRODUCTION",
+      "productionLoad": "LOW",
+      "transferLevel": "NEAR",
+      "supportLevel": "STARTER_CODE",
+      "familyKey": "mutability.reference-boundaries",
+      "learningOutcomeKeys": ["mutability.consolidate.append-array-immutably"],
+      "misconceptionTags": ["mutability.array-push-is-immutable-update"],
+      "estimatedMinutes": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Spread_syntax",
+        "https://react.dev/learn/updating-arrays-in-state"
+      ],
+      "mixedEvidence": false
+    }
+  }
+]

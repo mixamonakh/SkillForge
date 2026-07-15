@@ -52,10 +52,14 @@ GET /api/v1/tracks/:trackKey
 GET /api/v1/topics?track=&status=&reviewDue=&search=
 GET /api/v1/topics/:topicKey
 GET /api/v1/topics/:topicKey/evidence
+GET /api/v1/topics/:topicKey/capability-profile
+GET /api/v1/users/me/capability-summary
 GET /api/v1/content?topicKey=&kind=&cursor=
 ```
 
 Reset требует typed confirmation и не объединяется с preview. Topic keys валидируются как stable machine keys; похожий русский title не используется для поиска identity.
+
+Capability endpoints являются user-scoped read-only projections. Они возвращают `NOT_TESTED`/`INSUFFICIENT`/`SUFFICIENT`, nullable estimate и объяснения; их чтение не записывает mastery и не меняет `TopicStatus`.
 
 ## Assessment
 
@@ -72,6 +76,30 @@ POST /api/v1/assessment-runs/:runId/complete
 ```
 
 Create run фиксирует snapshot blueprint/TaskVersion. Lifecycle transition идемпотентен там, где это безопасно, либо возвращает stable conflict error. Free-text completion остаётся pending external review.
+
+### Evaluation coverage
+
+Attempt projection после submit содержит `evaluationCoverage` и
+`deterministicEvaluation`. Exact-match и browser worker заполняют только явно поддерживаемые rubric
+dimensions. Например, у смешанной `PREDICT_OUTPUT`-задачи локально проверяется output, а explanation
+остаётся pending:
+
+```json
+{
+  "score": null,
+  "passed": null,
+  "dimensionScores": { "PREDICT_OUTPUT": 100 },
+  "coverage": {
+    "evaluatedDimensions": ["PREDICT_OUTPUT"],
+    "pendingDimensions": ["EXPLANATION"],
+    "unsupportedDimensions": [],
+    "isFinal": false
+  }
+}
+```
+
+`score`/`passed` становятся итоговыми только при `coverage.isFinal: true`. Частичный ноль одной
+dimension не проецируется как окончательный провал ответа и не подменяет pending review.
 
 ## Attempts/autosave
 
@@ -125,6 +153,20 @@ GET /api/v1/metrics/misconceptions
 ```
 
 Каждый metric response содержит `dataSufficiency`; `value` nullable. Readiness без coverage не возвращает fake zero.
+
+## Bounded AI
+
+```text
+POST /api/v1/ai/attempts/:attemptId/evaluate
+GET  /api/v1/ai/evaluations/:draftId
+POST /api/v1/ai/evaluations/:draftId/apply
+POST /api/v1/ai/evaluations/:draftId/reject
+POST /api/v1/ai/evaluations/:draftId/rollback
+POST /api/v1/ai/attempts/:attemptId/nudge
+GET  /api/v1/ai/usage/current
+```
+
+Provider result сначала сохраняется как previewable draft. Только explicit apply создаёт обычные Evaluation/Evidence; reject не меняет knowledge state, rollback добавляет compensating Evaluation. Подробный contract: [ai.md](ai.md).
 
 ## Import/export и external artifacts
 

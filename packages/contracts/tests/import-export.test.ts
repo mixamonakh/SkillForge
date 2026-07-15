@@ -143,6 +143,10 @@ describe('ExportBundleV1', () => {
 });
 
 describe('SkillForgeAnalysisV1', () => {
+  it('continues to parse the unchanged v1 contract alongside v2 evaluation contracts', () => {
+    expect(SkillForgeAnalysisV1.parse(validAnalysis())).toEqual(validAnalysis());
+  });
+
   it('parses JSON wrapped in a Markdown fence and applies documented defaults', () => {
     const analysis = validAnalysis();
     delete (analysis.attemptEvaluations[0] as { reliability?: number }).reliability;

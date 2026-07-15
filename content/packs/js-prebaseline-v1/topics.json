@@ -1,0 +1,112 @@
+[
+  {
+    "key": "cs.values-and-references",
+    "trackKey": "cs-foundation",
+    "title": "Значения и ссылки",
+    "shortDescription": "Различать копирование значения и совместный доступ к объекту.",
+    "whyImportant": "Ошибки с aliasing приводят к неожиданным изменениям данных и нестабильным контрактам функций.",
+    "atWork": "Нужно при проектировании DTO, state updates и API между модулями.",
+    "atInterview": "Проверяется через трассировку присваиваний и изменения вложенных объектов.",
+    "position": 1,
+    "defaultHalfLifeDays": 90,
+    "status": "active",
+    "prerequisites": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ]
+    }
+  },
+  {
+    "key": "cs.mutability",
+    "trackKey": "cs-foundation",
+    "title": "Мутабельность и копирование",
+    "shortDescription": "Понимать поверхностное копирование, мутацию и неизменяемые обновления.",
+    "whyImportant": "Корректная работа с состоянием требует понимать границы shallow copy.",
+    "atWork": "Встречается в reducer, кешах, React state и преобразовании ответов API.",
+    "atInterview": "Проверяется задачами на spread, вложенные структуры и побочные эффекты.",
+    "position": 2,
+    "defaultHalfLifeDays": 90,
+    "status": "active",
+    "prerequisites": ["cs.values-and-references"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Glossary/Shallow_copy"]
+    }
+  },
+  {
+    "key": "js.values.types",
+    "trackKey": "javascript-core",
+    "title": "Примитивы и типы",
+    "shortDescription": "Знать primitive types, typeof и особые значения JavaScript.",
+    "whyImportant": "Тип значения определяет сравнение, преобразование и допустимые операции.",
+    "atWork": "Нужно для runtime validation, nullable данных и безопасных API-контрактов.",
+    "atInterview": "Часто проверяются typeof null, NaN, Symbol и BigInt.",
+    "position": 1,
+    "defaultHalfLifeDays": 90,
+    "status": "active",
+    "prerequisites": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ]
+    }
+  },
+  {
+    "key": "js.coercion.equality",
+    "trackKey": "javascript-core",
+    "title": "Приведение и сравнение",
+    "shortDescription": "Предсказывать ToPrimitive, truthiness и различия == / === / Object.is.",
+    "whyImportant": "Неявное приведение может менять ветвление и давать труднообнаружимые ошибки.",
+    "atWork": "Важно при обработке форм, query params и данных из внешних систем.",
+    "atInterview": "Проверяется выводом выражений и объяснением алгоритма сравнения.",
+    "position": 2,
+    "defaultHalfLifeDays": 75,
+    "status": "active",
+    "prerequisites": ["js.values.types"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Equality_comparisons_and_sameness"
+      ]
+    }
+  },
+  {
+    "key": "js.variables.scope",
+    "trackKey": "javascript-core",
+    "title": "Переменные, scope и TDZ",
+    "shortDescription": "Различать let, const, var, lexical scope, hoisting и TDZ.",
+    "whyImportant": "Модель областей видимости определяет доступность и время инициализации bindings.",
+    "atWork": "Нужно для безопасного рефакторинга, модулей и callback-кода.",
+    "atInterview": "Проверяется трассировкой hoisting, блоков и shadowing.",
+    "position": 3,
+    "defaultHalfLifeDays": 75,
+    "status": "active",
+    "prerequisites": ["js.values.types"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Grammar_and_types#declarations"
+      ]
+    }
+  },
+  {
+    "key": "js.functions.basics",
+    "trackKey": "javascript-core",
+    "title": "Функции, callbacks и HOF",
+    "shortDescription": "Работать с функциями как значениями и контрактами вызова.",
+    "whyImportant": "Callbacks и higher-order functions лежат в основе современного JavaScript API.",
+    "atWork": "Используется в обработчиках, коллекциях, middleware и dependency injection.",
+    "atInterview": "Проверяется композиция функций и корректность callback-контрактов.",
+    "position": 4,
+    "defaultHalfLifeDays": 90,
+    "status": "active",
+    "prerequisites": ["js.variables.scope"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Web/JavaScript/Guide/Functions"]
+    }
+  }
+]

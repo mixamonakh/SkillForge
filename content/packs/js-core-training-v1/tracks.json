@@ -1,0 +1,9 @@
+[
+  {
+    "key": "cs-foundation",
+    "title": "Computer Science Foundation",
+    "description": "Минимальный фундамент о значениях, ссылках и изменяемости данных.",
+    "position": 1,
+    "status": "active"
+  }
+]

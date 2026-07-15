@@ -1,0 +1,142 @@
+[
+  {
+    "stableKey": "cs.mutability.training.catalog-update-plan-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "EXPLAIN",
+    "difficulty": "MEDIUM",
+    "status": "draft",
+    "promptMarkdown": "Рабочий state каталога содержит `categories`, внутри каждой категории — `products`. Нужно изменить цену одного продукта по `categoryId` и `productId`, не мутируя прежний state. До написания кода составь план: какие ссылки должны измениться, какие можно сохранить, что вернуть при отсутствующей категории или продукте и как избежать полного deep clone. Укажи один trade-off выбранного поиска по массивам.",
+    "rubric": {
+      "dimensions": {
+        "TRANSFER": 60,
+        "EDGE_CASES": 25,
+        "COMPLEXITY_REASONING": 15
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "План создаёт новые ссылки только вдоль category/product path",
+      "Незатронутые категории и продукты сохраняют ссылки",
+      "Определён контракт для отсутствующей цели",
+      "Deep clone не используется как замена анализа",
+      "Назван trade-off линейного поиска или предложенной структуры данных"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["TRANSFER", "MECHANISM"],
+      "cognitiveLevel": "TRANSFER_INTERVIEW",
+      "productionLoad": "LOW",
+      "transferLevel": "WORK_LIKE",
+      "supportLevel": "NONE",
+      "familyKey": "mutability.ui-state-update",
+      "learningOutcomeKeys": ["mutability.transfer.plan-nested-collection-update"],
+      "misconceptionTags": [
+        "mutability.transfer-deep-clone-all-state",
+        "mutability.transfer-copy-only-root"
+      ],
+      "estimatedMinutes": 5,
+      "documentationUrls": [
+        "https://react.dev/learn/updating-arrays-in-state",
+        "https://react.dev/learn/updating-objects-in-state"
+      ],
+      "mixedEvidence": true
+    }
+  },
+  {
+    "stableKey": "cs.mutability.training.rename-card-transfer-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "CODE",
+    "difficulty": "HARD",
+    "status": "draft",
+    "promptMarkdown": "Реализуй `renameCard(state, columnId, cardId, title)` для state доски с массивом `columns` и массивом `cards` внутри каждой колонки. Измени заголовок целевой карточки без мутации. Новые ссылки нужны только для state, columns, найденной колонки, её cards и найденной карточки; остальные ссылки сохрани. Если колонка или карточка не найдена, верни исходный state.",
+    "starterCode": "export function renameCard(state, columnId, cardId, title) {\n  // твой код\n}",
+    "language": "javascript",
+    "rubric": {
+      "dimensions": {
+        "CODE_CORRECTNESS": 55,
+        "EDGE_CASES": 20,
+        "TRANSFER": 25
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Заголовок целевой карточки изменён",
+      "Исходный state и вложенные данные не мутированы",
+      "Новые ссылки созданы только вдоль изменённого пути",
+      "Незатронутые колонки и карточки сохраняют ссылки",
+      "При отсутствующей цели возвращён исходный state"
+    ],
+    "testCases": [
+      {
+        "name": "переименовывает целевую карточку",
+        "input": [
+          {
+            "boardId": "b1",
+            "columns": [
+              {
+                "id": "todo",
+                "cards": [
+                  { "id": "c1", "title": "Старое" },
+                  { "id": "c2", "title": "Без изменений" }
+                ]
+              }
+            ]
+          },
+          "todo",
+          "c1",
+          "Новое"
+        ],
+        "expected": {
+          "boardId": "b1",
+          "columns": [
+            {
+              "id": "todo",
+              "cards": [
+                { "id": "c1", "title": "Новое" },
+                { "id": "c2", "title": "Без изменений" }
+              ]
+            }
+          ]
+        },
+        "testCode": "const state = { boardId: 'b1', columns: [{ id: 'todo', cards: [{ id: 'c1', title: 'Старое' }, { id: 'c2', title: 'Без изменений' }] }] }; assert.deepEqual(renameCard(state, 'todo', 'c1', 'Новое'), { boardId: 'b1', columns: [{ id: 'todo', cards: [{ id: 'c1', title: 'Новое' }, { id: 'c2', title: 'Без изменений' }] }] });",
+        "hidden": false,
+        "position": 1
+      },
+      {
+        "name": "соблюдает structural sharing",
+        "testCode": "const untouchedColumn = { id: 'done', cards: [{ id: 'c3', title: 'Готово' }] }; const state = { columns: [{ id: 'todo', cards: [{ id: 'c1', title: 'Старое' }, { id: 'c2', title: 'Прежнее' }] }, untouchedColumn] }; const snapshot = JSON.stringify(state); const result = renameCard(state, 'todo', 'c1', 'Новое'); assert.notEqual(result, state); assert.notEqual(result.columns, state.columns); assert.notEqual(result.columns[0], state.columns[0]); assert.notEqual(result.columns[0].cards, state.columns[0].cards); assert.notEqual(result.columns[0].cards[0], state.columns[0].cards[0]); assert.equal(result.columns[0].cards[1], state.columns[0].cards[1]); assert.equal(result.columns[1], state.columns[1]); assert.equal(JSON.stringify(state), snapshot);",
+        "hidden": true,
+        "position": 2
+      },
+      {
+        "name": "не создаёт состояние без цели",
+        "testCode": "const state = { columns: [{ id: 'todo', cards: [{ id: 'c1', title: 'Старое' }] }] }; assert.equal(renameCard(state, 'missing', 'c1', 'Новое'), state); assert.equal(renameCard(state, 'todo', 'missing', 'Новое'), state);",
+        "hidden": true,
+        "position": 3
+      }
+    ],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["CODE_PRODUCTION", "TRANSFER"],
+      "cognitiveLevel": "TRANSFER_INTERVIEW",
+      "productionLoad": "HIGH",
+      "transferLevel": "WORK_LIKE",
+      "supportLevel": "STARTER_CODE",
+      "familyKey": "mutability.ui-state-update",
+      "learningOutcomeKeys": ["mutability.transfer.implement-nested-state-update"],
+      "misconceptionTags": [
+        "mutability.transfer-copy-every-branch",
+        "mutability.transfer-copy-root-only"
+      ],
+      "estimatedMinutes": 12,
+      "documentationUrls": [
+        "https://react.dev/learn/updating-arrays-in-state",
+        "https://react.dev/learn/updating-objects-in-state"
+      ],
+      "mixedEvidence": true
+    }
+  }
+]

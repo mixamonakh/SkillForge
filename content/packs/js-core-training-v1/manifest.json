@@ -1,0 +1,52 @@
+{
+  "key": "js-core-training-v1",
+  "version": "1.0.0",
+  "locale": "ru",
+  "createdAt": "2026-07-15",
+  "status": "draft",
+  "requiresAppSchema": ">=2.0.0 <3.0.0",
+  "tracks": ["cs-foundation"],
+  "counts": {
+    "topics": 2,
+    "tasks": 10,
+    "assessments": 0,
+    "sequences": 3
+  },
+  "requirements": {
+    "baselineItems": 0,
+    "blocks": 0,
+    "itemsPerBlock": 0,
+    "minimumTaskKinds": 4,
+    "minimumDeterministicTasks": 7,
+    "minimumExplanationTasks": 2,
+    "minimumDebuggingTasks": 1,
+    "minimumAiReviewOrCompareTasks": 0,
+    "minimumMixedTasks": 5
+  },
+  "sources": [
+    {
+      "title": "ECMAScript Language Specification — Language Types",
+      "url": "https://tc39.es/ecma262/#sec-ecmascript-language-types"
+    },
+    {
+      "title": "MDN JavaScript data structures",
+      "url": "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+    },
+    {
+      "title": "MDN Shallow copy",
+      "url": "https://developer.mozilla.org/docs/Glossary/Shallow_copy"
+    },
+    {
+      "title": "MDN Spread syntax",
+      "url": "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Spread_syntax"
+    },
+    {
+      "title": "React — Updating objects in state",
+      "url": "https://react.dev/learn/updating-objects-in-state"
+    },
+    {
+      "title": "React — Updating arrays in state",
+      "url": "https://react.dev/learn/updating-arrays-in-state"
+    }
+  ]
+}

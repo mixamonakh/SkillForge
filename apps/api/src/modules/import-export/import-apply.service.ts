@@ -6,6 +6,11 @@ import { invalidState, notFound } from '../../common/api-error.js';
 import { asJsonInput, objectValue } from '../../common/json.js';
 import { PrismaService } from '../../database/prisma.service.js';
 import { MasteryService, initialEvidenceNormalization } from '../mastery/mastery.service.js';
+import {
+  storedSuppressedExternalEvaluationEffects,
+  suppressedExternalEvaluationEffect,
+  type SuppressedExternalEvaluationEffect,
+} from './external-evaluation-policy.js';
 import { parseImportSourceScope } from './import-source-scope.js';
 
 @Injectable()
@@ -29,6 +34,7 @@ export class ImportApplyService {
           importId: batch.id,
           status: batch.status,
           appliedAt: batch.appliedAt?.toISOString() ?? null,
+          suppressedEvaluationEffects: storedSuppressedExternalEvaluationEffects(batch.preview),
           idempotent: true,
         };
       }
@@ -58,7 +64,12 @@ export class ImportApplyService {
           userId: DEFAULT_USER_ID,
           id: { in: allowedAttemptIds },
         },
-        include: { taskVersion: { include: { task: { include: { topic: true } } } } },
+        include: {
+          taskVersion: { include: { task: { include: { topic: true } } } },
+          session: {
+            select: { assessmentRun: { select: { snapshot: true } } },
+          },
+        },
       });
       const topicKeys = [
         ...new Set(
@@ -76,9 +87,18 @@ export class ImportApplyService {
       const attemptById = new Map(attempts.map((attempt) => [attempt.id, attempt]));
       const topicByKey = new Map(topics.map((topic) => [topic.key, topic]));
       const affectedTopicIds = new Set<string>();
+      const suppressedEvaluationEffects: SuppressedExternalEvaluationEffect[] = [];
+      let evaluationsCreated = 0;
+      let evidenceCreated = 0;
       for (const imported of analysis.attemptEvaluations) {
         const attempt = attemptById.get(imported.attemptId);
         if (!attempt) continue;
+        const suppressedEffect = suppressedExternalEvaluationEffect({
+          attemptId: attempt.id,
+          assessmentSnapshot: attempt.session.assessmentRun?.snapshot,
+          requestedEvidenceItems: imported.topicEvidence.length,
+        });
+        if (suppressedEffect !== null) suppressedEvaluationEffects.push(suppressedEffect);
         const reliability = Math.min(0.65, imported.reliability);
         const evaluation = await transaction.evaluation.create({
           data: {
@@ -92,10 +112,19 @@ export class ImportApplyService {
             reliability,
             dimensionScores: asJsonInput(imported.dimensions),
             feedbackMarkdown: imported.feedbackMarkdown,
-            rubricResult: asJsonInput({ advisory: true, contract: analysis.contract }),
+            rubricResult: asJsonInput({
+              advisory: true,
+              contract: analysis.contract,
+              evidencePolicy: suppressedEffect ?? {
+                evidenceAction: 'CREATE',
+                topicStateAction: 'RECOMPUTE',
+                masteryAction: 'RECOMPUTE',
+              },
+            }),
             externalReference: analysis.sourceBundleId,
           },
         });
+        evaluationsCreated += 1;
         const misconceptionIds = new Set<string>();
         for (const finding of imported.misconceptions) {
           const misconception = await transaction.misconception.upsert({
@@ -126,6 +155,7 @@ export class ImportApplyService {
         const evidenceByComposite = new Map(
           imported.topicEvidence.map((item) => [`${item.topicKey}:${item.kind}`, item]),
         );
+        if (suppressedEffect !== null) continue;
         for (const item of evidenceByComposite.values()) {
           const topic = topicByKey.get(item.topicKey);
           if (!topic || sourceScope?.attemptTopicById.get(attempt.id) !== item.topicKey) continue;
@@ -155,6 +185,7 @@ export class ImportApplyService {
               }),
             },
           });
+          evidenceCreated += 1;
           affectedTopicIds.add(topic.id);
           for (const misconceptionId of misconceptionIds) {
             await transaction.topicMisconception.upsert({
@@ -165,12 +196,14 @@ export class ImportApplyService {
           }
         }
       }
-      await this.mastery.recomputeWithin(transaction, [...affectedTopicIds]);
-      await this.mastery.snapshotWithin(transaction, `import:${batch.id}`, {
-        sourceBundleId: analysis.sourceBundleId,
-        affectedTopicIds: [...affectedTopicIds],
-        summary: analysis.summary,
-      });
+      if (affectedTopicIds.size > 0) {
+        await this.mastery.recomputeWithin(transaction, [...affectedTopicIds]);
+        await this.mastery.snapshotWithin(transaction, `import:${batch.id}`, {
+          sourceBundleId: analysis.sourceBundleId,
+          affectedTopicIds: [...affectedTopicIds],
+          summary: analysis.summary,
+        });
+      }
       const appliedAt = new Date();
       await transaction.importBatch.update({
         where: { id: batch.id },
@@ -180,6 +213,9 @@ export class ImportApplyService {
         importId: batch.id,
         status: 'APPLIED',
         appliedAt: appliedAt.toISOString(),
+        evaluationsCreated,
+        evidenceCreated,
+        suppressedEvaluationEffects,
         affectedTopics: affectedTopicIds.size,
         idempotent: false,
       };
@@ -224,7 +260,9 @@ export class ImportApplyService {
         where: { evaluation: { importBatchId: batch.id } },
       });
       await transaction.evaluation.deleteMany({ where: { importBatchId: batch.id } });
-      await this.mastery.recomputeWithin(transaction, affectedTopicIds);
+      if (affectedTopicIds.length > 0) {
+        await this.mastery.recomputeWithin(transaction, affectedTopicIds);
+      }
       const rolledBackAt = new Date();
       await transaction.importBatch.update({
         where: { id: batch.id },
@@ -238,11 +276,13 @@ export class ImportApplyService {
           }),
         },
       });
-      await this.mastery.snapshotWithin(transaction, `import-rollback:${batch.id}`, {
-        importId: batch.id,
-        affectedTopicIds,
-        rolledBackAt: rolledBackAt.toISOString(),
-      });
+      if (affectedTopicIds.length > 0) {
+        await this.mastery.snapshotWithin(transaction, `import-rollback:${batch.id}`, {
+          importId: batch.id,
+          affectedTopicIds,
+          rolledBackAt: rolledBackAt.toISOString(),
+        });
+      }
       return {
         importId: batch.id,
         status: 'REJECTED',

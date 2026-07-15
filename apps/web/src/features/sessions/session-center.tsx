@@ -14,17 +14,17 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { ErrorState, LoadingState } from '@/components/data-state';
 import { apiFetch, apiMutation } from '@/shared/api/client';
-import type { LearningSession, SessionSummary, TopicSummary } from '@/shared/api/types';
+import type {
+  CapabilityFamily,
+  LearningPhase,
+  LearningSession,
+  LoadMode,
+  SessionMode,
+  SessionRecommendation,
+  SessionSummary,
+  TopicSummary,
+} from '@/shared/api/types';
 
-type Recommendation = {
-  topic: TopicSummary | null;
-  mode: string;
-  loadMode: string;
-  reason: string;
-};
-
-type SessionMode = 'TRAINING' | 'REVIEW' | 'INTERVIEW' | 'RETURN' | 'BATTLE';
-type LoadMode = 'MINIMAL' | 'NORMAL' | 'DEEP' | 'RETURN';
 type CodeLanguage = 'javascript' | 'typescript';
 
 type SessionPlan = {
@@ -33,6 +33,9 @@ type SessionPlan = {
   topicKeys: string[];
   documentationAllowed: boolean;
   codeLanguage: CodeLanguage;
+  learningPhase?: Exclude<LearningPhase, 'CALIBRATION'>;
+  sequenceKey?: string;
+  sequenceVersion?: number;
   returnFromSessionId?: string;
 };
 
@@ -58,6 +61,23 @@ const loadModes = [
   { value: 'RETURN', label: 'Возврат', minutes: '15–20 мин' },
 ] as const;
 
+const learningPhaseLabels: Record<LearningPhase, string> = {
+  CALIBRATION: 'Калибровка',
+  ACQUISITION: 'Освоение',
+  CONSOLIDATION: 'Закрепление',
+  TRANSFER: 'Перенос в рабочую задачу',
+};
+
+const capabilityLabels: Record<CapabilityFamily, string> = {
+  TERM: 'Терминология',
+  MECHANISM: 'Механизм',
+  TRACE: 'Чтение хода выполнения',
+  DEBUG: 'Отладка',
+  CODE_PRODUCTION: 'Самостоятельный код',
+  TRANSFER: 'Перенос',
+  CALIBRATION: 'Калибровка',
+};
+
 export function SessionCenter() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -70,6 +90,7 @@ export function SessionCenter() {
   );
   const [documentationAllowed, setDocumentationAllowed] = useState(true);
   const [codeLanguage, setCodeLanguage] = useState<CodeLanguage | null>(null);
+  const [recommendationApplied, setRecommendationApplied] = useState(false);
   const profileQuery = useQuery({
     queryKey: ['profile'],
     queryFn: () => apiFetch<ProfileSettings>('/api/v1/profile'),
@@ -90,11 +111,18 @@ export function SessionCenter() {
   });
   const recommendationQuery = useQuery({
     queryKey: ['session-recommendation'],
-    queryFn: () => apiFetch<Recommendation>('/api/v1/sessions/recommendation'),
+    queryFn: () => apiFetch<SessionRecommendation>('/api/v1/sessions/recommendation'),
     enabled: !returnFromSessionId,
   });
+  const recommendationTopicKey =
+    recommendationQuery.data?.topicKey ?? recommendationQuery.data?.topic?.key ?? null;
   const createMutation = useMutation({
     mutationFn: async () => {
+      const useAppliedRecommendation =
+        recommendationApplied &&
+        recommendationTopicKey !== null &&
+        topicKeys.length === 1 &&
+        topicKeys[0] === recommendationTopicKey;
       const plan: SessionPlan = {
         mode: effectiveMode,
         loadMode: effectiveLoadMode,
@@ -102,11 +130,17 @@ export function SessionCenter() {
           ? []
           : topicKeys.length > 0
             ? topicKeys
-            : recommendationQuery.data?.topic
-              ? [recommendationQuery.data.topic.key]
+            : recommendationTopicKey
+              ? [recommendationTopicKey]
               : [],
         documentationAllowed,
         codeLanguage: configuredCodeLanguage,
+        ...(useAppliedRecommendation && recommendationQuery.data?.learningPhase
+          ? { learningPhase: recommendationQuery.data.learningPhase }
+          : {}),
+        ...(useAppliedRecommendation && recommendationQuery.data?.sequenceKey
+          ? { sequenceKey: recommendationQuery.data.sequenceKey }
+          : {}),
         ...(returnFromSessionId ? { returnFromSessionId } : {}),
       };
       const preview = await apiMutation<SessionPlan>('/api/v1/sessions/plan', 'POST', plan);
@@ -152,16 +186,52 @@ export function SessionCenter() {
           </Link>
         }
       />
-      {recommendationQuery.data?.topic ? (
+      {recommendationTopicKey ? (
         <SectionCard className="sf-recommendation-strip">
-          <div>
+          <div className="sf-stack sf-stack--compact">
             <p className="sf-eyebrow">Рекомендация</p>
-            <h2>{recommendationQuery.data.topic.title}</h2>
-            <p>{recommendationQuery.data.reason}</p>
+            <h2>
+              {recommendationQuery.data?.title ??
+                recommendationQuery.data?.topic?.title ??
+                recommendationTopicKey}
+            </h2>
+            {recommendationQuery.data?.learningPhase ? (
+              <div className="sf-card-title-row">
+                <span className="sf-pill">
+                  {learningPhaseLabels[recommendationQuery.data.learningPhase]}
+                </span>
+                {recommendationQuery.data.capabilityGap ? (
+                  <span className="sf-pill">
+                    Gap: {capabilityLabels[recommendationQuery.data.capabilityGap]}
+                  </span>
+                ) : null}
+                {recommendationQuery.data.estimatedMinutes ? (
+                  <span className="sf-pill">≈ {recommendationQuery.data.estimatedMinutes} мин</span>
+                ) : null}
+              </div>
+            ) : null}
+            <p>{recommendationQuery.data?.reason}</p>
+            {recommendationQuery.data?.completionTarget ? (
+              <p>
+                <strong>Цель сессии:</strong> {recommendationQuery.data.completionTarget}
+              </p>
+            ) : null}
+            {recommendationQuery.data?.evidenceNeeded?.length ? (
+              <p className="sf-muted">
+                Нужно evidence: {recommendationQuery.data.evidenceNeeded.join(' · ')}
+              </p>
+            ) : null}
           </div>
           <SecondaryButton
             type="button"
-            onClick={() => setTopicKeys([recommendationQuery.data.topic?.key ?? ''])}
+            onClick={() => {
+              setTopicKeys([recommendationTopicKey]);
+              if (recommendationQuery.data) {
+                setMode(recommendationQuery.data.mode);
+                setLoadMode(recommendationQuery.data.loadMode);
+              }
+              setRecommendationApplied(true);
+            }}
           >
             Выбрать
           </SecondaryButton>
@@ -177,7 +247,10 @@ export function SessionCenter() {
               data-selected={effectiveMode === item.value}
               aria-pressed={effectiveMode === item.value}
               disabled={Boolean(returnFromSessionId)}
-              onClick={() => setMode(item.value)}
+              onClick={() => {
+                setMode(item.value);
+                setRecommendationApplied(false);
+              }}
             >
               <strong>{item.label}</strong>
               <span>{item.description}</span>
@@ -195,7 +268,10 @@ export function SessionCenter() {
               data-selected={effectiveLoadMode === item.value}
               aria-pressed={effectiveLoadMode === item.value}
               disabled={Boolean(returnFromSessionId)}
-              onClick={() => setLoadMode(item.value)}
+              onClick={() => {
+                setLoadMode(item.value);
+                setRecommendationApplied(false);
+              }}
             >
               <strong>{item.label}</strong>
               <span>{item.minutes}</span>
@@ -225,7 +301,10 @@ export function SessionCenter() {
                   type="button"
                   data-selected={topicKeys.includes(topic.key)}
                   aria-pressed={topicKeys.includes(topic.key)}
-                  onClick={() => toggleTopic(topic.key)}
+                  onClick={() => {
+                    toggleTopic(topic.key);
+                    setRecommendationApplied(false);
+                  }}
                 >
                   <StatusBadge status={topic.status} />
                   <span>{topic.title}</span>
@@ -278,7 +357,7 @@ export function SessionCenter() {
         disabled={
           profileQuery.isLoading ||
           profileQuery.error !== null ||
-          (!returnFromSessionId && topicKeys.length === 0 && !recommendationQuery.data?.topic)
+          (!returnFromSessionId && topicKeys.length === 0 && !recommendationTopicKey)
         }
       >
         <BookOpen aria-hidden="true" size={17} />
@@ -303,6 +382,7 @@ export function SessionCenter() {
                 <br />
                 <small>
                   {session.mode} · {session.loadMode} · {session.itemCount} items
+                  {session.learningPhase ? ` · ${learningPhaseLabels[session.learningPhase]}` : ''}
                 </small>
               </span>
               <Link className="sf-link" href={`/sessions/${session.id}`}>

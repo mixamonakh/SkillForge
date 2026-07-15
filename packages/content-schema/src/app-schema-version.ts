@@ -1,4 +1,5 @@
-export const APP_CONTENT_SCHEMA_VERSION = '1.0.0';
+export const APP_CONTENT_SCHEMA_VERSION = '2.0.0';
+export const SUPPORTED_APP_CONTENT_SCHEMA_VERSIONS = ['1.0.0', APP_CONTENT_SCHEMA_VERSION] as const;
 
 type SemanticVersion = readonly [major: number, minor: number, patch: number];
 
@@ -22,11 +23,13 @@ export function supportsAppSchema(range: string): boolean {
   const values = match.slice(1).map(Number);
   const lower: SemanticVersion = [values[0] ?? 0, values[1] ?? 0, values[2] ?? 0];
   const upper: SemanticVersion = [values[3] ?? 0, values[4] ?? 0, values[5] ?? 0];
-  const currentParts = APP_CONTENT_SCHEMA_VERSION.split('.').map(Number);
-  const current: SemanticVersion = [
-    currentParts[0] ?? 0,
-    currentParts[1] ?? 0,
-    currentParts[2] ?? 0,
-  ];
-  return compareVersions(current, lower) >= 0 && compareVersions(current, upper) < 0;
+  return SUPPORTED_APP_CONTENT_SCHEMA_VERSIONS.some((version) => {
+    const currentParts = version.split('.').map(Number);
+    const current: SemanticVersion = [
+      currentParts[0] ?? 0,
+      currentParts[1] ?? 0,
+      currentParts[2] ?? 0,
+    ];
+    return compareVersions(current, lower) >= 0 && compareVersions(current, upper) < 0;
+  });
 }

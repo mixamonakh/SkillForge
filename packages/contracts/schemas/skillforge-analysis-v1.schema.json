@@ -33,7 +33,10 @@
               "format": "date-time"
             }
           },
-          "required": ["kind", "analyzedAt"],
+          "required": [
+            "kind",
+            "analyzedAt"
+          ],
           "additionalProperties": false
         },
         "attemptEvaluations": {
@@ -51,7 +54,10 @@
                 "maximum": 100
               },
               "passed": {
-                "type": ["boolean", "null"]
+                "type": [
+                  "boolean",
+                  "null"
+                ]
               },
               "reliability": {
                 "type": "number",
@@ -91,7 +97,12 @@
                       "maxLength": 10000
                     }
                   },
-                  "required": ["key", "title", "evidence", "remediation"],
+                  "required": [
+                    "key",
+                    "title",
+                    "evidence",
+                    "remediation"
+                  ],
                   "additionalProperties": false
                 },
                 "maxItems": 100
@@ -125,7 +136,11 @@
                       "$ref": "#/definitions/SkillForgeAnalysisV1/properties/attemptEvaluations/items/properties/overallScore"
                     }
                   },
-                  "required": ["topicKey", "kind", "score"],
+                  "required": [
+                    "topicKey",
+                    "kind",
+                    "score"
+                  ],
                   "additionalProperties": false
                 },
                 "maxItems": 200
@@ -159,7 +174,14 @@
               },
               "sessionMode": {
                 "type": "string",
-                "enum": ["ASSESSMENT", "TRAINING", "REVIEW", "INTERVIEW", "RETURN", "BATTLE"]
+                "enum": [
+                  "ASSESSMENT",
+                  "TRAINING",
+                  "REVIEW",
+                  "INTERVIEW",
+                  "RETURN",
+                  "BATTLE"
+                ]
               },
               "reason": {
                 "type": "string",
@@ -167,7 +189,12 @@
                 "maxLength": 10000
               }
             },
-            "required": ["topicKey", "priority", "sessionMode", "reason"],
+            "required": [
+              "topicKey",
+              "priority",
+              "sessionMode",
+              "reason"
+            ],
             "additionalProperties": false
           },
           "maxItems": 500

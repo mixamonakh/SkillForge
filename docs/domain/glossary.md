@@ -16,6 +16,11 @@
 | Evaluation           | Append-only оценка Attempt конкретным evaluator и его версией.                                                      |
 | Evidence             | Нормализованное доказательство topic/dimension, полученное из Evaluation или подтверждённого external artifact.     |
 | Topic state          | Пересчитываемый cache estimate/status/confidence/coverage/review по evidence пользователя.                          |
+| Capability profile   | Немaterialизованная projection по TERM/MECHANISM/TRACE/DEBUG/CODE_PRODUCTION/TRANSFER/CALIBRATION.                  |
+| Capability coverage  | `NOT_TESTED`, `INSUFFICIENT` или `SUFFICIENT`; не подменяется числовым нулём.                                       |
+| Learning phase       | Педагогическая цель session: CALIBRATION, ACQUISITION, CONSOLIDATION или TRANSFER.                                  |
+| Routing profile      | Результат pre-baseline с primary gap, observations и recommended phase; не mastery verdict.                         |
+| Sequence blueprint   | Версионированный content artifact для упорядоченной phase-specific learning session.                                |
 | Misconception        | Конкретная повторяющаяся ошибка и remediation, не синоним слабой темы.                                              |
 | External artifact    | Результат из проекта, PR, LeetCode или другой внешней практики.                                                     |
 | Battle evidence      | Evidence `BATTLE`/`TRANSFER`, созданное после подтверждения external artifact.                                      |
@@ -32,6 +37,7 @@
 | Import batch         | Audit record внешнего анализа со schema version, checksum, status, preview и результатом apply.                     |
 | Export bundle        | Immutable snapshot выбранного scope по версионированной схеме с checksum.                                           |
 | Manual AI mode       | Workflow export → внешний ChatGPT → strict JSON import; API key не нужен.                                           |
+| AI evaluation draft  | Schema/domain-validated candidate и preview до explicit apply; не является evidence сам по себе.                    |
 
 ## Evidence kinds
 

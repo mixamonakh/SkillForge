@@ -23,7 +23,13 @@
         },
         "bundleType": {
           "type": "string",
-          "enum": ["assessment-run", "session", "topic", "profile", "pending-review"]
+          "enum": [
+            "assessment-run",
+            "session",
+            "topic",
+            "profile",
+            "pending-review"
+          ]
         },
         "user": {
           "type": "object",
@@ -42,7 +48,11 @@
               "maxLength": 35
             }
           },
-          "required": ["displayName", "targetTrack", "locale"],
+          "required": [
+            "displayName",
+            "targetTrack",
+            "locale"
+          ],
           "additionalProperties": false
         },
         "scope": {
@@ -86,7 +96,13 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["UNKNOWN", "WEAK", "UNSTABLE", "SOLID", "MASTERED"]
+                "enum": [
+                  "UNKNOWN",
+                  "WEAK",
+                  "UNSTABLE",
+                  "SOLID",
+                  "MASTERED"
+                ]
               },
               "masteryEstimate": {
                 "anyOf": [
@@ -108,7 +124,13 @@
                 "minimum": 0
               }
             },
-            "required": ["key", "status", "masteryEstimate", "masteryConfidence", "evidenceCount"],
+            "required": [
+              "key",
+              "status",
+              "masteryEstimate",
+              "masteryConfidence",
+              "evidenceCount"
+            ],
             "additionalProperties": false
           },
           "maxItems": 2000
@@ -191,7 +213,13 @@
               },
               "helpLevel": {
                 "type": "string",
-                "enum": ["NONE", "NUDGE", "HINT", "MULTIPLE_HINTS", "SOLUTION_VIEWED"]
+                "enum": [
+                  "NONE",
+                  "NUDGE",
+                  "HINT",
+                  "MULTIPLE_HINTS",
+                  "SOLUTION_VIEWED"
+                ]
               },
               "deterministicEvaluation": {
                 "anyOf": [
@@ -246,7 +274,11 @@
               "maxItems": 100
             }
           },
-          "required": ["contract", "language", "instructions"],
+          "required": [
+            "contract",
+            "language",
+            "instructions"
+          ],
           "additionalProperties": false
         }
       },

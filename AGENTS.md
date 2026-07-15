@@ -23,6 +23,7 @@ SkillForge is a personal evidence-based engineering learning system. The product
 - `packages/learning-engine` contains pure deterministic learning algorithms.
 - `packages/db` contains persistence, not product policy.
 - `packages/contracts` owns versioned import/export schemas.
+- `packages/ai-provider` owns provider-neutral strict AI contracts, prompt versions, adapters and cost calculation; it does not write learning state.
 - `content/packs` is the source of truth for curated learning content.
 - Controllers must not call Prisma directly.
 - Web components must not import Prisma or backend internals.
@@ -92,6 +93,7 @@ A change is done only when:
 - Seeds/content imports must be idempotent.
 - Destructive operations require explicit confirmation and documented backup.
 - Import application is atomic and deduplicated by checksum.
+- API-assisted AI writes a preview draft first; only explicit Apply may create ordinary `Evaluation`/`Evidence`, and rollback is compensating rather than destructive.
 
 ## 10. Testing focus
 
@@ -106,6 +108,7 @@ Prioritize tests for:
 - code runner timeout;
 - prerequisite graph validation;
 - container restart persistence.
+- AI budget concurrency, cache identity, preview/apply/reject/rollback and nudge leakage guards.
 
 ## 11. Prohibited shortcuts
 

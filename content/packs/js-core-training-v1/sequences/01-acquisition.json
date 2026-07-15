@@ -1,0 +1,60 @@
+[
+  {
+    "schemaVersion": "1.0",
+    "key": "cs.mutability.training.acquisition-v1",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "phase": "ACQUISITION",
+    "estimatedMinutes": 30,
+    "steps": [
+      {
+        "kind": "CONTENT",
+        "contentItemKey": "cs.mutability.training.canonical-boundaries",
+        "version": 1
+      },
+      {
+        "kind": "CONTENT",
+        "contentItemKey": "cs.mutability.training.worked-contact-update",
+        "version": 1
+      },
+      {
+        "kind": "TASK",
+        "taskKey": "cs.mutability.training.cart-shallow-trace-001",
+        "version": 1,
+        "purpose": "PREDICT_BEFORE_REVEAL"
+      },
+      {
+        "kind": "CONTENT",
+        "contentItemKey": "cs.mutability.training.primitive-object-contrast",
+        "version": 1
+      },
+      {
+        "kind": "TASK",
+        "taskKey": "cs.mutability.training.board-mutation-debug-001",
+        "version": 1,
+        "purpose": "MUTATION_DEBUG"
+      },
+      {
+        "kind": "TASK",
+        "taskKey": "cs.mutability.training.update-locale-guided-001",
+        "version": 1,
+        "purpose": "GUIDED_COMPLETION"
+      },
+      {
+        "kind": "TASK",
+        "taskKey": "cs.mutability.training.increment-line-independent-001",
+        "version": 1,
+        "purpose": "INDEPENDENT_NO_HELP_PRODUCTION"
+      },
+      {
+        "kind": "CONTENT",
+        "contentItemKey": "cs.mutability.training.shallow-copy-mistake",
+        "version": 1
+      }
+    ],
+    "completionRule": {
+      "requiredSteps": 8,
+      "minimumNoHelpSuccesses": 1
+    }
+  }
+]

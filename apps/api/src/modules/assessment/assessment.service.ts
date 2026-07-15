@@ -5,6 +5,7 @@ import { AssessmentLifecycleService } from './assessment-lifecycle.service.js';
 import { AssessmentQueryService } from './assessment-query.service.js';
 import { AttemptAutosaveService } from './attempt-autosave.service.js';
 import { AttemptEvaluationService } from './attempt-evaluation.service.js';
+import { PrebaselineAssessmentService } from './prebaseline-assessment.service.js';
 
 @Injectable()
 export class AssessmentService {
@@ -13,6 +14,7 @@ export class AssessmentService {
     private readonly lifecycle: AssessmentLifecycleService,
     private readonly autosaves: AttemptAutosaveService,
     private readonly evaluationsService: AttemptEvaluationService,
+    private readonly prebaseline: PrebaselineAssessmentService,
   ) {}
 
   public catalog(): Promise<unknown[]> {
@@ -25,6 +27,18 @@ export class AssessmentService {
 
   public createRun(key: string): Promise<unknown> {
     return this.queries.createRun(key);
+  }
+
+  public startPrebaseline(): Promise<unknown> {
+    return this.prebaseline.start();
+  }
+
+  public nextPrebaseline(runId: string): Promise<unknown> {
+    return this.prebaseline.next(runId);
+  }
+
+  public prebaselineRoutingProfile(runId: string): Promise<unknown> {
+    return this.prebaseline.routingProfile(runId);
   }
 
   public run(runId: string): Promise<unknown> {

@@ -8,6 +8,8 @@ docker compose up --build
 
 Ожидаемый порядок: healthy PostgreSQL → `prisma migrate deploy` → default user → idempotent content import → API ready → web. Первый build может занимать дольше из-за image/dependencies.
 
+Default import включает оба совместимых диагностических pack: `js-baseline-v1,js-prebaseline-v1`. Для явного списка задайте `SEED_CONTENT_PACKS` через запятую; `SEED_CONTENT_PACK` остаётся single-pack fallback для старых direct-entrypoint запусков. `js-core-training-v1` намеренно не входит в default, пока его DRAFT quality gates не закрыты человеком.
+
 Проверка:
 
 ```bash
@@ -58,6 +60,8 @@ API startup применяет только `prisma migrate deploy`. Новая 
 ## Configuration
 
 Compose читает `.env`/environment. Не помещайте API keys и реальные дампы в image/build args. Для dev port PostgreSQL используйте `docker-compose.dev.yml`, если он предусмотрен.
+
+Safe defaults (`AI_MODE=manual`, выключенные AI flags) не требуют key или pricing. При явном `api-assisted` OpenAI feature вместе с key задайте актуальные три `OPENAI_PRICE_*_USD_PER_MILLION`: без консервативной цены API не может атомарно резервировать hard monthly budget и поэтому fail-closed до сетевого вызова.
 
 ## Очистка build cache
 

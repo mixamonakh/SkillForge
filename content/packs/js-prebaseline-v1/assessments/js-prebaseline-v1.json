@@ -1,0 +1,207 @@
+[
+  {
+    "key": "js-prebaseline-v1",
+    "version": 1,
+    "title": "Предварительная диагностика JavaScript",
+    "description": "Пул коротких диагностических заданий для выбора следующего полезного шага. Сетка фиксирует версии кандидатов; порядок следующего задания и раннюю остановку определяет runtime routing. Результат не является экзаменационной оценкой и сам по себе не устанавливает mastery или TopicStatus.",
+    "totalBlocks": 6,
+    "estimatedMin": 29,
+    "status": "draft",
+    "selectionRules": {
+      "itemsPerBlock": 3,
+      "minimumItemsPerTopic": 3,
+      "noHints": true,
+      "snapshotTaskVersions": true,
+      "blockLabels": [
+        "Значения и ссылки",
+        "Мутабельность и копирование",
+        "Примитивы и типы",
+        "Приведение и сравнение",
+        "Переменные и область видимости",
+        "Функции и callbacks"
+      ]
+    },
+    "items": [
+      {
+        "taskKey": "cs.values-and-references.trace-shared-object-001",
+        "taskVersion": 1,
+        "blockIndex": 0,
+        "position": 0,
+        "required": false,
+        "dimensionWeights": {
+          "PREDICT_OUTPUT": 100
+        }
+      },
+      {
+        "taskKey": "cs.values-and-references.explain-shared-object-001",
+        "taskVersion": 1,
+        "blockIndex": 0,
+        "position": 1,
+        "required": false,
+        "dimensionWeights": {
+          "EXPLANATION": 100
+        }
+      },
+      {
+        "taskKey": "cs.values-and-references.term-aliasing-001",
+        "taskVersion": 1,
+        "blockIndex": 0,
+        "position": 2,
+        "required": false,
+        "dimensionWeights": {
+          "RECALL": 100
+        }
+      },
+      {
+        "taskKey": "cs.mutability.trace-shallow-copy-001",
+        "taskVersion": 1,
+        "blockIndex": 1,
+        "position": 0,
+        "required": false,
+        "dimensionWeights": {
+          "PREDICT_OUTPUT": 100
+        }
+      },
+      {
+        "taskKey": "cs.mutability.debug-sort-mutation-001",
+        "taskVersion": 1,
+        "blockIndex": 1,
+        "position": 1,
+        "required": false,
+        "dimensionWeights": {
+          "DEBUGGING": 100
+        }
+      },
+      {
+        "taskKey": "cs.mutability.transfer-ui-state-001",
+        "taskVersion": 1,
+        "blockIndex": 1,
+        "position": 2,
+        "required": false,
+        "dimensionWeights": {
+          "TRANSFER": 100
+        }
+      },
+      {
+        "taskKey": "js.values.types.trace-nullish-value-001",
+        "taskVersion": 1,
+        "blockIndex": 2,
+        "position": 0,
+        "required": false,
+        "dimensionWeights": {
+          "PREDICT_OUTPUT": 100
+        }
+      },
+      {
+        "taskKey": "js.values.types.term-primitives-001",
+        "taskVersion": 1,
+        "blockIndex": 2,
+        "position": 1,
+        "required": false,
+        "dimensionWeights": {
+          "RECALL": 100
+        }
+      },
+      {
+        "taskKey": "js.values.types.code-finite-number-001",
+        "taskVersion": 1,
+        "blockIndex": 2,
+        "position": 2,
+        "required": false,
+        "dimensionWeights": {
+          "CODE_CORRECTNESS": 100
+        }
+      },
+      {
+        "taskKey": "js.coercion.equality.trace-default-operators-001",
+        "taskVersion": 1,
+        "blockIndex": 3,
+        "position": 0,
+        "required": false,
+        "dimensionWeights": {
+          "PREDICT_OUTPUT": 100
+        }
+      },
+      {
+        "taskKey": "js.coercion.equality.debug-zero-default-001",
+        "taskVersion": 1,
+        "blockIndex": 3,
+        "position": 1,
+        "required": false,
+        "dimensionWeights": {
+          "DEBUGGING": 100
+        }
+      },
+      {
+        "taskKey": "js.coercion.equality.explain-strict-equality-001",
+        "taskVersion": 1,
+        "blockIndex": 3,
+        "position": 2,
+        "required": false,
+        "dimensionWeights": {
+          "EXPLANATION": 100
+        }
+      },
+      {
+        "taskKey": "js.variables.scope.trace-block-shadowing-001",
+        "taskVersion": 1,
+        "blockIndex": 4,
+        "position": 0,
+        "required": false,
+        "dimensionWeights": {
+          "PREDICT_OUTPUT": 100
+        }
+      },
+      {
+        "taskKey": "js.variables.scope.term-tdz-001",
+        "taskVersion": 1,
+        "blockIndex": 4,
+        "position": 1,
+        "required": false,
+        "dimensionWeights": {
+          "RECALL": 100
+        }
+      },
+      {
+        "taskKey": "js.variables.scope.debug-block-result-001",
+        "taskVersion": 1,
+        "blockIndex": 4,
+        "position": 2,
+        "required": false,
+        "dimensionWeights": {
+          "DEBUGGING": 100
+        }
+      },
+      {
+        "taskKey": "js.functions.basics.trace-callback-order-001",
+        "taskVersion": 1,
+        "blockIndex": 5,
+        "position": 0,
+        "required": false,
+        "dimensionWeights": {
+          "PREDICT_OUTPUT": 100
+        }
+      },
+      {
+        "taskKey": "js.functions.basics.code-active-names-001",
+        "taskVersion": 1,
+        "blockIndex": 5,
+        "position": 1,
+        "required": false,
+        "dimensionWeights": {
+          "CODE_CORRECTNESS": 100
+        }
+      },
+      {
+        "taskKey": "js.functions.basics.transfer-event-handler-001",
+        "taskVersion": 1,
+        "blockIndex": 5,
+        "position": 2,
+        "required": false,
+        "dimensionWeights": {
+          "TRANSFER": 100
+        }
+      }
+    ]
+  }
+]

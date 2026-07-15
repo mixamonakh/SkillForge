@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "2.0" },
+    "evidenceFamilies": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "TERM",
+          "MECHANISM",
+          "TRACE",
+          "DEBUG",
+          "CODE_PRODUCTION",
+          "TRANSFER",
+          "CALIBRATION"
+        ]
+      }
+    },
+    "cognitiveLevel": {
+      "type": "string",
+      "enum": [
+        "LEXICON",
+        "CANONICAL_MECHANISM",
+        "COMPOSITE_MECHANISM",
+        "CONSTRAINED_PRODUCTION",
+        "TRANSFER_INTERVIEW"
+      ]
+    },
+    "productionLoad": {
+      "type": "string",
+      "enum": ["NONE", "LOW", "MEDIUM", "HIGH"]
+    },
+    "transferLevel": {
+      "type": "string",
+      "enum": ["NONE", "NEAR", "WORK_LIKE", "NOVEL"]
+    },
+    "supportLevel": {
+      "type": "string",
+      "enum": ["NONE", "STARTER_CODE", "SCAFFOLDED", "WORKED_EXAMPLE"]
+    },
+    "familyKey": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 160,
+      "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+    },
+    "learningOutcomeKeys": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 160,
+        "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+      }
+    },
+    "misconceptionTags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 160,
+        "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+      }
+    },
+    "estimatedMinutes": { "type": "integer", "minimum": 1, "maximum": 120 },
+    "targetRelevance": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 160,
+        "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+      },
+      "additionalProperties": { "type": "number" }
+    },
+    "documentationUrls": {
+      "minItems": 1,
+      "type": "array",
+      "items": { "type": "string", "format": "uri" }
+    },
+    "mixedEvidence": { "type": "boolean" }
+  },
+  "required": [
+    "schemaVersion",
+    "evidenceFamilies",
+    "cognitiveLevel",
+    "productionLoad",
+    "transferLevel",
+    "supportLevel",
+    "familyKey",
+    "learningOutcomeKeys",
+    "misconceptionTags",
+    "estimatedMinutes",
+    "documentationUrls",
+    "mixedEvidence"
+  ],
+  "additionalProperties": false
+}

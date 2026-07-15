@@ -30,6 +30,11 @@ type ExportResult = {
 
 type ExportBundleType = 'assessment-run' | 'session' | 'topic' | 'profile' | 'pending-review';
 
+type ExportSelection = {
+  bundleType: ExportBundleType;
+  scopeId: string;
+};
+
 type ImportValidation = {
   importId: string;
   schemaVersion: string;
@@ -72,6 +77,25 @@ export function createExportScope(
     };
   }
   return {};
+}
+
+export function exportSelectionFromSearchParams(
+  searchParams: Pick<URLSearchParams, 'get'>,
+): ExportSelection {
+  const assessmentRunId = searchParams.get('assessmentRunId');
+  if (assessmentRunId) return { bundleType: 'assessment-run', scopeId: assessmentRunId };
+
+  const sessionId = searchParams.get('sessionId');
+  if (sessionId) return { bundleType: 'session', scopeId: sessionId };
+
+  const topicKey = searchParams.get('topic');
+  if (topicKey) return { bundleType: 'topic', scopeId: topicKey };
+
+  if (searchParams.get('scope') === 'profile') {
+    return { bundleType: 'profile', scopeId: '' };
+  }
+
+  return { bundleType: 'pending-review', scopeId: '' };
 }
 
 export function ImportExportCenter() {
@@ -137,18 +161,9 @@ export function ImportExportCenter() {
 
 function ExportPanel() {
   const searchParams = useSearchParams();
-  const [bundleType, setBundleType] = useState<ExportBundleType>(
-    searchParams.has('assessmentRunId')
-      ? 'assessment-run'
-      : searchParams.has('topic')
-        ? 'topic'
-        : searchParams.get('scope') === 'profile'
-          ? 'profile'
-          : 'pending-review',
-  );
-  const [scopeId, setScopeId] = useState(
-    searchParams.get('assessmentRunId') ?? searchParams.get('topic') ?? '',
-  );
+  const initialSelection = exportSelectionFromSearchParams(searchParams);
+  const [bundleType, setBundleType] = useState<ExportBundleType>(initialSelection.bundleType);
+  const [scopeId, setScopeId] = useState(initialSelection.scopeId);
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [result, setResult] = useState<ExportResult | null>(null);
@@ -421,11 +436,30 @@ function ImportPanel() {
       {preview ? (
         <ImportPreviewDiff>
           <p className="sf-eyebrow">Анализ ещё не применён</p>
-          <h2>SkillForge создаст evaluations и evidence, затем пересчитает темы</h2>
+          <h2>
+            {(preview.suppressedEvaluationEffects?.length ?? 0) > 0
+              ? 'SkillForge сохранит audit evaluations, но не изменит knowledge state pre-baseline'
+              : 'SkillForge создаст evaluations и evidence, затем пересчитает темы'}
+          </h2>
           <p className="sf-muted">
             Исходные ответы останутся неизменными. Matched: {preview.matchedAttempts}; evaluations:{' '}
-            {preview.evaluationsToCreate}.
+            {preview.evaluationsToCreate}; evidence:{' '}
+            {preview.evidenceToCreate ?? 'не рассчитано для legacy preview'}.
           </p>
+          {(preview.suppressedEvaluationEffects?.length ?? 0) > 0 ? (
+            <div className="sf-callout" role="status">
+              <h3>Pre-baseline: mutation подавлена</h3>
+              <ul className="sf-list">
+                {preview.suppressedEvaluationEffects?.map((effect) => (
+                  <li key={effect.attemptId}>
+                    <code>{effect.attemptId}</code>: Evaluation — audit record; Evidence —{' '}
+                    <strong>SUPPRESSED</strong>; TopicState и mastery — <strong>NO_MUTATION</strong>
+                    .
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
           {preview.unknownAttempts.length || preview.unknownTopics.length ? (
             <div className="sf-callout">
               Unknown attempts: {preview.unknownAttempts.length}; unknown topics:{' '}

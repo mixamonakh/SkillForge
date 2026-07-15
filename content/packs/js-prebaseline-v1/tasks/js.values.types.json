@@ -1,0 +1,157 @@
+[
+  {
+    "stableKey": "js.values.types.trace-nullish-value-001",
+    "version": 1,
+    "topicKey": "js.values.types",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Напиши две строки, которые выведет код. Объяснение не требуется. Если не знаешь, ответ «Не знаю» допустим.\n\n```js\nconst response = { data: null };\n\nconsole.log(response.data === null);\nconsole.log(response.missing === undefined);\n```",
+    "expectedAnswer": {
+      "output": ["true", "true"]
+    },
+    "rubric": {
+      "dimensions": {
+        "PREDICT_OUTPUT": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указаны две строки: true и true в этом порядке"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["TRACE"],
+      "cognitiveLevel": "CANONICAL_MECHANISM",
+      "productionLoad": "NONE",
+      "transferLevel": "NONE",
+      "supportLevel": "NONE",
+      "familyKey": "values.null-and-undefined",
+      "learningOutcomeKeys": ["values.trace.null-and-undefined"],
+      "misconceptionTags": ["values.missing-property-is-null"],
+      "estimatedMinutes": 1,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ],
+      "mixedEvidence": false
+    }
+  },
+  {
+    "stableKey": "js.values.types.term-primitives-001",
+    "version": 1,
+    "topicKey": "js.values.types",
+    "kind": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Выбери все значения, которые в JavaScript относятся к примитивам.",
+    "options": [
+      {
+        "id": "value-string",
+        "text": "'текст'"
+      },
+      {
+        "id": "value-number",
+        "text": "42"
+      },
+      {
+        "id": "value-null",
+        "text": "null"
+      },
+      {
+        "id": "value-array",
+        "text": "[]"
+      },
+      {
+        "id": "value-object",
+        "text": "{}"
+      },
+      {
+        "id": "unknown",
+        "text": "Не знаю"
+      }
+    ],
+    "expectedAnswer": {
+      "selectedOptionIds": ["value-string", "value-number", "value-null"]
+    },
+    "rubric": {
+      "dimensions": {
+        "RECALL": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Выбраны строка, число и null",
+      "Массив и объект не выбраны"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["TERM"],
+      "cognitiveLevel": "LEXICON",
+      "productionLoad": "NONE",
+      "transferLevel": "NONE",
+      "supportLevel": "NONE",
+      "familyKey": "values.primitive-types",
+      "learningOutcomeKeys": ["values.name.primitive-values"],
+      "misconceptionTags": ["values.null-is-object-value", "values.array-is-primitive"],
+      "estimatedMinutes": 1,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ],
+      "mixedEvidence": false
+    }
+  },
+  {
+    "stableKey": "js.values.types.code-finite-number-001",
+    "version": 1,
+    "topicKey": "js.values.types",
+    "kind": "CODE",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Реализуй `isFiniteNumber(value)`. Функция возвращает `true` только для конечного значения типа number. Для `NaN`, `Infinity`, `-Infinity`, строк, `null` и `undefined` она возвращает `false` и ничего не преобразует. Если решение пока неизвестно, можно не угадывать.",
+    "starterCode": "export function isFiniteNumber(value) {\n}\n",
+    "language": "javascript",
+    "rubric": {
+      "dimensions": {
+        "CODE_CORRECTNESS": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Конечные числа, включая 0 и отрицательные дробные значения, дают true",
+      "NaN и бесконечности дают false",
+      "Значения других типов не преобразуются и дают false"
+    ],
+    "testCases": [
+      {
+        "name": "отличает конечные числа от остальных значений",
+        "testCode": "assert.deepEqual([0, -2.5, NaN, Infinity, '3'].map(isFiniteNumber), [true, true, false, false, false]);",
+        "hidden": false,
+        "position": 1
+      },
+      {
+        "name": "обрабатывает вторую бесконечность и nullish значения",
+        "testCode": "assert.deepEqual([-Infinity, null, undefined, 12].map(isFiniteNumber), [false, false, false, true]);",
+        "hidden": true,
+        "position": 2
+      }
+    ],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["CODE_PRODUCTION"],
+      "cognitiveLevel": "CONSTRAINED_PRODUCTION",
+      "productionLoad": "MEDIUM",
+      "transferLevel": "NEAR",
+      "supportLevel": "STARTER_CODE",
+      "familyKey": "values.finite-number-guard",
+      "learningOutcomeKeys": ["values.code.finite-number-guard"],
+      "misconceptionTags": ["values.type-number-always-finite", "values.number-guard-coerces"],
+      "estimatedMinutes": 3,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number/isFinite"
+      ],
+      "mixedEvidence": false
+    }
+  }
+]

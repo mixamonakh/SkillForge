@@ -3,8 +3,14 @@ import { DEFAULT_USER_ID, RunStatus } from '@skillforge/db';
 
 import { ApiError, invalidState, notFound } from '../../common/api-error.js';
 import { PrismaService } from '../../database/prisma.service.js';
+import { asJsonInput } from '../../common/json.js';
 import { parseAssessmentSnapshot } from '../learning/task-view.js';
 import { AssessmentQueryService } from './assessment-query.service.js';
+import {
+  parsePrebaselineSnapshot,
+  pausePrebaselineSnapshot,
+  resumePrebaselineSnapshot,
+} from './prebaseline-snapshot.js';
 
 @Injectable()
 export class AssessmentLifecycleService {
@@ -20,14 +26,26 @@ export class AssessmentLifecycleService {
       throw invalidState('ASSESSMENT_RUN_NOT_DRAFT', 'Диагностика уже была запущена');
     }
     const now = new Date();
+    const prebaseline = parsePrebaselineSnapshot(run.snapshot);
+    const resumedSnapshot = prebaseline ? resumePrebaselineSnapshot(prebaseline, now) : null;
     await this.database.client.$transaction([
       this.database.client.assessmentRun.update({
         where: { id: runId },
-        data: { status: RunStatus.ACTIVE, startedAt: now, pausedAt: null },
+        data: {
+          status: RunStatus.ACTIVE,
+          startedAt: now,
+          pausedAt: null,
+          ...(resumedSnapshot ? { snapshot: asJsonInput(resumedSnapshot) } : {}),
+        },
       }),
       this.database.client.learningSession.update({
         where: { assessmentRunId: runId },
-        data: { status: RunStatus.ACTIVE, startedAt: now, pausedAt: null },
+        data: {
+          status: RunStatus.ACTIVE,
+          startedAt: now,
+          pausedAt: null,
+          ...(resumedSnapshot ? { planSnapshot: asJsonInput(resumedSnapshot) } : {}),
+        },
       }),
     ]);
     return this.queries.run(runId);
@@ -43,14 +61,24 @@ export class AssessmentLifecycleService {
       );
     }
     const now = new Date();
+    const prebaseline = parsePrebaselineSnapshot(run.snapshot);
+    const pausedSnapshot = prebaseline ? pausePrebaselineSnapshot(prebaseline, now) : null;
     await this.database.client.$transaction([
       this.database.client.assessmentRun.update({
         where: { id: runId },
-        data: { status: RunStatus.PAUSED, pausedAt: now },
+        data: {
+          status: RunStatus.PAUSED,
+          pausedAt: now,
+          ...(pausedSnapshot ? { snapshot: asJsonInput(pausedSnapshot) } : {}),
+        },
       }),
       this.database.client.learningSession.update({
         where: { assessmentRunId: runId },
-        data: { status: RunStatus.PAUSED, pausedAt: now },
+        data: {
+          status: RunStatus.PAUSED,
+          pausedAt: now,
+          ...(pausedSnapshot ? { planSnapshot: asJsonInput(pausedSnapshot) } : {}),
+        },
       }),
     ]);
     return this.queries.run(runId);
@@ -62,14 +90,25 @@ export class AssessmentLifecycleService {
     if (run.status !== 'PAUSED') {
       throw invalidState('ASSESSMENT_RUN_NOT_PAUSED', 'Диагностика не находится на паузе');
     }
+    const now = new Date();
+    const prebaseline = parsePrebaselineSnapshot(run.snapshot);
+    const resumedSnapshot = prebaseline ? resumePrebaselineSnapshot(prebaseline, now) : null;
     await this.database.client.$transaction([
       this.database.client.assessmentRun.update({
         where: { id: runId },
-        data: { status: RunStatus.ACTIVE, pausedAt: null },
+        data: {
+          status: RunStatus.ACTIVE,
+          pausedAt: null,
+          ...(resumedSnapshot ? { snapshot: asJsonInput(resumedSnapshot) } : {}),
+        },
       }),
       this.database.client.learningSession.update({
         where: { assessmentRunId: runId },
-        data: { status: RunStatus.ACTIVE, pausedAt: null },
+        data: {
+          status: RunStatus.ACTIVE,
+          pausedAt: null,
+          ...(resumedSnapshot ? { planSnapshot: asJsonInput(resumedSnapshot) } : {}),
+        },
       }),
     ]);
     return this.queries.run(runId);
@@ -77,6 +116,12 @@ export class AssessmentLifecycleService {
 
   public async completeBlock(runId: string): Promise<unknown> {
     const run = await this.requireRun(runId);
+    if (parsePrebaselineSnapshot(run.snapshot)) {
+      throw invalidState(
+        'PREBASELINE_ADAPTIVE_NEXT_REQUIRED',
+        'Pre-baseline продвигается только через adaptive next',
+      );
+    }
     if (run.status !== 'ACTIVE') {
       throw invalidState(
         'ASSESSMENT_RUN_NOT_ACTIVE',
@@ -120,6 +165,12 @@ export class AssessmentLifecycleService {
 
   public async complete(runId: string): Promise<unknown> {
     const run = await this.requireRun(runId);
+    if (parsePrebaselineSnapshot(run.snapshot)) {
+      throw invalidState(
+        'PREBASELINE_ADAPTIVE_NEXT_REQUIRED',
+        'Pre-baseline завершается только stop decision adaptive routing',
+      );
+    }
     if (run.status === 'COMPLETED') return this.queries.run(runId);
     if (run.status !== 'ACTIVE' || !run.session) {
       throw invalidState(

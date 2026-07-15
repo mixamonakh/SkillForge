@@ -1,6 +1,12 @@
+import { EvaluationResultV2Schema, type EvaluationResultV2 } from '@skillforge/contracts';
+import type { EvaluatorType } from '@skillforge/db';
+
 import { currentRunnerResult } from '../../common/bound-runner-result.js';
 import { objectValue, stringArray } from '../../common/json.js';
-import type { EvaluatorType } from '@skillforge/db';
+import {
+  deterministicEvaluationResult,
+  evaluationCoverage,
+} from '../assessment/deterministic-evaluation.js';
 
 type SessionItemRecord = {
   id: string;
@@ -12,6 +18,7 @@ type SessionItemRecord = {
     starterCode: string | null;
     language: string | null;
     options: unknown;
+    rubric: unknown;
     hints: unknown;
     testCases: Array<{ name: string; testCode: string | null; hidden: boolean; position: number }>;
     task: {
@@ -37,6 +44,8 @@ type SessionItemRecord = {
       evaluatorVersion: string;
       rawScore: number | null;
       passed: boolean | null;
+      dimensionScores: unknown;
+      rubricResult: unknown;
     }>;
   }>;
 };
@@ -135,11 +144,46 @@ export function parseAssessmentSnapshot(value: unknown): AssessmentSnapshot | nu
   };
 }
 
+type AttemptEvaluationContext = { taskKind: string; rubric: unknown };
+
+export function projectDeterministicEvaluation(
+  evaluation: NonNullable<SessionItemRecord['attempts'][number]['evaluations']>[number] | undefined,
+  context: AttemptEvaluationContext | undefined,
+): EvaluationResultV2 | null {
+  if (!evaluation) return null;
+  const stored = EvaluationResultV2Schema.safeParse(evaluation.rubricResult);
+  if (stored.success) return stored.data;
+  if (
+    !context ||
+    evaluation.rawScore === null ||
+    !['EXACT_MATCH', 'TEST_RUNNER'].includes(evaluation.evaluatorType)
+  ) {
+    return null;
+  }
+  return deterministicEvaluationResult({
+    taskKind: context.taskKind,
+    rubric: context.rubric,
+    evaluatorType: evaluation.evaluatorType as 'EXACT_MATCH' | 'TEST_RUNNER',
+    evaluatorVersion: evaluation.evaluatorVersion,
+    rawScore: evaluation.rawScore,
+  });
+}
+
 export function serializeAttempt(
   attempt: SessionItemRecord['attempts'][number] | undefined,
+  context?: AttemptEvaluationContext,
+  evaluationOverride?: EvaluationResultV2 | null,
 ): unknown {
   if (!attempt) return null;
-  const deterministicEvaluation = attempt.evaluations?.[0];
+  const deterministicEvaluation =
+    evaluationOverride === undefined
+      ? projectDeterministicEvaluation(attempt.evaluations?.[0], context)
+      : evaluationOverride;
+  const coverage =
+    attempt.submittedAt && context
+      ? (deterministicEvaluation?.coverage ??
+        evaluationCoverage(context.taskKind, context.rubric, false))
+      : null;
   return {
     id: attempt.id,
     revision: attempt.revision,
@@ -152,14 +196,8 @@ export function serializeAttempt(
     hintsUsed: stringArray(attempt.hintsUsed),
     submittedAt: attempt.submittedAt?.toISOString() ?? null,
     runnerOutput: currentRunnerResult(attempt.runnerOutput, attempt.answerCode),
-    deterministicEvaluation: deterministicEvaluation
-      ? {
-          evaluatorType: deterministicEvaluation.evaluatorType,
-          evaluatorVersion: deterministicEvaluation.evaluatorVersion,
-          rawScore: deterministicEvaluation.rawScore,
-          passed: deterministicEvaluation.passed,
-        }
-      : null,
+    evaluationCoverage: coverage,
+    deterministicEvaluation,
   };
 }
 
@@ -192,7 +230,10 @@ export function serializeTaskItem(
       runnerHarness:
         item.taskVersion.task.kind === 'CODE' ? runnerHarness(item.taskVersion.testCases) : null,
     },
-    attempt: serializeAttempt(item.attempts[0]),
+    attempt: serializeAttempt(item.attempts[0], {
+      taskKind: item.taskVersion.task.kind,
+      rubric: item.taskVersion.rubric,
+    }),
   };
 }
 

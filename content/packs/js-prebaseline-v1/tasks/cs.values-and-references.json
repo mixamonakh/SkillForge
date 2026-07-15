@@ -1,0 +1,132 @@
+[
+  {
+    "stableKey": "cs.values-and-references.trace-shared-object-001",
+    "version": 1,
+    "topicKey": "cs.values-and-references",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Напиши две строки, которые выведет код. Объяснение не требуется. Если не знаешь, ответ «Не знаю» допустим.\n\n```js\nconst user = { active: false };\nconst current = user;\ncurrent.active = true;\n\nconsole.log(user.active);\nconsole.log(current === user);\n```",
+    "expectedAnswer": {
+      "output": ["true", "true"]
+    },
+    "rubric": {
+      "dimensions": {
+        "PREDICT_OUTPUT": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указаны две строки: true и true в этом порядке"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["TRACE"],
+      "cognitiveLevel": "CANONICAL_MECHANISM",
+      "productionLoad": "NONE",
+      "transferLevel": "NONE",
+      "supportLevel": "NONE",
+      "familyKey": "references.shared-object",
+      "learningOutcomeKeys": ["references.trace.shared-object"],
+      "misconceptionTags": ["references.assignment-copies-object"],
+      "estimatedMinutes": 1,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ],
+      "mixedEvidence": false
+    }
+  },
+  {
+    "stableKey": "cs.values-and-references.explain-shared-object-001",
+    "version": 1,
+    "topicKey": "cs.values-and-references",
+    "kind": "EXPLAIN",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Две переменные получили один объект. Затем поле объекта изменили через вторую переменную, и новое значение стало видно через первую. Объясни своими словами, почему так произошло. Специальный термин называть не нужно. Если не знаешь, так и напиши: «Не знаю».",
+    "rubric": {
+      "dimensions": {
+        "EXPLANATION": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указано, что обе переменные дают доступ к одному объекту",
+      "Не утверждается, что присваивание создало независимую копию объекта"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["MECHANISM"],
+      "cognitiveLevel": "CANONICAL_MECHANISM",
+      "productionLoad": "NONE",
+      "transferLevel": "NONE",
+      "supportLevel": "NONE",
+      "familyKey": "references.shared-object",
+      "learningOutcomeKeys": ["references.explain.shared-object"],
+      "misconceptionTags": ["references.assignment-copies-object"],
+      "estimatedMinutes": 2,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ],
+      "mixedEvidence": false
+    }
+  },
+  {
+    "stableKey": "cs.values-and-references.term-aliasing-001",
+    "version": 1,
+    "topicKey": "cs.values-and-references",
+    "kind": "SINGLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Как обычно называют ситуацию, когда две переменные дают доступ к одному объекту?",
+    "options": [
+      {
+        "id": "shared-access",
+        "text": "Совместный доступ к одному объекту (aliasing)"
+      },
+      {
+        "id": "deep-copy",
+        "text": "Глубокое копирование"
+      },
+      {
+        "id": "primitive-conversion",
+        "text": "Преобразование в примитив"
+      },
+      {
+        "id": "unknown",
+        "text": "Не знаю"
+      }
+    ],
+    "expectedAnswer": {
+      "selectedOptionIds": ["shared-access"]
+    },
+    "rubric": {
+      "dimensions": {
+        "RECALL": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Выбран совместный доступ к одному объекту (aliasing)"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["TERM"],
+      "cognitiveLevel": "LEXICON",
+      "productionLoad": "NONE",
+      "transferLevel": "NONE",
+      "supportLevel": "NONE",
+      "familyKey": "references.shared-object",
+      "learningOutcomeKeys": ["references.name.aliasing"],
+      "misconceptionTags": ["references.aliasing-means-copy"],
+      "estimatedMinutes": 1,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ],
+      "mixedEvidence": false
+    }
+  }
+]

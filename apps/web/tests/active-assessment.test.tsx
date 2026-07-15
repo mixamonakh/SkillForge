@@ -53,13 +53,36 @@ function taskItem(id: string, kind: TaskKind, topicKey: string, submitted = true
       hintsUsed: [],
       submittedAt: submitted ? '2026-07-11T00:00:00.000Z' : null,
       runnerOutput: null,
+      evaluationCoverage: submitted
+        ? kind === 'PREDICT_OUTPUT'
+          ? {
+              evaluatedDimensions: ['PREDICT_OUTPUT'],
+              pendingDimensions: ['EXPLANATION'],
+              unsupportedDimensions: [],
+              isFinal: false,
+            }
+          : {
+              evaluatedDimensions: [],
+              pendingDimensions: ['EXPLANATION'],
+              unsupportedDimensions: [],
+              isFinal: false,
+            }
+        : null,
       deterministicEvaluation:
         kind === 'PREDICT_OUTPUT'
           ? {
               evaluatorType: 'EXACT_MATCH',
-              evaluatorVersion: 'exact-match-v1.0',
-              rawScore: 100,
-              passed: true,
+              evaluatorVersion: 'exact-match-v2.0',
+              score: null,
+              passed: null,
+              dimensionScores: { PREDICT_OUTPUT: 100 },
+              coverage: {
+                evaluatedDimensions: ['PREDICT_OUTPUT'],
+                pendingDimensions: ['EXPLANATION'],
+                unsupportedDimensions: [],
+                isFinal: false,
+              },
+              feedback: ['Локальная проверка завершена частично.'],
             }
           : null,
     },
@@ -126,8 +149,11 @@ describe('ActiveAssessment integrity states', () => {
       />,
     );
 
-    expect(screen.getByText('js.one.predict_output')).toBeInTheDocument();
-    expect(screen.getByText(/100 \/ 100 · пройдено/i)).toBeInTheDocument();
+    expect(screen.getAllByText('js.one.predict_output')).not.toHaveLength(0);
+    expect(
+      screen.getByText(/вывод программы: 100 \/ 100 · проверено частично/i),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText(/ожидают проверки: объяснение/i)).not.toHaveLength(0);
   });
 
   it('shows completed coverage by distinct topic and deterministic results', async () => {
@@ -136,6 +162,8 @@ describe('ActiveAssessment integrity states', () => {
 
     expect(await screen.findByText('2 из 2')).toBeInTheDocument();
     expect(screen.getAllByText('js.one.predict_output')).not.toHaveLength(0);
-    expect(screen.getAllByText(/100 \/ 100 · пройдено/i)).not.toHaveLength(0);
+    expect(
+      screen.getAllByText(/вывод программы: 100 \/ 100 · проверено частично/i),
+    ).not.toHaveLength(0);
   });
 });

@@ -2,10 +2,34 @@ import { Injectable } from '@nestjs/common';
 import { DEFAULT_USER_ID, Prisma } from '@skillforge/db';
 
 import { conflict, notFound } from '../../common/api-error.js';
-import { asJsonInput } from '../../common/json.js';
+import { asJsonInput, stringArray } from '../../common/json.js';
 import { PrismaService } from '../../database/prisma.service.js';
 import { serializeAttempt } from '../learning/task-view.js';
 import type { AutosaveAttemptDto } from './assessment.dto.js';
+
+const HELP_LEVEL_RANK = {
+  NONE: 0,
+  NUDGE: 1,
+  HINT: 2,
+  MULTIPLE_HINTS: 3,
+  SOLUTION_VIEWED: 4,
+} as const;
+
+type AttemptHelpLevel = keyof typeof HELP_LEVEL_RANK;
+
+export function mergeAttemptHelp(
+  current: { helpLevel: AttemptHelpLevel; hintsUsed: unknown },
+  incoming: { helpLevel: AttemptHelpLevel; hintsUsed: readonly string[] },
+): { helpLevel: AttemptHelpLevel; hintsUsed: string[] } {
+  const helpLevel =
+    HELP_LEVEL_RANK[current.helpLevel] > HELP_LEVEL_RANK[incoming.helpLevel]
+      ? current.helpLevel
+      : incoming.helpLevel;
+  return {
+    helpLevel,
+    hintsUsed: [...new Set([...stringArray(current.hintsUsed), ...incoming.hintsUsed])],
+  };
+}
 
 @Injectable()
 export class AttemptAutosaveService {
@@ -74,6 +98,13 @@ export class AttemptAutosaveService {
         where: { id: current.id, revision: input.revision, submittedAt: null },
         data: {
           ...data,
+          ...(() => {
+            const merged = mergeAttemptHelp(current, input);
+            return {
+              helpLevel: merged.helpLevel,
+              hintsUsed: asJsonInput(merged.hintsUsed),
+            };
+          })(),
           ...(current.answerCode !== data.answerCode ? { runnerOutput: Prisma.DbNull } : {}),
           revision: { increment: 1 },
         },

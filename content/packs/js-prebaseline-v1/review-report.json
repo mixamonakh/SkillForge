@@ -1,0 +1,139 @@
+{
+  "packKey": "js-prebaseline-v1",
+  "packVersion": "1.0.0",
+  "reviewedAt": "2026-07-15T16:25:54Z",
+  "reviewers": ["ai:codex/phase4-content-audit"],
+  "summary": {
+    "pass": 0,
+    "needsHumanReview": 18,
+    "blockImport": 0
+  },
+  "items": [
+    {
+      "stableKey": "cs.values-and-references.trace-shared-object-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "cs.values-and-references.explain-shared-object-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "cs.values-and-references.term-aliasing-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "cs.mutability.trace-shallow-copy-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "cs.mutability.debug-sort-mutation-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "cs.mutability.transfer-ui-state-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "js.values.types.trace-nullish-value-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "js.values.types.term-primitives-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "js.values.types.code-finite-number-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "js.coercion.equality.trace-default-operators-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "js.coercion.equality.debug-zero-default-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "js.coercion.equality.explain-strict-equality-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "js.variables.scope.trace-block-shadowing-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "js.variables.scope.term-tdz-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "js.variables.scope.debug-block-result-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "js.functions.basics.trace-callback-order-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "js.functions.basics.code-active-names-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    },
+    {
+      "stableKey": "js.functions.basics.transfer-event-handler-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Требуются human dry run и педагогическое одобрение перед активацией."],
+      "resolvedFindings": []
+    }
+  ]
+}

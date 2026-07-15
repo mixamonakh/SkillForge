@@ -1,0 +1,28 @@
+[
+  {
+    "schemaVersion": "1.0",
+    "key": "cs.mutability.training.transfer-v1",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "phase": "TRANSFER",
+    "estimatedMinutes": 17,
+    "steps": [
+      {
+        "kind": "TASK",
+        "taskKey": "cs.mutability.training.catalog-update-plan-001",
+        "version": 1,
+        "purpose": "USER_PLAN_TRADEOFFS_EDGE_CASES"
+      },
+      {
+        "kind": "TASK",
+        "taskKey": "cs.mutability.training.rename-card-transfer-001",
+        "version": 1,
+        "purpose": "WORK_LIKE_TRANSFER_EVIDENCE"
+      }
+    ],
+    "completionRule": {
+      "requiredSteps": 2,
+      "minimumNoHelpSuccesses": 1
+    }
+  }
+]

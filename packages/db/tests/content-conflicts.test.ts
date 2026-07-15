@@ -6,9 +6,12 @@ function createDiff(overrides: Partial<ContentDatabaseDiff> = {}): ContentDataba
   return {
     pack: { key: 'js-baseline-v1', version: '1.0.0', checksum: 'pack-checksum' },
     alreadyImported: false,
+    tracks: { create: 2, update: 0, reuse: 0, conflicts: 0 },
+    topics: { create: 18, update: 0, reuse: 0, conflicts: 0 },
     tasks: { create: 72, unchanged: 0, conflicts: 0 },
     contentItems: { create: 18, unchanged: 0, conflicts: 0 },
     assessments: { create: 1, unchanged: 0, conflicts: 0 },
+    sequences: { create: 0, unchanged: 0, conflicts: 0 },
     conflictDetails: [],
     ...overrides,
   };
@@ -23,6 +26,7 @@ describe('assertNoContentConflicts', () => {
           tasks: { create: 0, unchanged: 72, conflicts: 0 },
           contentItems: { create: 0, unchanged: 18, conflicts: 0 },
           assessments: { create: 0, unchanged: 1, conflicts: 0 },
+          sequences: { create: 0, unchanged: 0, conflicts: 0 },
         }),
       ),
     ).not.toThrow();
@@ -42,6 +46,25 @@ describe('assertNoContentConflicts', () => {
         createDiff({
           tasks: { create: 0, unchanged: 71, conflicts: 1 },
           conflictDetails: [conflict],
+        }),
+      ),
+    ).toThrow(/создайте новую version/iu);
+  });
+
+  it('запрещает несовместимое cross-pack переопределение shared topic', () => {
+    expect(() =>
+      assertNoContentConflicts(
+        createDiff({
+          topics: { create: 0, update: 0, reuse: 17, conflicts: 1 },
+          conflictDetails: [
+            {
+              kind: 'topic',
+              stableKey: 'cs.values-and-references',
+              version: '1.0.0',
+              existingChecksum: 'owner-semantics',
+              incomingChecksum: 'foreign-semantics',
+            },
+          ],
         }),
       ),
     ).toThrow(/создайте новую version/iu);

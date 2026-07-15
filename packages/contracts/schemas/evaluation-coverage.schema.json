@@ -1,0 +1,39 @@
+{
+  "$ref": "#/definitions/EvaluationCoverage",
+  "definitions": {
+    "EvaluationCoverage": {
+      "type": "object",
+      "properties": {
+        "evaluatedDimensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pendingDimensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unsupportedDimensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isFinal": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "evaluatedDimensions",
+        "pendingDimensions",
+        "unsupportedDimensions",
+        "isFinal"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

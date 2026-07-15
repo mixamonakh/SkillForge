@@ -9,6 +9,12 @@ export function createPrismaClient(databaseUrl = process.env.DATABASE_URL): Pris
     throw new Error('DATABASE_URL обязателен для подключения к PostgreSQL');
   }
 
-  const adapter = new PrismaPg({ connectionString: databaseUrl });
+  const connectionUrl = new URL(databaseUrl);
+  const schema = connectionUrl.searchParams.get('schema')?.trim();
+  connectionUrl.searchParams.delete('schema');
+  const adapter = new PrismaPg(
+    { connectionString: connectionUrl.toString() },
+    schema ? { schema } : undefined,
+  );
   return new PrismaClient({ adapter });
 }

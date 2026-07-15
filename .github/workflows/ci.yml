@@ -206,6 +206,19 @@ jobs:
     name: Playwright critical flow
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      COMPOSE_PROJECT_NAME: skillforge-ci-e2e
+      POSTGRES_VOLUME_NAME: skillforge_ci_e2e_postgres
+      SEED_CONTENT_PACKS: js-baseline-v1,js-prebaseline-v1,js-core-training-v1
+      AI_MODE: api-assisted
+      AI_PROVIDER: fake
+      AI_FAKE_PROVIDER_ENABLED: 'true'
+      AI_ATTEMPT_REVIEW_ENABLED: 'true'
+      AI_NUDGE_ENABLED: 'true'
+      AI_MONTHLY_BUDGET_USD: '10'
+      OPENAI_PRICE_INPUT_USD_PER_MILLION: '1'
+      OPENAI_PRICE_CACHED_INPUT_USD_PER_MILLION: '1'
+      OPENAI_PRICE_OUTPUT_USD_PER_MILLION: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -218,9 +231,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --dir e2e exec playwright install --with-deps chromium
       - name: Start a clean production stack
-        run: |
-          docker compose down --volumes --remove-orphans
-          docker compose up --detach --build --wait --wait-timeout 300
+        run: docker compose up --detach --build --wait --wait-timeout 300
       - name: Verify runtime users are non-root
         run: |
           test "$(docker compose exec -T api id -u)" -ne 0
@@ -229,9 +240,13 @@ jobs:
         env:
           E2E_COMPOSE_RESTART: '1'
           E2E_EXPECT_CLEAN: '1'
+          E2E_FAKE_AI: '1'
         run: pnpm test:e2e
       - name: Verify timestamped PostgreSQL and content-manifest backup
         run: ./scripts/backup.sh
+      - name: Stop the disposable stack without deleting its volume
+        if: always()
+        run: docker compose down
       - name: Collect Compose logs on failure
         if: failure()
         run: docker compose logs --no-color --timestamps db api web > compose.log

@@ -13,7 +13,9 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:integration": "vitest run --config vitest.integration.config.ts --passWithNoTests",
-    "openapi:generate": "tsx src/openapi.ts"
+    "openapi:generate": "tsx src/openapi.ts",
+    "ai:smoke": "tsx src/scripts/ai-api-cli.ts smoke",
+    "ai:usage": "tsx src/scripts/ai-api-cli.ts usage"
   },
   "dependencies": {
     "@fastify/helmet": "13.1.0",
@@ -23,6 +25,7 @@
     "@nestjs/core": "11.1.28",
     "@nestjs/platform-fastify": "11.1.28",
     "@nestjs/swagger": "11.4.5",
+    "@skillforge/ai-provider": "workspace:*",
     "@skillforge/contracts": "workspace:*",
     "@skillforge/db": "workspace:*",
     "@skillforge/learning-engine": "workspace:*",

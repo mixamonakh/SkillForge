@@ -14,7 +14,7 @@
 
 ### Прохождение
 
-`AssessmentRun` сохраняет snapshot blueprint/task versions, текущий блок/позицию и lifecycle. Assessment связан с `LearningSession`; `SessionItem` фиксирует упорядоченную TaskVersion. `Attempt` принадлежит пользователю, session и TaskVersion и обновляется autosave с optimistic revision.
+`AssessmentRun` сохраняет snapshot blueprint/task versions, текущий блок/позицию и lifecycle. Assessment связан с `LearningSession`; `SessionItem` фиксирует упорядоченную TaskVersion. `LearningSession.learningPhase` явно хранит `CALIBRATION`, `ACQUISITION`, `CONSOLIDATION` или `TRANSFER`. `LearningSequenceBlueprint` версионирует CONTENT/TASK steps и completion rule, а session хранит immutable snapshot выбранной version. `Attempt` принадлежит пользователю, session и TaskVersion и обновляется autosave с optimistic revision.
 
 Snapshot позволяет продолжить старую попытку после релиза нового content pack.
 
@@ -45,6 +45,7 @@ User ─┬─ AssessmentRun ─ LearningSession ─ SessionItem ─ TaskVersion
 Track ─ Topic ─ Task ─ TaskVersion ─ TaskTestCase
              └─ ContentItem
 AssessmentBlueprint ─ AssessmentBlueprintItem ─ TaskVersion
+LearningSequenceBlueprint ─ Topic + versioned ContentItem/TaskVersion refs
 TargetTrack ─ TargetTrackRule ─ Topic/Track
 ```
 
@@ -60,7 +61,17 @@ TargetTrack ─ TargetTrackRule ─ Topic/Track
 8. ImportBatch APPLIED и checksum защищают от повторного evidence.
 9. Run/session после restart продолжаются из PostgreSQL.
 10. Даты хранятся UTC; индексы покрывают user/status/due/occurredAt.
+11. Новая session получает explicit `LearningPhase`; staged DB default существует только для
+    совместимости migration transition.
+12. Sequence key/version/checksum immutable, а активное прохождение читает snapshot, не live
+    blueprint.
 
 ## Миграции
 
 Схема изменяется только через сохранённые Prisma migrations. `prisma db push` не является production workflow. Destructive изменение требует backup, явного плана преобразования и проверки сохранности attempts/evidence.
+
+Миграция `20260715000000_learning_sequences_and_phases` создаёт enum/blueprint table и добавляет
+сначала nullable `learningPhase`. Затем она backfill-ит существующие режимы
+`ASSESSMENT→CALIBRATION`, `TRAINING→ACQUISITION`, `REVIEW|RETURN→CONSOLIDATION`,
+`INTERVIEW|BATTLE→TRANSFER` и только после этого ставит `NOT NULL`. Attempts, answers,
+evaluations, evidence, snapshots и imports миграция не обновляет и не удаляет.

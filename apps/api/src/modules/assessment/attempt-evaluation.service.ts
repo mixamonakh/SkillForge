@@ -1,12 +1,16 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { RunnerResponseSchema } from '@skillforge/contracts';
+import { RunnerResponseSchema, type EvaluationResultV2 } from '@skillforge/contracts';
 import { DEFAULT_USER_ID, EvaluatorType } from '@skillforge/db';
 
 import { ApiError, conflict, invalidState, notFound } from '../../common/api-error.js';
 import { bindRunnerResult, currentRunnerResult } from '../../common/bound-runner-result.js';
-import { asJsonInput } from '../../common/json.js';
+import { asJsonInput, stringArray } from '../../common/json.js';
 import { PrismaService } from '../../database/prisma.service.js';
-import { parseAssessmentSnapshot, serializeAttempt } from '../learning/task-view.js';
+import {
+  parseAssessmentSnapshot,
+  projectDeterministicEvaluation,
+  serializeAttempt,
+} from '../learning/task-view.js';
 import {
   MasteryService,
   evidenceKindForTask,
@@ -14,10 +18,23 @@ import {
 } from '../mastery/mastery.service.js';
 import {
   choiceScore,
+  deterministicEvaluationResult,
+  evaluationCoverage,
   exactOutputScore,
-  pendingExternalReview,
   runnerScore,
 } from './deterministic-evaluation.js';
+import { isPrebaselineSnapshot } from './prebaseline-snapshot.js';
+
+function isUnknownCalibrationAnswer(input: {
+  answerText: string | null;
+  selectedOptions: unknown;
+}): boolean {
+  const normalized = input.answerText
+    ?.trim()
+    .toLocaleLowerCase('ru-RU')
+    .replace(/[.!?]+$/u, '');
+  return normalized === 'не знаю' || stringArray(input.selectedOptions).includes('unknown');
+}
 
 @Injectable()
 export class AttemptEvaluationService {
@@ -81,23 +98,50 @@ export class AttemptEvaluationService {
       const attempt = await transaction.attempt.findFirst({
         where: { id: attemptId, userId: DEFAULT_USER_ID },
         include: {
-          evaluations: { orderBy: { createdAt: 'desc' } },
+          evaluations: {
+            where: {
+              evaluatorType: { in: ['EXACT_MATCH', 'TEST_RUNNER'] as EvaluatorType[] },
+              supersededBy: null,
+            },
+            orderBy: { createdAt: 'desc' },
+            take: 1,
+          },
           session: { include: { assessmentRun: true } },
           sessionItem: true,
           taskVersion: { include: { task: { include: { topic: true } } } },
         },
       });
       if (!attempt) throw notFound('ATTEMPT_NOT_FOUND', 'Попытка не найдена');
+      const prebaseline = isPrebaselineSnapshot(attempt.session.assessmentRun?.snapshot);
+      const unknownCalibrationAnswer =
+        prebaseline &&
+        isUnknownCalibrationAnswer({
+          answerText: attempt.answerText,
+          selectedOptions: attempt.selectedOptions,
+        });
       if (!['ACTIVE', 'PAUSED'].includes(attempt.session.status)) {
         throw invalidState('SESSION_NOT_ACTIVE', 'Сессия не находится в активном состоянии');
       }
-      if (attempt.submittedAt && attempt.evaluations.length > 0) {
-        return { attempt: serializeAttempt(attempt), evaluation: attempt.evaluations[0] };
-      }
       const taskKind = attempt.taskVersion.task.kind;
+      if (attempt.submittedAt) {
+        const projected = projectDeterministicEvaluation(attempt.evaluations[0], {
+          taskKind,
+          rubric: attempt.taskVersion.rubric,
+        });
+        const coverage =
+          projected?.coverage ?? evaluationCoverage(taskKind, attempt.taskVersion.rubric, false);
+        return {
+          attempt: serializeAttempt(attempt, {
+            taskKind,
+            rubric: attempt.taskVersion.rubric,
+          }),
+          evaluation: projected,
+          pendingExternalReview: coverage.pendingDimensions.length > 0,
+        };
+      }
       const currentRunner =
         taskKind === 'CODE' ? currentRunnerResult(attempt.runnerOutput, attempt.answerCode) : null;
-      if (taskKind === 'CODE' && !currentRunner) {
+      if (taskKind === 'CODE' && !currentRunner && !unknownCalibrationAnswer) {
         throw invalidState(
           'CODE_RUN_REQUIRED',
           'Перед отправкой запусти тесты для текущей версии кода',
@@ -113,14 +157,25 @@ export class AttemptEvaluationService {
       } else if (taskKind === 'PREDICT_OUTPUT') {
         evaluatorType = 'EXACT_MATCH';
         rawScore = exactOutputScore(attempt.answerText, attempt.taskVersion.expectedAnswer);
-      } else if (taskKind === 'CODE') {
+      } else if (taskKind === 'CODE' && currentRunner !== null) {
         evaluatorType = 'TEST_RUNNER';
         rawScore = runnerScore(currentRunner);
       }
-      let evaluation: unknown = null;
+      let evaluation: EvaluationResultV2 | null = null;
+      let coverage = evaluationCoverage(taskKind, attempt.taskVersion.rubric, false);
       if (evaluatorType && rawScore !== null) {
         const reliability = evaluatorType === 'TEST_RUNNER' ? 1 : 0.95;
         const kind = evidenceKindForTask(taskKind);
+        const evaluatorVersion =
+          evaluatorType === 'TEST_RUNNER' ? 'browser-worker-v1.0' : 'exact-match-v2.0';
+        const result = deterministicEvaluationResult({
+          taskKind,
+          rubric: attempt.taskVersion.rubric,
+          evaluatorType,
+          evaluatorVersion,
+          rawScore,
+        });
+        coverage = result.coverage;
         const previousEvaluation = attempt.sessionItemId
           ? await transaction.evaluation.findFirst({
               where: {
@@ -136,43 +191,44 @@ export class AttemptEvaluationService {
             attemptId: attempt.id,
             userId: DEFAULT_USER_ID,
             evaluatorType: evaluatorType as EvaluatorType,
-            evaluatorVersion:
-              evaluatorType === 'TEST_RUNNER' ? 'browser-worker-v1.0' : 'exact-match-v1.0',
+            evaluatorVersion,
             rawScore,
-            passed: rawScore >= 100,
+            passed: result.passed,
             reliability,
-            dimensionScores: asJsonInput({ [kind]: rawScore }),
-            rubricResult: asJsonInput({ deterministic: true }),
+            dimensionScores: asJsonInput(result.dimensionScores),
+            rubricResult: asJsonInput(result),
             ...(previousEvaluation ? { supersedesId: previousEvaluation.id } : {}),
           },
         });
-        const normalized = initialEvidenceNormalization({
-          rawScore,
-          reliability,
-          kind,
-          helpLevel: attempt.helpLevel,
-          halfLifeDays: attempt.taskVersion.task.topic.defaultHalfLifeDays,
-        });
-        await transaction.evidence.create({
-          data: {
-            userId: DEFAULT_USER_ID,
-            topicId: attempt.taskVersion.task.topic.id,
-            evaluationId: created.id,
-            kind,
+        if (!prebaseline && Object.hasOwn(result.dimensionScores, kind)) {
+          const normalized = initialEvidenceNormalization({
             rawScore,
-            normalizedScore: normalized.normalizedScore,
-            weight: normalized.weight,
-            occurredAt: submittedAt,
-            provenance: asJsonInput({
-              evaluator: evaluatorType,
-              evaluatorVersion: created.evaluatorVersion,
-              attemptId: attempt.id,
-              taskVersionId: attempt.taskVersionId,
-            }),
-          },
-        });
-        await this.mastery.recomputeWithin(transaction, [attempt.taskVersion.task.topic.id]);
-        evaluation = created;
+            reliability,
+            kind,
+            helpLevel: attempt.helpLevel,
+            halfLifeDays: attempt.taskVersion.task.topic.defaultHalfLifeDays,
+          });
+          await transaction.evidence.create({
+            data: {
+              userId: DEFAULT_USER_ID,
+              topicId: attempt.taskVersion.task.topic.id,
+              evaluationId: created.id,
+              kind,
+              rawScore,
+              normalizedScore: normalized.normalizedScore,
+              weight: normalized.weight,
+              occurredAt: submittedAt,
+              provenance: asJsonInput({
+                evaluator: evaluatorType,
+                evaluatorVersion: created.evaluatorVersion,
+                attemptId: attempt.id,
+                taskVersionId: attempt.taskVersionId,
+              }),
+            },
+          });
+          await this.mastery.recomputeWithin(transaction, [attempt.taskVersion.task.topic.id]);
+        }
+        evaluation = result;
       }
       await transaction.learningSession.update({
         where: { id: attempt.sessionId },
@@ -201,9 +257,13 @@ export class AttemptEvaluationService {
       }
       const saved = await transaction.attempt.findUniqueOrThrow({ where: { id: attempt.id } });
       return {
-        attempt: serializeAttempt(saved),
+        attempt: serializeAttempt(
+          saved,
+          { taskKind, rubric: attempt.taskVersion.rubric },
+          evaluation,
+        ),
         evaluation,
-        pendingExternalReview: pendingExternalReview(taskKind),
+        pendingExternalReview: coverage.pendingDimensions.length > 0,
       };
     });
   }

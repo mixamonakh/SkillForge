@@ -51,4 +51,48 @@ describe('AssessmentCatalog', () => {
     await waitFor(() => expect(mocks.push).toHaveBeenCalledWith('/assessment/completed-run'));
     expect(mocks.apiMutation).not.toHaveBeenCalled();
   });
+
+  it('starts the draft prebaseline through its dedicated adaptive endpoint', async () => {
+    mocks.apiFetch.mockResolvedValue([
+      {
+        key: 'js-prebaseline-v1',
+        version: 1,
+        title: 'Быстрая калибровка JavaScript',
+        description: 'Короткая адаптивная калибровка',
+        totalBlocks: 1,
+        totalItems: 18,
+        estimatedMin: 29,
+        taskKinds: ['SINGLE_CHOICE', 'PREDICT_OUTPUT', 'CODE'],
+        flow: 'ADAPTIVE_PREBASELINE',
+        contentStatus: 'DRAFT',
+        reviewState: 'NEEDS_HUMAN_REVIEW',
+        activeRun: null,
+        latestCompletedRun: null,
+        completedRuns: 0,
+      },
+    ]);
+    mocks.apiMutation.mockResolvedValue({ runId: 'prebaseline-run' });
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    render(
+      <QueryClientProvider client={client}>
+        <AssessmentCatalog />
+      </QueryClientProvider>,
+    );
+
+    expect(await screen.findByText('Draft · нужен human review')).toBeInTheDocument();
+    expect(screen.getByText(/human dry run/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /^начать$/i }));
+
+    await waitFor(() =>
+      expect(mocks.apiMutation).toHaveBeenCalledWith(
+        '/api/v1/assessments/prebaseline/start',
+        'POST',
+      ),
+    );
+    expect(mocks.push).toHaveBeenCalledWith('/assessment/prebaseline-run');
+    expect(mocks.apiMutation).not.toHaveBeenCalledWith(
+      expect.stringContaining('/runs'),
+      expect.anything(),
+    );
+  });
 });

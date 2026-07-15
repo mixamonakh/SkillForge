@@ -1,0 +1,28 @@
+[
+  {
+    "schemaVersion": "1.0",
+    "key": "cs.mutability.training.consolidation-v1",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "phase": "CONSOLIDATION",
+    "estimatedMinutes": 8,
+    "steps": [
+      {
+        "kind": "TASK",
+        "taskKey": "cs.mutability.training.filters-delayed-trace-001",
+        "version": 1,
+        "purpose": "DELAYED_RETRIEVAL_TRACE"
+      },
+      {
+        "kind": "TASK",
+        "taskKey": "cs.mutability.training.append-notification-001",
+        "version": 1,
+        "purpose": "SHORT_NO_HELP_PRODUCTION"
+      }
+    ],
+    "completionRule": {
+      "requiredSteps": 2,
+      "minimumNoHelpSuccesses": 2
+    }
+  }
+]

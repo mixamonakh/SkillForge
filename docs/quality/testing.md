@@ -13,6 +13,9 @@
 - import/export Zod/JSON schemas и canonical checksum;
 - content graph/schema validation;
 - runner protocol utilities и output cap.
+- content metadata v1 compatibility, strict v2 metadata и generated JSON Schema;
+- evaluation coverage: partial/final/pending/unsupported dimensions и canonical choice answer keys;
+- capability family mapping, sufficiency gates, pending mixed evidence, help/recency factors и порядок входных evidence;
 
 Целевое branch coverage: learning engine ≥90%, import/export ≥85%. Детерминированное API core (runner binding/evaluation, strict export/import boundaries, session planner и honest metric helpers) имеет обязательный threshold ≥80% для statements/branches/functions/lines. Transactional services дополнительно проверяются real-PostgreSQL integration и e2e; coverage не заменяет invariant assertions.
 
@@ -23,6 +26,8 @@
 - optimistic autosave и stale revision 409;
 - deterministic Evaluation → Evidence persistence;
 - recompute TopicState/ReviewSchedule в transaction;
+- DRAFT source pack и неактивные exact sequence refs скрыты и от recommendation, и от direct selection;
+- isolated acquisition: exact CONTENT/TASK order, progress, no-help retry, deterministic evidence, capability и review schedule;
 - content import idempotency и immutable used TaskVersion;
 - import validate/preview/apply/rollback/checksum deduplication;
 - сохранение после API/container restart.
@@ -39,6 +44,7 @@ Tests используют отдельную test DB/schema и реальные
 - code runner result/timeout;
 - import preview current→projected;
 - loading/empty/error/insufficient/populated states;
+- capability matrix: семь families, read-only states, nullable estimate и доступные текстовые labels;
 - keyboard/focus и accessible names.
 
 ## E2E Playwright
@@ -58,6 +64,8 @@ Tests используют отдельную test DB/schema и реальные
 11. Roadmap status меняется только через evidence;
 12. restart services → data persists.
 
+Pre-release acquisition входит в `critical-flow.spec.ts`, но fail-closed пропускается без `E2E_EXPECT_CLEAN=1`: canonical `js-core-training-v1` остаётся DRAFT. На отдельном disposable Compose volume test проверяет DRAFT manifest, активирует ровно четыре acquisition tasks и четыре content refs, затем проходит recommendation → CONTENT/TASK sequence → pause/resume → runner → Evidence/Capability. Source JSON, review status, consolidation и transfer не меняются.
+
 ## Обязательные edge cases
 
 - русский title не влияет на stable ID;
@@ -76,6 +84,10 @@ Tests используют отдельную test DB/schema и реальные
 - worker infinite loop timeout и termination;
 - console/source size capped;
 - free text remains pending.
+- mixed exact-match сохраняет dimension score, но оставляет overall score/pass nullable;
+- старый export/import v1 contract остаётся совместимым после добавления evaluation v2;
+- capability endpoint не изменяет `TopicState`; v1 evidence получает только conservative family mapping;
+- numeric output (`2`) не теряется при удалении настоящих list markers (`1.`/`1)`);
 
 ## Полная проверка
 

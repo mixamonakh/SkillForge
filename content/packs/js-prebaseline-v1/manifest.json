@@ -1,0 +1,40 @@
+{
+  "key": "js-prebaseline-v1",
+  "version": "1.0.0",
+  "locale": "ru",
+  "createdAt": "2026-07-15",
+  "status": "draft",
+  "requiresAppSchema": ">=2.0.0 <3.0.0",
+  "tracks": ["cs-foundation", "javascript-core"],
+  "counts": {
+    "topics": 6,
+    "tasks": 18,
+    "assessments": 1,
+    "sequences": 0
+  },
+  "requirements": {
+    "baselineItems": 18,
+    "blocks": 6,
+    "itemsPerBlock": 3,
+    "minimumTaskKinds": 6,
+    "minimumDeterministicTasks": 11,
+    "minimumExplanationTasks": 2,
+    "minimumDebuggingTasks": 5,
+    "minimumAiReviewOrCompareTasks": 0,
+    "minimumMixedTasks": 0
+  },
+  "sources": [
+    {
+      "title": "ECMAScript Language Specification",
+      "url": "https://tc39.es/ecma262/"
+    },
+    {
+      "title": "MDN JavaScript Guide",
+      "url": "https://developer.mozilla.org/docs/Web/JavaScript/Guide"
+    },
+    {
+      "title": "React: Updating Arrays in State",
+      "url": "https://react.dev/learn/updating-arrays-in-state"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "key": "cs.values-and-references",
+    "trackKey": "cs-foundation",
+    "title": "Значения и ссылки",
+    "shortDescription": "Различать копирование значения и совместный доступ к объекту.",
+    "whyImportant": "Ошибки с aliasing приводят к неожиданным изменениям данных и нестабильным контрактам функций.",
+    "atWork": "Нужно при проектировании DTO, state updates и API между модулями.",
+    "atInterview": "Проверяется через трассировку присваиваний и изменения вложенных объектов.",
+    "position": 1,
+    "defaultHalfLifeDays": 90,
+    "status": "active",
+    "prerequisites": [],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ]
+    }
+  },
+  {
+    "key": "cs.mutability",
+    "trackKey": "cs-foundation",
+    "title": "Мутабельность и копирование",
+    "shortDescription": "Понимать поверхностное копирование, мутацию и неизменяемые обновления.",
+    "whyImportant": "Корректная работа с состоянием требует понимать границы shallow copy.",
+    "atWork": "Встречается в reducer, кешах, React state и преобразовании ответов API.",
+    "atInterview": "Проверяется задачами на spread, вложенные структуры и побочные эффекты.",
+    "position": 2,
+    "defaultHalfLifeDays": 90,
+    "status": "active",
+    "prerequisites": ["cs.values-and-references"],
+    "metadata": {
+      "yandexRelevance": 5,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Glossary/Shallow_copy"]
+    }
+  }
+]

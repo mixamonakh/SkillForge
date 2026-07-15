@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { ErrorState, LoadingState } from '@/components/data-state';
+import { AiUsagePanel } from '@/features/ai/ai-usage';
 import { apiFetch, apiMutation } from '@/shared/api/client';
 
 type SettingsData = {
@@ -137,10 +138,10 @@ export function SettingsPageContent() {
             >
               <option value="manual">Manual — без API key</option>
               <option value="hybrid" disabled>
-                Hybrid — future
+                Hybrid — legacy preference
               </option>
               <option value="api-assisted" disabled>
-                API-assisted — future
+                API-assisted — настраивается окружением
               </option>
             </select>
           </label>
@@ -156,9 +157,11 @@ export function SettingsPageContent() {
           </label>
           <p className="sf-callout">
             Manual mode полностью функционален: экспортируй prompt bundle во внешний ChatGPT и
-            импортируй strict JSON. Встроенного AI-чата нет.
+            импортируй strict JSON. API-assisted features включаются только через серверные feature
+            flags; встроенного AI-чата нет.
           </p>
         </SectionCard>
+        <AiUsagePanel />
         <SectionCard>
           <h2>Интерфейс</h2>
           <label className="sf-field">

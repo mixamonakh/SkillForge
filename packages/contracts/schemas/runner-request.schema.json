@@ -11,7 +11,10 @@
         },
         "language": {
           "type": "string",
-          "enum": ["javascript", "typescript"]
+          "enum": [
+            "javascript",
+            "typescript"
+          ]
         },
         "source": {
           "type": "string",
@@ -27,7 +30,13 @@
           "maximum": 2000
         }
       },
-      "required": ["requestId", "language", "source", "harness", "timeoutMs"],
+      "required": [
+        "requestId",
+        "language",
+        "source",
+        "harness",
+        "timeoutMs"
+      ],
       "additionalProperties": false
     }
   },

@@ -4,6 +4,10 @@ import { describe, expect, it, vi } from 'vitest';
 import type { PrismaService } from '../src/database/prisma.service.js';
 import type { SessionRecommendationService } from '../src/modules/sessions/session-recommendation.service.js';
 import type { MasteryService } from '../src/modules/mastery/mastery.service.js';
+import {
+  defaultLearningPhaseForMode,
+  resolveLearningPhase,
+} from '../src/modules/sessions/session-learning-phase.js';
 import { SessionPlanDto } from '../src/modules/sessions/sessions.dto.js';
 import { SessionsService } from '../src/modules/sessions/sessions.service.js';
 
@@ -30,6 +34,36 @@ describe('SessionPlanDto', () => {
 
     expect(withoutReturn.some((error) => error.property === 'returnFromSessionId')).toBe(true);
     expect(withReturn).toHaveLength(0);
+  });
+
+  it('accepts only stable sequence keys and sequence learning phases', async () => {
+    const valid = await validate(
+      planDto({
+        learningPhase: 'CONSOLIDATION',
+        sequenceKey: 'js.references.consolidation-v1',
+      }),
+    );
+    const invalidKey = await validate(planDto({ sequenceKey: 'Ссылки и объекты' }));
+
+    expect(valid).toHaveLength(0);
+    expect(invalidKey.some((error) => error.property === 'sequenceKey')).toBe(true);
+  });
+});
+
+describe('SessionMode to LearningPhase mapping', () => {
+  it('maps every persisted session mode explicitly', () => {
+    expect(defaultLearningPhaseForMode('ASSESSMENT')).toBe('CALIBRATION');
+    expect(defaultLearningPhaseForMode('TRAINING')).toBe('ACQUISITION');
+    expect(defaultLearningPhaseForMode('REVIEW')).toBe('CONSOLIDATION');
+    expect(defaultLearningPhaseForMode('RETURN')).toBe('CONSOLIDATION');
+    expect(defaultLearningPhaseForMode('INTERVIEW')).toBe('TRANSFER');
+    expect(defaultLearningPhaseForMode('BATTLE')).toBe('TRANSFER');
+  });
+
+  it('allows an explicit consolidation route for training and rejects mismatched phases', () => {
+    expect(resolveLearningPhase('TRAINING', 'CONSOLIDATION')).toBe('CONSOLIDATION');
+    expect(() => resolveLearningPhase('REVIEW', 'TRANSFER')).toThrow(RangeError);
+    expect(() => resolveLearningPhase('INTERVIEW', 'ACQUISITION')).toThrow(RangeError);
   });
 });
 
@@ -63,6 +97,7 @@ describe('SessionsService return plan', () => {
     expect(result).toMatchObject({
       mode: 'RETURN',
       loadMode: 'RETURN',
+      learningPhase: 'CONSOLIDATION',
       topicKeys: ['js.source-topic'],
       returnFromSessionId: RETURN_FROM_SESSION_ID,
     });
@@ -96,5 +131,46 @@ describe('SessionsService return plan', () => {
     await expect(
       service.plan(planDto({ topicKeys: ['js.source-topic'], codeLanguage: 'typescript' })),
     ).rejects.toMatchObject({ code: 'SESSION_CODE_LANGUAGE_UNAVAILABLE' });
+  });
+
+  it('normalizes an explicit compatible phase and rejects mismatched phase or multi-topic sequence', async () => {
+    const database = {
+      client: {
+        topic: {
+          findMany: vi
+            .fn()
+            .mockResolvedValue([{ key: 'js.source-topic' }, { key: 'js.second-topic' }]),
+        },
+      },
+    } as unknown as PrismaService;
+    const recommendations = {} as SessionRecommendationService;
+    const service = new SessionsService(database, recommendations, mastery);
+
+    await expect(
+      service.plan(
+        planDto({
+          mode: 'TRAINING',
+          topicKeys: ['js.source-topic'],
+          learningPhase: 'CONSOLIDATION',
+        }),
+      ),
+    ).resolves.toMatchObject({ learningPhase: 'CONSOLIDATION' });
+    await expect(
+      service.plan(
+        planDto({
+          mode: 'REVIEW',
+          topicKeys: ['js.source-topic'],
+          learningPhase: 'TRANSFER',
+        }),
+      ),
+    ).rejects.toMatchObject({ code: 'SESSION_LEARNING_PHASE_MISMATCH' });
+    await expect(
+      service.plan(
+        planDto({
+          topicKeys: ['js.source-topic', 'js.second-topic'],
+          sequenceKey: 'js.references.acquisition-v1',
+        }),
+      ),
+    ).rejects.toMatchObject({ code: 'SESSION_SEQUENCE_TOPIC_COUNT_INVALID' });
   });
 });

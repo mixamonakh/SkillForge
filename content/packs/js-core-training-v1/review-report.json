@@ -1,0 +1,220 @@
+{
+  "packKey": "js-core-training-v1",
+  "packVersion": "1.0.0",
+  "packChecksum": "69a843381c05c091a8385008585a10c0c55411d2745e16b2d88f8320553003b2",
+  "reviewedAt": "2026-07-15T16:41:16Z",
+  "reviewers": ["ai:codex-content-review-v1"],
+  "releaseDecision": "KEEP_DRAFT_DO_NOT_IMPORT",
+  "design": {
+    "targetAudience": "Взрослый JavaScript/frontend-разработчик с локализованным пробелом в values/references и immutable state updates.",
+    "purpose": "Один bounded learning sequence от shared identity и shallow copy к рабочему UI-state update.",
+    "topicMap": ["cs.values-and-references", "cs.mutability"],
+    "prerequisites": ["Базовый синтаксис JavaScript, объекты, массивы и функции"],
+    "learningOutcomes": [
+      "Трассировать общую идентичность объектов и shallow-copy boundaries",
+      "Копировать только изменённый путь без мутации входа",
+      "Сохранять structural sharing незатронутых ветвей",
+      "Планировать и реализовывать вложенный UI-state update с edge cases"
+    ],
+    "evidenceFamilies": ["MECHANISM", "TRACE", "DEBUG", "CODE_PRODUCTION", "TRANSFER"],
+    "difficultyDimensions": [
+      "Глубина изменяемого пути",
+      "Количество проверяемых identity contracts",
+      "Самостоятельность production",
+      "Рабочие edge cases и trade-offs"
+    ],
+    "taskTaxonomy": ["PREDICT_OUTPUT", "EXPLAIN", "FIND_BUG", "CODE"],
+    "sourcePolicy": "TC39, MDN и официальная React documentation; вторичные источники не использованы.",
+    "humanReviewer": null,
+    "expectedRole": "DRAFT acquisition, consolidation and transfer content; не calibration и не approved assessment."
+  },
+  "automatedChecks": {
+    "schemaAndGraph": {
+      "status": "PASS",
+      "result": "content:validate passed; 2 topics, 10 tasks, 0 assessments, 3 sequences"
+    },
+    "referenceCode": {
+      "status": "PASS",
+      "result": "4 CODE reference implementations passed 10 visible/hidden test cases"
+    },
+    "predictOutput": {
+      "status": "PASS",
+      "result": "3 PREDICT_OUTPUT snippets matched their versioned expected output"
+    },
+    "sourceUrls": {
+      "status": "PASS_WITH_RETRY",
+      "result": "7 unique canonical sources resolved; 4 opened directly, 3 locale/anchor forms were verified through their official resolved MDN/TC39 targets after local network timeout"
+    },
+    "databaseDiff": {
+      "status": "PASS",
+      "result": "1 shared Track and 2 shared Topics reuse existing ownership; zero conflicts; 4 content items, 10 tasks and 3 sequences planned for create"
+    },
+    "theoryLength": {
+      "status": "PASS",
+      "result": "Canonical note is 351 whitespace-delimited words; the complete four-item theory module is 618"
+    }
+  },
+  "humanReview": {
+    "completed": false,
+    "pedagogicalReview": false,
+    "humanSolve": false,
+    "renderedUiDryRun": false,
+    "timingCheck": false,
+    "fullRecommendationToEvidenceFlow": false
+  },
+  "summary": {
+    "pass": 0,
+    "needsHumanReview": 17,
+    "blockImport": 0
+  },
+  "items": [
+    {
+      "stableKey": "cs.mutability.training.canonical-boundaries",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Нужны human pedagogical review, rendered UI dry run и timing check."],
+      "resolvedFindings": ["Schema, sources and 300–700 word canonical explanation bound checked."]
+    },
+    {
+      "stableKey": "cs.mutability.training.worked-contact-update",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": [
+        "Нужно подтвердить, что worked example достаточно направляет, но не раскрывает ответы заданий."
+      ],
+      "resolvedFindings": ["Example identifiers and structure differ from all assessed examples."]
+    },
+    {
+      "stableKey": "cs.mutability.training.primitive-object-contrast",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Нужна human-проверка ясности primitive/object contrast."],
+      "resolvedFindings": ["Contrast sibling and shared family are explicit in payload."]
+    },
+    {
+      "stableKey": "cs.mutability.training.shallow-copy-mistake",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Нужна human-проверка remediation wording и cognitive load."],
+      "resolvedFindings": ["Common mistake does not contain an exact later-task solution."]
+    },
+    {
+      "stableKey": "cs.values-and-references.training.contrast-trace-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Нужен human solve и UI output-format check."],
+      "resolvedFindings": ["Reference output executed and matched expected output."]
+    },
+    {
+      "stableKey": "cs.values-and-references.training.shared-config-explain-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Human reviewer должен подтвердить rubric для свободного ответа."],
+      "resolvedFindings": [
+        "Prompt does not require terminology and does not fabricate deterministic grading."
+      ]
+    },
+    {
+      "stableKey": "cs.mutability.training.cart-shallow-trace-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Нужен human solve и проверка predict-before-reveal UX."],
+      "resolvedFindings": [
+        "Reference output executed on a new example and matched expected output."
+      ]
+    },
+    {
+      "stableKey": "cs.mutability.training.board-mutation-debug-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": [
+        "Human reviewer должен проверить ambiguity, partial-credit rubric и единственный hint."
+      ],
+      "resolvedFindings": [
+        "Prompt states mutation symptom and required edge case without embedding corrected code."
+      ]
+    },
+    {
+      "stableKey": "cs.mutability.training.update-locale-guided-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Нужны human solve и оценка объёма guided scaffolding."],
+      "resolvedFindings": [
+        "Reference implementation passed 1 visible and 1 hidden test; hint is bounded."
+      ]
+    },
+    {
+      "stableKey": "cs.mutability.training.increment-line-independent-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Нужны human solve, UI runner dry run и timing check."],
+      "resolvedFindings": [
+        "No hints; reference implementation passed 1 visible and 2 hidden tests."
+      ]
+    },
+    {
+      "stableKey": "cs.mutability.training.filters-delayed-trace-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Нужно подтвердить delayed-review timing и manual explanation rubric."],
+      "resolvedFindings": [
+        "Reference output executed and matched expected output; task has no hint."
+      ]
+    },
+    {
+      "stableKey": "cs.mutability.training.append-notification-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Нужны human solve и timing check для consolidation."],
+      "resolvedFindings": ["No hints; reference implementation passed visible and hidden tests."]
+    },
+    {
+      "stableKey": "cs.mutability.training.catalog-update-plan-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Human reviewer должен проверить work-like realism и transfer rubric."],
+      "resolvedFindings": [
+        "Plan prompt covers changed/preserved references, missing target and trade-off without code leakage."
+      ]
+    },
+    {
+      "stableKey": "cs.mutability.training.rename-card-transfer-001",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Нужны human solve, runner UI dry run и timing check."],
+      "resolvedFindings": [
+        "No hints; reference implementation passed 1 visible and 2 hidden tests including identity contracts."
+      ]
+    },
+    {
+      "stableKey": "cs.mutability.training.acquisition-v1",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Нужен полный human sequence dry run и проверка 30-minute estimate."],
+      "resolvedFindings": [
+        "All 8 exact-version refs, completion bounds and phase fit passed validation.",
+        "Completion requires one final no-help success from the pure PREDICT_OUTPUT task; mixed CODE evaluations remain partial until their unsupported rubric dimensions are reviewed."
+      ]
+    },
+    {
+      "stableKey": "cs.mutability.training.consolidation-v1",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": ["Нужно проверить delayed scheduling и 8-minute estimate в приложении."],
+      "resolvedFindings": [
+        "Both exact-version no-help task refs and completion bounds passed validation."
+      ]
+    },
+    {
+      "stableKey": "cs.mutability.training.transfer-v1",
+      "version": 1,
+      "status": "NEEDS_HUMAN_REVIEW",
+      "findings": [
+        "Нужен end-to-end human flow recommendation → attempt → evidence → capability update."
+      ],
+      "resolvedFindings": [
+        "Plan and implementation refs, phase and completion bounds passed validation."
+      ]
+    }
+  ]
+}

@@ -25,7 +25,8 @@ MVP рассчитан на одного доверенного пользова
 - Пользовательский JS выполняется только в browser Web Worker с timeout, ограничением source/output и выключенными network APIs.
 - Worker не является полноценным sandbox: он допустим только для локального доверенного пользователя. Multi-user режим требует отдельного изолированного runner service/container.
 - Hidden browser tests — UX-механика, не секрет и не security boundary.
-- `OPENAI_API_KEY`, если когда-либо включён API-assisted режим, остаётся только на сервере и не попадает в browser bundle/logs.
+- `OPENAI_API_KEY` в API-assisted режиме остаётся только на сервере и не попадает в browser bundle/logs.
+- Attempt evaluation отправляет провайдеру только явно запрошенный task/answer/rubric context. Nudge wire payload не содержит expected answer, hidden tests и local forbidden fragments.
 
 ## Обязательные меры
 
@@ -38,6 +39,9 @@ MVP рассчитан на одного доверенного пользова
 - Docker processes без root, PostgreSQL без host port в основном compose;
 - request IDs и структурированные логи без answer body, import payload и секретов;
 - atomic import, checksum deduplication и сохранение provenance;
+- strict AI response schema и повторная local/domain validation; model output не может назначать `TopicStatus`/mastery;
+- atomic monthly AI reservation/reconciliation, exact cache identity, feature flags и one-nudge quota;
+- preview до Apply, audit при Reject и compensating Evaluation/Evidence при Rollback без удаления истории;
 - dependency audit в CI;
 - backup перед destructive-миграцией и явное подтверждение reset/restore.
 

@@ -1,0 +1,501 @@
+{
+  "schemaVersion": "1.0",
+  "packKey": "js-core-training-v1",
+  "packVersion": "1.0.0",
+  "packChecksum": "fc50a03734a3bc33bab42ef762f589f57d0c8d5938004ea233146f13a881b5b9",
+  "provider": "fake",
+  "model": "fake-deterministic-v1",
+  "promptKey": "content-reviewer",
+  "promptVersion": 1,
+  "generatedAt": "2026-07-15T17:44:20.810Z",
+  "batchSize": 5,
+  "totals": {
+    "items": 17,
+    "pass": 0,
+    "needsHumanReview": 17,
+    "blockImport": 0,
+    "usage": {
+      "inputTokens": 0,
+      "cachedInputTokens": 0,
+      "outputTokens": 0
+    }
+  },
+  "items": [
+    {
+      "artifactType": "SEQUENCE",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.mutability.training.acquisition-v1",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "TASK",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.mutability.training.append-notification-001",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "TASK",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.mutability.training.board-mutation-debug-001",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "CONTENT_ITEM",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.mutability.training.canonical-boundaries",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "TASK",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.mutability.training.cart-shallow-trace-001",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "TASK",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.mutability.training.catalog-update-plan-001",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "SEQUENCE",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.mutability.training.consolidation-v1",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "TASK",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.mutability.training.filters-delayed-trace-001",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "TASK",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.mutability.training.increment-line-independent-001",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "CONTENT_ITEM",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.mutability.training.primitive-object-contrast",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "TASK",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.mutability.training.rename-card-transfer-001",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "CONTENT_ITEM",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.mutability.training.shallow-copy-mistake",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "SEQUENCE",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.mutability.training.transfer-v1",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "TASK",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.mutability.training.update-locale-guided-001",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "CONTENT_ITEM",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.mutability.training.worked-contact-update",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "TASK",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.values-and-references.training.contrast-trace-001",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    },
+    {
+      "artifactType": "TASK",
+      "result": {
+        "contract": "skillforge-content-review-v1",
+        "stableKey": "cs.values-and-references.training.shared-config-explain-001",
+        "version": 1,
+        "verdict": "NEEDS_HUMAN_REVIEW",
+        "findings": [
+          {
+            "code": "FAKE_PROVIDER_HUMAN_REVIEW_REQUIRED",
+            "severity": "WARNING",
+            "fieldPath": null,
+            "message": "Fake provider validates the flow but cannot approve content quality.",
+            "suggestedAction": "Run human review or explicit live provider review before activation."
+          }
+        ],
+        "checks": {
+          "correctness": "Not decided by the fake provider; human review is required.",
+          "ambiguity": "Not decided by the fake provider; human review is required.",
+          "rubricAlignment": "Not decided by the fake provider; human review is required.",
+          "stageFit": "Not decided by the fake provider; human review is required.",
+          "sourceQuality": "Not decided by the fake provider; human review is required.",
+          "duplicateRisk": "Sibling context was supplied; human review is required.",
+          "triviaRisk": "Not decided by the fake provider; human review is required.",
+          "solutionLeakage": "Not decided by the fake provider; human review is required."
+        }
+      }
+    }
+  ]
+}

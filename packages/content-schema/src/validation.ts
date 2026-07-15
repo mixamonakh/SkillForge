@@ -12,6 +12,7 @@ export type ContentValidationSummary = {
   topics: number;
   tasks: number;
   assessments: number;
+  sequences: number;
   assessmentItems: number;
   taskKinds: number;
   deterministicTasks: number;
@@ -256,6 +257,77 @@ function validateBlueprints(pack: LoadedContentPack, errors: ContentValidationIs
   }
 }
 
+function validateLearningSequences(
+  pack: LoadedContentPack,
+  errors: ContentValidationIssue[],
+): void {
+  const topicKeys = new Set(pack.topics.map((topic) => topic.key));
+  const contentByVersion = new Map(
+    pack.contentItems.map((item) => [`${item.stableKey}@${String(item.version)}`, item]),
+  );
+  const taskByVersion = new Map(
+    pack.tasks.map((task) => [`${task.stableKey}@${String(task.version)}`, task]),
+  );
+
+  for (const sequence of pack.sequences) {
+    if (!topicKeys.has(sequence.topicKey)) {
+      errors.push({
+        code: 'MISSING_SEQUENCE_TOPIC',
+        message: `${sequence.key}@${String(sequence.version)}: не найдена topic ${sequence.topicKey}`,
+      });
+    }
+
+    if (sequence.completionRule.requiredSteps > sequence.steps.length) {
+      errors.push({
+        code: 'SEQUENCE_REQUIRED_STEPS_OUT_OF_RANGE',
+        message: `${sequence.key}@${String(sequence.version)}: requiredSteps превышает количество steps`,
+      });
+    }
+
+    const taskStepCount = sequence.steps.filter((step) => step.kind === 'TASK').length;
+    if (
+      sequence.completionRule.minimumNoHelpSuccesses > taskStepCount ||
+      sequence.completionRule.minimumNoHelpSuccesses > sequence.completionRule.requiredSteps
+    ) {
+      errors.push({
+        code: 'SEQUENCE_NO_HELP_SUCCESSES_OUT_OF_RANGE',
+        message: `${sequence.key}@${String(sequence.version)}: minimumNoHelpSuccesses вне допустимого диапазона`,
+      });
+    }
+
+    for (const step of sequence.steps) {
+      if (step.kind === 'CONTENT') {
+        const item = contentByVersion.get(`${step.contentItemKey}@${String(step.version)}`);
+        if (item === undefined) {
+          errors.push({
+            code: 'MISSING_SEQUENCE_CONTENT_VERSION',
+            message: `${sequence.key}: не найден content item ${step.contentItemKey}@${String(step.version)}`,
+          });
+        } else if (item.topicKey !== sequence.topicKey) {
+          errors.push({
+            code: 'SEQUENCE_CONTENT_TOPIC_MISMATCH',
+            message: `${sequence.key}: content item ${step.contentItemKey}@${String(step.version)} относится к ${item.topicKey}`,
+          });
+        }
+        continue;
+      }
+
+      const task = taskByVersion.get(`${step.taskKey}@${String(step.version)}`);
+      if (task === undefined) {
+        errors.push({
+          code: 'MISSING_SEQUENCE_TASK_VERSION',
+          message: `${sequence.key}: не найдена task ${step.taskKey}@${String(step.version)}`,
+        });
+      } else if (task.topicKey !== sequence.topicKey) {
+        errors.push({
+          code: 'SEQUENCE_TASK_TOPIC_MISMATCH',
+          message: `${sequence.key}: task ${step.taskKey}@${String(step.version)} относится к ${task.topicKey}`,
+        });
+      }
+    }
+  }
+}
+
 export async function validateContentPack(
   pack: LoadedContentPack,
 ): Promise<ContentValidationReport> {
@@ -301,6 +373,12 @@ export async function validateContentPack(
     pack.assessments.map((assessment) => `${assessment.key}@${String(assessment.version)}`),
     'DUPLICATE_ASSESSMENT_VERSION',
     'assessment version',
+    errors,
+  );
+  addDuplicateErrors(
+    pack.sequences.map((sequence) => `${sequence.key}@${String(sequence.version)}`),
+    'DUPLICATE_SEQUENCE_VERSION',
+    'learning sequence version',
     errors,
   );
 
@@ -363,6 +441,7 @@ export async function validateContentPack(
 
   validateTaskContracts(pack, errors);
   validateBlueprints(pack, errors);
+  validateLearningSequences(pack, errors);
   await validateLocalLinks(pack, errors);
 
   const assessmentItems = pack.assessments.reduce(
@@ -374,6 +453,18 @@ export async function validateContentPack(
     ['CODE', 'PREDICT_OUTPUT', 'SINGLE_CHOICE', 'MULTIPLE_CHOICE'].includes(task.kind),
   ).length;
   const requirements = pack.manifest.requirements;
+  if (
+    pack.assessments.length === 0 &&
+    (requirements.baselineItems !== 0 ||
+      requirements.blocks !== 0 ||
+      requirements.itemsPerBlock !== 0)
+  ) {
+    errors.push({
+      code: 'ASSESSMENT_REQUIREMENTS_WITHOUT_ASSESSMENT',
+      message:
+        'Pack без assessments должен объявлять baselineItems, blocks и itemsPerBlock равными 0',
+    });
+  }
   for (const assessment of pack.assessments) {
     if (assessment.totalBlocks !== requirements.blocks) {
       errors.push({
@@ -398,6 +489,12 @@ export async function validateContentPack(
   const thresholdChecks: Array<[boolean, string, string]> = [
     [pack.topics.length === pack.manifest.counts.topics, 'TOPIC_COUNT_MISMATCH', 'topics'],
     [pack.tasks.length === pack.manifest.counts.tasks, 'TASK_COUNT_MISMATCH', 'tasks'],
+    [
+      pack.manifest.counts.sequences === undefined ||
+        pack.sequences.length === pack.manifest.counts.sequences,
+      'SEQUENCE_COUNT_MISMATCH',
+      'sequences',
+    ],
     [
       pack.assessments.length === pack.manifest.counts.assessments,
       'ASSESSMENT_COUNT_MISMATCH',
@@ -460,6 +557,7 @@ export async function validateContentPack(
       topics: pack.topics.length,
       tasks: pack.tasks.length,
       assessments: pack.assessments.length,
+      sequences: pack.sequences.length,
       assessmentItems,
       taskKinds,
       deterministicTasks,

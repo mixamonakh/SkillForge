@@ -50,6 +50,35 @@ const topicResponse = {
   evidence: [],
 };
 
+function notTestedCapability(family: string) {
+  return {
+    family,
+    coverage: 'NOT_TESTED',
+    estimate: null,
+    confidence: 0,
+    evidenceCount: 0,
+    independentDays: 0,
+    noHelpSuccessCount: 0,
+    pendingReviewCount: 0,
+    lastEvidenceAt: null,
+    explanation: [],
+  };
+}
+
+const capabilityResponse = {
+  topicKey: 'js.runtime.event-loop',
+  algorithmVersion: 'capability-profile-v1.0',
+  capabilities: {
+    TERM: notTestedCapability('TERM'),
+    MECHANISM: notTestedCapability('MECHANISM'),
+    TRACE: notTestedCapability('TRACE'),
+    DEBUG: notTestedCapability('DEBUG'),
+    CODE_PRODUCTION: notTestedCapability('CODE_PRODUCTION'),
+    TRANSFER: notTestedCapability('TRANSFER'),
+    CALIBRATION: notTestedCapability('CALIBRATION'),
+  },
+};
+
 const apiFetch = vi.hoisted(() => vi.fn());
 
 vi.mock('@/shared/api/client', () => ({ apiFetch }));
@@ -66,7 +95,9 @@ function renderTopic() {
 describe('TopicDetail', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    apiFetch.mockResolvedValue(topicResponse);
+    apiFetch.mockImplementation((path: string) =>
+      Promise.resolve(path.endsWith('/capability-profile') ? capabilityResponse : topicResponse),
+    );
   });
 
   it('renders real misconceptions and explainable mastery gates', async () => {
@@ -74,6 +105,7 @@ describe('TopicDetail', () => {
 
     expect(await screen.findByText('Результат пока нестабилен.')).toBeInTheDocument();
     expect(screen.getByText('PREDICT_OUTPUT')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Компоненты навыка' })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('tab', { name: 'Ошибки' }));
     expect(screen.getByText('Путает очередность microtask')).toBeInTheDocument();
@@ -92,5 +124,26 @@ describe('TopicDetail', () => {
 
     expect(screen.getByRole('tab', { name: 'Теория' })).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByRole('tab', { name: 'Теория' })).toHaveFocus();
+  });
+
+  it('does not show mastery confidence as a calibrated percentage before an estimate exists', async () => {
+    apiFetch.mockImplementation((path: string) =>
+      Promise.resolve(
+        path.endsWith('/capability-profile')
+          ? capabilityResponse
+          : {
+              ...topicResponse,
+              status: 'UNKNOWN',
+              masteryEstimate: null,
+              masteryConfidence: 21,
+              evidenceCount: 1,
+            },
+      ),
+    );
+
+    renderTopic();
+
+    expect(await screen.findByText('Не откалибровано')).toBeInTheDocument();
+    expect(screen.queryByText('21%')).not.toBeInTheDocument();
   });
 });

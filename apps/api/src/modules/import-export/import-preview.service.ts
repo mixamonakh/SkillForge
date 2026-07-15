@@ -7,6 +7,7 @@ import { invalidState, notFound } from '../../common/api-error.js';
 import { asJsonInput } from '../../common/json.js';
 import { PrismaService } from '../../database/prisma.service.js';
 import { MasteryService } from '../mastery/mastery.service.js';
+import { suppressedExternalEvaluationEffect } from './external-evaluation-policy.js';
 import { parseImportSourceScope } from './import-source-scope.js';
 
 @Injectable()
@@ -52,7 +53,12 @@ export class ImportPreviewService {
     const [attempts, topics] = await Promise.all([
       this.database.client.attempt.findMany({
         where: { userId: DEFAULT_USER_ID, id: { in: allowedAttemptIds } },
-        include: { taskVersion: { include: { task: true } } },
+        include: {
+          taskVersion: { include: { task: true } },
+          session: {
+            select: { assessmentRun: { select: { snapshot: true } } },
+          },
+        },
       }),
       this.database.client.topic.findMany({
         where: { key: { in: allowedTopicKeys } },
@@ -61,11 +67,25 @@ export class ImportPreviewService {
     ]);
     const attemptById = new Map(attempts.map((attempt) => [attempt.id, attempt]));
     const topicByKey = new Map(topics.map((topic) => [topic.key, topic]));
+    const suppressedEvaluationEffects = analysis.attemptEvaluations.flatMap((evaluation) => {
+      const attempt = attemptById.get(evaluation.attemptId);
+      if (!attempt) return [];
+      const effect = suppressedExternalEvaluationEffect({
+        attemptId: attempt.id,
+        assessmentSnapshot: attempt.session.assessmentRun?.snapshot,
+        requestedEvidenceItems: evaluation.topicEvidence.length,
+      });
+      return effect === null ? [] : [effect];
+    });
+    const suppressedAttemptIds = new Set(
+      suppressedEvaluationEffects.map((effect) => effect.attemptId),
+    );
     const additionsByTopic = new Map<string, TopicEvidenceInput[]>();
     const uniqueEvidence = new Set<string>();
     for (const evaluation of analysis.attemptEvaluations) {
       const attempt = attemptById.get(evaluation.attemptId);
       if (!attempt) continue;
+      if (suppressedAttemptIds.has(attempt.id)) continue;
       for (const evidence of evaluation.topicEvidence) {
         const topic = topicByKey.get(evidence.topicKey);
         const uniqueKey = `${attempt.id}:${evidence.topicKey}:${evidence.kind}`;
@@ -132,6 +152,11 @@ export class ImportPreviewService {
       ...(analysis.attemptEvaluations.some((item) => item.reliability > 0.65)
         ? ['External AI reliability ограничена до 0.65.']
         : []),
+      ...(suppressedEvaluationEffects.length > 0
+        ? [
+            `Pre-baseline safety: ${String(suppressedEvaluationEffects.length)} Evaluation будут сохранены только для audit; Evidence SUPPRESSED, TopicState/mastery NO_MUTATION.`,
+          ]
+        : []),
     ];
     const preview = {
       importId: batch.id,
@@ -143,6 +168,11 @@ export class ImportPreviewService {
       evaluationsToCreate: analysis.attemptEvaluations.filter((item) =>
         attemptById.has(item.attemptId),
       ).length,
+      evidenceToCreate: [...additionsByTopic.values()].reduce(
+        (total, additions) => total + additions.length,
+        0,
+      ),
+      suppressedEvaluationEffects,
       projectedTopics,
       recommendations: analysis.recommendations
         .filter(

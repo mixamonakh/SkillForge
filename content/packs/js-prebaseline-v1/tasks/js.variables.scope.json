@@ -1,0 +1,133 @@
+[
+  {
+    "stableKey": "js.variables.scope.trace-block-shadowing-001",
+    "version": 1,
+    "topicKey": "js.variables.scope",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Напиши две строки, которые выведет код. Объяснение не требуется. Если не знаешь, ответ «Не знаю» допустим.\n\n```js\nlet label = 'outer';\n\nif (true) {\n  let label = 'inner';\n  console.log(label);\n}\n\nconsole.log(label);\n```",
+    "expectedAnswer": {
+      "output": ["inner", "outer"]
+    },
+    "rubric": {
+      "dimensions": {
+        "PREDICT_OUTPUT": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указаны две строки: inner и outer в этом порядке"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["TRACE"],
+      "cognitiveLevel": "CANONICAL_MECHANISM",
+      "productionLoad": "NONE",
+      "transferLevel": "NONE",
+      "supportLevel": "NONE",
+      "familyKey": "scope.block-shadowing",
+      "learningOutcomeKeys": ["scope.trace.block-shadowing"],
+      "misconceptionTags": ["scope.inner-binding-replaces-outer"],
+      "estimatedMinutes": 1,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/block"
+      ],
+      "mixedEvidence": false
+    }
+  },
+  {
+    "stableKey": "js.variables.scope.term-tdz-001",
+    "version": 1,
+    "topicKey": "js.variables.scope",
+    "kind": "SINGLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Как называют участок от начала блока до строки инициализации `let`-переменной, где обращение к ней вызывает `ReferenceError`?",
+    "options": [
+      {
+        "id": "temporal-dead-zone",
+        "text": "Temporal Dead Zone (TDZ)"
+      },
+      {
+        "id": "closure",
+        "text": "Замыкание"
+      },
+      {
+        "id": "prototype-chain",
+        "text": "Цепочка прототипов"
+      },
+      {
+        "id": "unknown",
+        "text": "Не знаю"
+      }
+    ],
+    "expectedAnswer": {
+      "selectedOptionIds": ["temporal-dead-zone"]
+    },
+    "rubric": {
+      "dimensions": {
+        "RECALL": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Выбран Temporal Dead Zone (TDZ)"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["TERM"],
+      "cognitiveLevel": "LEXICON",
+      "productionLoad": "NONE",
+      "transferLevel": "NONE",
+      "supportLevel": "NONE",
+      "familyKey": "scope.temporal-dead-zone",
+      "learningOutcomeKeys": ["scope.name.temporal-dead-zone"],
+      "misconceptionTags": ["scope.let-readable-before-initialization"],
+      "estimatedMinutes": 1,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/let#temporal_dead_zone_tdz"
+      ],
+      "mixedEvidence": false
+    }
+  },
+  {
+    "stableKey": "js.variables.scope.debug-block-result-001",
+    "version": 1,
+    "topicKey": "js.variables.scope",
+    "kind": "FIND_BUG",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Функция должна вернуть `Готово` для `true` и `Ожидание` для `false`. Сейчас она обращается к переменной вне доступной области. Найди ошибку и предложи исправленный код. Если не знаешь, так и напиши: «Не знаю».\n\n```js\nfunction statusLabel(isReady) {\n  if (isReady) {\n    const message = 'Готово';\n  }\n\n  return message;\n}\n```",
+    "rubric": {
+      "dimensions": {
+        "DEBUGGING": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указано, что message доступна только внутри блока if",
+      "Исправленный код не читает block-scoped переменную снаружи",
+      "Обе ветки возвращают требуемый текст"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["DEBUG"],
+      "cognitiveLevel": "COMPOSITE_MECHANISM",
+      "productionLoad": "LOW",
+      "transferLevel": "NEAR",
+      "supportLevel": "NONE",
+      "familyKey": "scope.block-result",
+      "learningOutcomeKeys": ["scope.debug.block-result"],
+      "misconceptionTags": ["scope.block-binding-escapes"],
+      "estimatedMinutes": 2,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/block"
+      ],
+      "mixedEvidence": false
+    }
+  }
+]

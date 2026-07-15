@@ -9,7 +9,81 @@ import type {
   TopicStatus,
 } from '@skillforge/contracts';
 
+import type { CAPABILITY_FAMILIES, LEARNING_PHASES } from './config.js';
+
 export type DateInput = Date | string;
+
+export type CapabilityFamily = (typeof CAPABILITY_FAMILIES)[number];
+export type LearningPhase = (typeof LEARNING_PHASES)[number];
+export type CapabilityCoverage = 'NOT_TESTED' | 'INSUFFICIENT' | 'SUFFICIENT';
+
+export interface CapabilityTaskMetadataInput {
+  sourceSchemaVersion: '1.0' | '2.0';
+  evidenceFamilies: readonly CapabilityFamily[];
+  mixedEvidence: boolean;
+}
+
+export interface CapabilityFamilyMappingInput {
+  evidenceKind: EvidenceKind;
+  families?: readonly CapabilityFamily[];
+  taskMetadata?: CapabilityTaskMetadataInput | null;
+}
+
+interface CapabilityEvidenceBase extends CapabilityFamilyMappingInput {
+  evaluatorType: EvaluatorType;
+  evaluatorReliability?: number;
+  evidenceTypeWeight?: number;
+  helpLevel: HelpLevel;
+  occurredAt: DateInput;
+  halfLifeDays?: number;
+  passed?: boolean | null;
+  taskKind?: TaskKind;
+}
+
+export interface CapabilityScoredEvidenceInput extends CapabilityEvidenceBase {
+  pending?: false;
+  rawScore: number;
+}
+
+export interface CapabilityPendingEvidenceInput extends CapabilityEvidenceBase {
+  pending: true;
+  rawScore?: null;
+}
+
+export type CapabilityEvidenceInput =
+  | CapabilityScoredEvidenceInput
+  | CapabilityPendingEvidenceInput;
+
+export interface NormalizedCapabilityEvidence {
+  families: CapabilityFamily[];
+  pending: boolean;
+  normalizedScore: number | null;
+  weight: number;
+  helpLevel: HelpLevel;
+  occurredAt: string;
+  evidenceKind: EvidenceKind;
+  passed: boolean | null;
+  taskKind?: TaskKind;
+}
+
+export interface CapabilityState {
+  family: CapabilityFamily;
+  coverage: CapabilityCoverage;
+  estimate: number | null;
+  confidence: number;
+  evidenceCount: number;
+  independentDays: number;
+  noHelpSuccessCount: number;
+  pendingReviewCount: number;
+  lastEvidenceAt: string | null;
+  explanation: string[];
+}
+
+export interface TopicCapabilityProfile {
+  topicKey: string;
+  algorithmVersion: string;
+  capabilities: Record<CapabilityFamily, CapabilityState>;
+}
 
 export interface EvidenceInput {
   rawScore: number;

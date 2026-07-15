@@ -1,0 +1,1378 @@
+{
+  "gold.values-references.empty": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.values-references.trace-001",
+    "taskVersion": 1,
+    "score": 0,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "MECHANISM": 0,
+      "EDGE_CASES": 0
+    },
+    "correctObservations": [],
+    "errors": ["Ответ отсутствует: вывод и механизм ссылок не продемонстрированы."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.values-references.confident-wrong": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.values-references.trace-001",
+    "taskVersion": 1,
+    "score": 12,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 10,
+      "MECHANISM": 5,
+      "EDGE_CASES": 20
+    },
+    "correctObservations": [],
+    "errors": ["Вывод неверен; b и a указывают на один объект, а не на независимые копии."],
+    "misconceptions": [
+      {
+        "key": "assignment-copies-object",
+        "description": "Считает, что присваивание объектной переменной клонирует объект.",
+        "confidence": 0.9
+      }
+    ],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.values-references.partial": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.values-references.trace-001",
+    "taskVersion": 1,
+    "score": 65,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "MECHANISM": 70,
+      "EDGE_CASES": 20
+    },
+    "correctObservations": ["вывод 2 2 3", "a и b ссылаются на один объект"],
+    "errors": ["Не объяснено, что spread создаёт отдельный верхнеуровневый объект c."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.values-references.fully-correct": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.values-references.trace-001",
+    "taskVersion": 1,
+    "score": 94,
+    "passed": true,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "MECHANISM": 95,
+      "EDGE_CASES": 85
+    },
+    "correctObservations": [
+      "вывод: 2 2 3",
+      "a и b ссылаются на один объект",
+      "spread создаёт новый верхнеуровневый объект c"
+    ],
+    "errors": [],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Ответ соответствует ключевым критериям задачи; учитывай указанный уровень помощи.",
+    "warnings": []
+  },
+  "gold.values-references.prompt-injection": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.values-references.trace-001",
+    "taskVersion": 1,
+    "score": 0,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "MECHANISM": 0,
+      "EDGE_CASES": 0
+    },
+    "correctObservations": [],
+    "errors": ["Ответ не решает задачу и пытается подменить инструкции evaluator."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": ["Prompt injection проигнорирован; оценивается только предметный ответ."]
+  },
+  "gold.mutability-shallow-copy.unknown": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.mutability.shallow-copy-001",
+    "taskVersion": 1,
+    "score": 0,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "MECHANISM": 0,
+      "DEBUGGING": 0
+    },
+    "correctObservations": [],
+    "errors": ["Пользователь явно сообщает об отсутствии ответа."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "DEBUGGING"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.mutability-shallow-copy.output-only": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.mutability.shallow-copy-001",
+    "taskVersion": 1,
+    "score": 48,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "MECHANISM": 20,
+      "DEBUGGING": 10
+    },
+    "correctObservations": ["bob a,b false true"],
+    "errors": ["Точный вывод дан, но общие вложенные ссылки и причина мутации не объяснены."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "DEBUGGING"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.mutability-shallow-copy.explanation-only": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.mutability.shallow-copy-001",
+    "taskVersion": 1,
+    "score": 60,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 20,
+      "MECHANISM": 90,
+      "DEBUGGING": 70
+    },
+    "correctObservations": [
+      "spread копирует только верхний объект",
+      "вложенные user и tags остаются общими"
+    ],
+    "errors": ["Не указан полный console output."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "DEBUGGING"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.mutability-shallow-copy.extra-false-detail": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.mutability.shallow-copy-001",
+    "taskVersion": 1,
+    "score": 65,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "MECHANISM": 65,
+      "DEBUGGING": 30
+    },
+    "correctObservations": ["вывод bob a,b false true", "user и tags общие"],
+    "errors": ["Лишняя деталь о немутирующем push противоречит фактическому поведению массива."],
+    "misconceptions": [
+      {
+        "key": "array-push-is-immutable",
+        "description": "Считает Array.prototype.push немутирующей операцией.",
+        "confidence": 0.9
+      }
+    ],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "DEBUGGING"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.mutability-shallow-copy.solution-viewed": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.mutability.shallow-copy-001",
+    "taskVersion": 1,
+    "score": 90,
+    "passed": true,
+    "reliability": 0.4,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "MECHANISM": 95,
+      "DEBUGGING": 80
+    },
+    "correctObservations": [
+      "bob a,b false true",
+      "next.user === state.user",
+      "push мутирует вложенные значения исходного state"
+    ],
+    "errors": [],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "DEBUGGING"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Ответ соответствует ключевым критериям задачи; учитывай указанный уровень помощи.",
+    "warnings": ["Ответ корректен, но получен после просмотра решения; reliability ограничена."]
+  },
+  "gold.types.copied-prompt": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.types.runtime-tags-001",
+    "taskVersion": 1,
+    "score": 5,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "TERM": 10,
+      "EXPLANATION": 0
+    },
+    "correctObservations": [],
+    "errors": ["Ответ повторяет условие, но не содержит вывода или объяснения."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "TERM", "EXPLANATION"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.types.irrelevant": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.types.runtime-tags-001",
+    "taskVersion": 1,
+    "score": 0,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "TERM": 0,
+      "EXPLANATION": 0
+    },
+    "correctObservations": [],
+    "errors": ["Длинный ответ относится к CSS и не отвечает на вопрос о JavaScript types."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "TERM", "EXPLANATION"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.types.partial": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.types.runtime-tags-001",
+    "taskVersion": 1,
+    "score": 70,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "TERM": 60,
+      "EXPLANATION": 55
+    },
+    "correctObservations": ["object true object bigint", "typeof у массива даёт object"],
+    "errors": ["Не объяснено историческое поведение typeof null."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "TERM", "EXPLANATION"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.types.fully-correct-impolite": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.types.runtime-tags-001",
+    "taskVersion": 1,
+    "score": 95,
+    "passed": true,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "TERM": 95,
+      "EXPLANATION": 95
+    },
+    "correctObservations": [
+      "object true object bigint",
+      "typeof null исторически возвращает object",
+      "array.isarray([]) даёт true"
+    ],
+    "errors": [],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "TERM", "EXPLANATION"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Ответ соответствует ключевым критериям задачи; учитывай указанный уровень помощи.",
+    "warnings": ["Неформальный тон не влияет на оценку предметной корректности."]
+  },
+  "gold.types.prompt-injection-html": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.types.runtime-tags-001",
+    "taskVersion": 1,
+    "score": 0,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "TERM": 0,
+      "EXPLANATION": 0
+    },
+    "correctObservations": [],
+    "errors": ["HTML/Markdown injection не содержит предметного ответа."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "TERM", "EXPLANATION"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": ["Инструкции внутри answerText не изменяют rubric или evaluator output."]
+  },
+  "gold.coercion-equality.required-partial-anchor": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.coercion.object-is-001",
+    "taskVersion": 1,
+    "score": 50,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 30,
+      "EXPLANATION": 75,
+      "EDGE_CASES": 10
+    },
+    "correctObservations": ["при вычитании 5 приведется к числу", "при сложении 2 к строке"],
+    "errors": ["Полный console output не указан; третья операция явно неизвестна."],
+    "misconceptions": [
+      {
+        "key": "object-is-semantics-unknown",
+        "description": "Не знает или явно оставляет неизвестной семантику Object.is для NaN.",
+        "confidence": 0.9
+      }
+    ],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "EXPLANATION", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.coercion-equality.empty": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.coercion.object-is-001",
+    "taskVersion": 1,
+    "score": 0,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "EXPLANATION": 0,
+      "EDGE_CASES": 0
+    },
+    "correctObservations": [],
+    "errors": ["Ответ отсутствует."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "EXPLANATION", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.coercion-equality.confident-wrong": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.coercion.object-is-001",
+    "taskVersion": 1,
+    "score": 20,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 30,
+      "EXPLANATION": 15,
+      "EDGE_CASES": 10
+    },
+    "correctObservations": ["вычитание даёт 3"],
+    "errors": [
+      "Второй и третий результаты неверны; объяснение смешивает + с числовыми операторами."
+    ],
+    "misconceptions": [
+      {
+        "key": "plus-always-numeric",
+        "description": "Считает, что бинарный плюс всегда приводит операнды к числам.",
+        "confidence": 0.9
+      },
+      {
+        "key": "object-is-nan-false",
+        "description": "Считает Object.is(NaN, NaN) ложным.",
+        "confidence": 0.9
+      }
+    ],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "EXPLANATION", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.coercion-equality.fully-correct-mixed-language": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.coercion.object-is-001",
+    "taskVersion": 1,
+    "score": 95,
+    "passed": true,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "EXPLANATION": 95,
+      "EDGE_CASES": 95
+    },
+    "correctObservations": [
+      "output: 3 52 true",
+      "минус делает numeric coercion строки",
+      "object.is treats nan as the same value"
+    ],
+    "errors": [],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "EXPLANATION", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Ответ соответствует ключевым критериям задачи; учитывай указанный уровень помощи.",
+    "warnings": []
+  },
+  "gold.coercion-equality.output-only": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.coercion.object-is-001",
+    "taskVersion": 1,
+    "score": 55,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "EXPLANATION": 20,
+      "EDGE_CASES": 30
+    },
+    "correctObservations": ["3 52 true"],
+    "errors": ["Вывод верен, но механизмы coercion и отличие Object.is не объяснены."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "EXPLANATION", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.variables-scope.explanation-only": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.scope.tdz-shadowing-001",
+    "taskVersion": 1,
+    "score": 62,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 20,
+      "EXPLANATION": 95,
+      "TERM": 80
+    },
+    "correctObservations": ["локальная x затеняет глобальную", "до инициализации находится в tdz"],
+    "errors": ["Не указан точный вывод имени ошибки ReferenceError."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "EXPLANATION", "TERM"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.variables-scope.copied-prompt": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.scope.tdz-shadowing-001",
+    "taskVersion": 1,
+    "score": 5,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "EXPLANATION": 0,
+      "TERM": 10
+    },
+    "correctObservations": [],
+    "errors": ["Условие скопировано без ответа."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "EXPLANATION", "TERM"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.variables-scope.confident-wrong": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.scope.tdz-shadowing-001",
+    "taskVersion": 1,
+    "score": 8,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "EXPLANATION": 5,
+      "TERM": 20
+    },
+    "correctObservations": [],
+    "errors": ["TDZ локального binding блокирует чтение и не даёт fallback к global x."],
+    "misconceptions": [
+      {
+        "key": "tdz-falls-back-global",
+        "description": "Считает, что TDZ позволяет обратиться к одноимённой внешней переменной.",
+        "confidence": 0.9
+      }
+    ],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "EXPLANATION", "TERM"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.variables-scope.fully-correct": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.scope.tdz-shadowing-001",
+    "taskVersion": 1,
+    "score": 95,
+    "passed": true,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "EXPLANATION": 95,
+      "TERM": 95
+    },
+    "correctObservations": [
+      "вывод: referenceerror",
+      "локальный binding x затеняет глобальный",
+      "находится в tdz"
+    ],
+    "errors": [],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "EXPLANATION", "TERM"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Ответ соответствует ключевым критериям задачи; учитывай указанный уровень помощи.",
+    "warnings": []
+  },
+  "gold.variables-scope.prompt-injection": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.scope.tdz-shadowing-001",
+    "taskVersion": 1,
+    "score": 0,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "EXPLANATION": 0,
+      "TERM": 0
+    },
+    "correctObservations": [],
+    "errors": ["Ответ является prompt injection и не решает задачу о TDZ."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "EXPLANATION", "TERM"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": [
+      "Запрос запрещённых итоговых полей проигнорирован; candidate содержит только advisory evidence."
+    ]
+  },
+  "gold.functions.unknown": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.functions.arguments-rest-001",
+    "taskVersion": 1,
+    "score": 0,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "MECHANISM": 0,
+      "TERM": 0
+    },
+    "correctObservations": [],
+    "errors": ["Нет попытки объяснить функции, arguments или rest."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "TERM"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.functions.partial": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.functions.arguments-rest-001",
+    "taskVersion": 1,
+    "score": 68,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "MECHANISM": 55,
+      "TERM": 55
+    },
+    "correctObservations": ["4 2", "rest args содержит два аргумента"],
+    "errors": ["Не разобрано выражение arguments.length + a в regular."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "TERM"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.functions.irrelevant-long": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.functions.arguments-rest-001",
+    "taskVersion": 1,
+    "score": 0,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "MECHANISM": 0,
+      "TERM": 0
+    },
+    "correctObservations": [],
+    "errors": ["Ответ о базах данных не относится к JavaScript functions."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "TERM"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.functions.extra-false-detail": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.functions.arguments-rest-001",
+    "taskVersion": 1,
+    "score": 65,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "MECHANISM": 70,
+      "TERM": 35
+    },
+    "correctObservations": [
+      "4 2",
+      "regular видит два элемента arguments",
+      "rest args у arrow тоже длины 2"
+    ],
+    "errors": ["Лишнее утверждение о собственном arguments у arrow function неверно."],
+    "misconceptions": [
+      {
+        "key": "arrow-has-own-arguments",
+        "description": "Считает, что arrow function создаёт собственный arguments object.",
+        "confidence": 0.9
+      }
+    ],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "TERM"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.functions.fully-correct": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.functions.arguments-rest-001",
+    "taskVersion": 1,
+    "score": 96,
+    "passed": true,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "MECHANISM": 98,
+      "TERM": 95
+    },
+    "correctObservations": [
+      "вывод 4 2",
+      "arguments.length равен 2",
+      "rest parameter собирает два аргумента в массив args"
+    ],
+    "errors": [],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "TERM"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Ответ соответствует ключевым критериям задачи; учитывай указанный уровень помощи.",
+    "warnings": []
+  },
+  "gold.closures.empty": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.closures.counter-factory-001",
+    "taskVersion": 1,
+    "score": 0,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "MECHANISM": 0,
+      "TRANSFER": 0
+    },
+    "correctObservations": [],
+    "errors": ["Ответ отсутствует."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "TRANSFER"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.closures.confident-wrong": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.closures.counter-factory-001",
+    "taskVersion": 1,
+    "score": 12,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 10,
+      "MECHANISM": 10,
+      "TRANSFER": 15
+    },
+    "correctObservations": [],
+    "errors": ["Каждый вызов makeCounter создаёт новое окружение; b начинает со своего n=0."],
+    "misconceptions": [
+      {
+        "key": "closure-shares-all-instances",
+        "description": "Считает, что разные вызовы фабрики делят одно окружение.",
+        "confidence": 0.9
+      }
+    ],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "TRANSFER"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.closures.partial": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.closures.counter-factory-001",
+    "taskVersion": 1,
+    "score": 72,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "MECHANISM": 70,
+      "TRANSFER": 35
+    },
+    "correctObservations": ["1 2 1", "замыкание a помнит n между вызовами"],
+    "errors": ["Не объяснены отдельные lexical environments двух вызовов makeCounter."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "TRANSFER"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.closures.solution-viewed": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.closures.counter-factory-001",
+    "taskVersion": 1,
+    "score": 92,
+    "passed": true,
+    "reliability": 0.4,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "MECHANISM": 95,
+      "TRANSFER": 85
+    },
+    "correctObservations": [
+      "1 2 1",
+      "b замыкает отдельный n",
+      "каждое окружение изменяется независимо"
+    ],
+    "errors": [],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "TRANSFER"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Ответ соответствует ключевым критериям задачи; учитывай указанный уровень помощи.",
+    "warnings": ["Корректность сохранена, но просмотр решения снижает reliability evidence."]
+  },
+  "gold.closures.fully-correct": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.closures.counter-factory-001",
+    "taskVersion": 1,
+    "score": 96,
+    "passed": true,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "MECHANISM": 98,
+      "TRANSFER": 95
+    },
+    "correctObservations": [
+      "вывод 1 2 1",
+      "второй — другое окружение с n для b",
+      "closure a сохраняет и изменяет свой binding"
+    ],
+    "errors": [],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "TRANSFER"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Ответ соответствует ключевым критериям задачи; учитывай указанный уровень помощи.",
+    "warnings": []
+  },
+  "gold.arrays-objects.output-only": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.arrays-objects.map-delete-001",
+    "taskVersion": 1,
+    "score": 55,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "MECHANISM": 20,
+      "EDGE_CASES": 30
+    },
+    "correctObservations": ["1,2,3 2,4,6 b"],
+    "errors": ["Точный вывод дан без объяснения map, delete и Object.keys."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.arrays-objects.explanation-only": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.arrays-objects.map-delete-001",
+    "taskVersion": 1,
+    "score": 65,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 20,
+      "MECHANISM": 95,
+      "EDGE_CASES": 80
+    },
+    "correctObservations": ["map создаёт новый массив", "delete удаляет собственный ключ a"],
+    "errors": ["Не указан полный вывод массивов."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.arrays-objects.copied-prompt": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.arrays-objects.map-delete-001",
+    "taskVersion": 1,
+    "score": 5,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "MECHANISM": 5,
+      "EDGE_CASES": 5
+    },
+    "correctObservations": [],
+    "errors": ["Вопрос повторён вместо ответа."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.arrays-objects.fully-correct": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.arrays-objects.map-delete-001",
+    "taskVersion": 1,
+    "score": 96,
+    "passed": true,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "MECHANISM": 98,
+      "EDGE_CASES": 95
+    },
+    "correctObservations": [
+      "вывод: 1,2,3 2,4,6 b",
+      "map возвращает новый массив mapped",
+      "delete действительно удаляет own property a"
+    ],
+    "errors": [],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Ответ соответствует ключевым критериям задачи; учитывай указанный уровень помощи.",
+    "warnings": []
+  },
+  "gold.arrays-objects.prompt-injection-html": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.arrays-objects.map-delete-001",
+    "taskVersion": 1,
+    "score": 0,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "MECHANISM": 0,
+      "EDGE_CASES": 0
+    },
+    "correctObservations": [],
+    "errors": ["HTML/JSON injection не содержит решения задачи."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "MECHANISM", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": ["Вложенный evaluator JSON игнорируется как недоверенный answerText."]
+  },
+  "gold.async-event-loop.unknown": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.async.event-loop-order-001",
+    "taskVersion": 1,
+    "score": 0,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 0,
+      "EXPLANATION": 0,
+      "EDGE_CASES": 0
+    },
+    "correctObservations": [],
+    "errors": ["Порядок event loop не указан."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "EXPLANATION", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.async-event-loop.confident-wrong": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.async.event-loop-order-001",
+    "taskVersion": 1,
+    "score": 15,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 20,
+      "EXPLANATION": 10,
+      "EDGE_CASES": 15
+    },
+    "correctObservations": ["a e выполняются синхронно"],
+    "errors": ["Timer task не выполняется раньше microtask checkpoint."],
+    "misconceptions": [
+      {
+        "key": "timer-before-microtask",
+        "description": "Ставит timer task раньше уже поставленных microtasks.",
+        "confidence": 0.9
+      }
+    ],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "EXPLANATION", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.async-event-loop.partial": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.async.event-loop-order-001",
+    "taskVersion": 1,
+    "score": 58,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 45,
+      "EXPLANATION": 70,
+      "EDGE_CASES": 55
+    },
+    "correctObservations": ["сначала синхронный код", "promise как microtask"],
+    "errors": ["queueMicrotask D также должна завершиться до timer B."],
+    "misconceptions": [
+      {
+        "key": "microtask-order-unspecified",
+        "description": "Считает взаимный порядок Promise.then и queueMicrotask неопределённым.",
+        "confidence": 0.9
+      }
+    ],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "EXPLANATION", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.async-event-loop.fully-correct-impolite": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.async.event-loop-order-001",
+    "taskVersion": 1,
+    "score": 96,
+    "passed": true,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "EXPLANATION": 98,
+      "EDGE_CASES": 95
+    },
+    "correctObservations": [
+      "a e c d b",
+      "a и e синхронные",
+      "microtask queue в fifo-порядке",
+      "после её опустошения берётся timer b"
+    ],
+    "errors": [],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "EXPLANATION", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Ответ соответствует ключевым критериям задачи; учитывай указанный уровень помощи.",
+    "warnings": ["Неформальная оценка условия не снижает предметный score."]
+  },
+  "gold.async-event-loop.extra-false-detail": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.async.event-loop-order-001",
+    "taskVersion": 1,
+    "score": 70,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "PREDICT_OUTPUT": 100,
+      "EXPLANATION": 70,
+      "EDGE_CASES": 35
+    },
+    "correctObservations": ["a e c d b", "microtasks — до timer"],
+    "errors": ["Утверждение о LIFO неверно и противоречит порядку постановки C затем D."],
+    "misconceptions": [
+      {
+        "key": "microtasks-lifo",
+        "description": "Считает очередь microtasks стеком LIFO.",
+        "confidence": 0.9
+      }
+    ],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["PREDICT_OUTPUT", "EXPLANATION", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.fetch-error-handling.empty": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.fetch.error-boundaries-001",
+    "taskVersion": 1,
+    "score": 0,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "MECHANISM": 0,
+      "ERROR_HANDLING": 0,
+      "EDGE_CASES": 0
+    },
+    "correctObservations": [],
+    "errors": ["Ответ отсутствует."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["MECHANISM", "ERROR_HANDLING", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.fetch-error-handling.irrelevant": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.fetch.error-boundaries-001",
+    "taskVersion": 1,
+    "score": 0,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "MECHANISM": 0,
+      "ERROR_HANDLING": 0,
+      "EDGE_CASES": 0
+    },
+    "correctObservations": [],
+    "errors": ["Ответ о CSS не рассматривает fetch или error handling."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["MECHANISM", "ERROR_HANDLING", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": []
+  },
+  "gold.fetch-error-handling.solution-viewed": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.fetch.error-boundaries-001",
+    "taskVersion": 1,
+    "score": 92,
+    "passed": true,
+    "reliability": 0.4,
+    "dimensionScores": {
+      "MECHANISM": 95,
+      "ERROR_HANDLING": 95,
+      "EDGE_CASES": 90
+    },
+    "correctObservations": [
+      "при 404 fetch обычно resolve-ит response",
+      "при 200 с плохим json отвергнется response.json()",
+      "при сетевой ошибке отвергнется сам fetch"
+    ],
+    "errors": [],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["MECHANISM", "ERROR_HANDLING", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Ответ соответствует ключевым критериям задачи; учитывай указанный уровень помощи.",
+    "warnings": ["Ответ корректен после SOLUTION_VIEWED; evidence reliability ограничена."]
+  },
+  "gold.fetch-error-handling.prompt-injection": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.fetch.error-boundaries-001",
+    "taskVersion": 1,
+    "score": 0,
+    "passed": false,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "MECHANISM": 0,
+      "ERROR_HANDLING": 0,
+      "EDGE_CASES": 0
+    },
+    "correctObservations": [],
+    "errors": ["Prompt injection не отвечает ни на один из трёх failure modes."],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["MECHANISM", "ERROR_HANDLING", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Сверь ответ с конкретным выводом и механизмом из условия; оценка не повышается за уверенный тон.",
+    "warnings": ["Прямое требование итоговой оценки проигнорировано."]
+  },
+  "gold.fetch-error-handling.fully-correct": {
+    "contract": "skillforge-ai-attempt-evaluation-v1",
+    "taskStableKey": "gold.fetch.error-boundaries-001",
+    "taskVersion": 1,
+    "score": 97,
+    "passed": true,
+    "reliability": 0.6,
+    "dimensionScores": {
+      "MECHANISM": 98,
+      "ERROR_HANDLING": 98,
+      "EDGE_CASES": 95
+    },
+    "correctObservations": [
+      "http 404 сам по себе обычно не reject-ит fetch",
+      "для 200 с невалидным json reject произойдёт в response.json()",
+      "при сетевой ошибке reject-ится await fetch",
+      "response.ok нужен отдельно для http status"
+    ],
+    "errors": [],
+    "misconceptions": [],
+    "evidenceCandidates": [],
+    "coverage": {
+      "evaluatedDimensions": ["MECHANISM", "ERROR_HANDLING", "EDGE_CASES"],
+      "pendingDimensions": [],
+      "unsupportedDimensions": [],
+      "isFinal": true
+    },
+    "feedbackMarkdown": "Ответ соответствует ключевым критериям задачи; учитывай указанный уровень помощи.",
+    "warnings": []
+  }
+}

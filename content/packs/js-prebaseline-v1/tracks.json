@@ -1,0 +1,16 @@
+[
+  {
+    "key": "cs-foundation",
+    "title": "Computer Science Foundation",
+    "description": "Минимальный фундамент о значениях, ссылках и изменяемости данных.",
+    "position": 1,
+    "status": "active"
+  },
+  {
+    "key": "javascript-core",
+    "title": "JavaScript Core",
+    "description": "Модель выполнения JavaScript, функции, коллекции, асинхронность и браузерные API.",
+    "position": 2,
+    "status": "active"
+  }
+]

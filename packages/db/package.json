@@ -13,6 +13,10 @@
     "./content": {
       "types": "./dist/src/content/index.d.ts",
       "import": "./dist/src/content/index.js"
+    },
+    "./ai": {
+      "types": "./dist/src/ai/index.d.ts",
+      "import": "./dist/src/ai/index.js"
     }
   },
   "files": [

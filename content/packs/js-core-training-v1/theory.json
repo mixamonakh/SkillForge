@@ -1,0 +1,93 @@
+[
+  {
+    "stableKey": "cs.mutability.training.canonical-boundaries",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "CONCEPT_NOTE",
+    "title": "Границы ссылок и неизменяемого обновления",
+    "bodyMarkdown": "В JavaScript полезно разделять два вопроса: какое значение связано с переменной и можно ли изменить данные, доступные через это значение. Примитивы — строки, числа, boolean, `null`, `undefined`, `bigint` и `symbol` — неизменяемы. После присваивания примитивного значения другой переменной дальнейшее присваивание новой переменной не меняет первую. Объект, массив и функция — объекты с идентичностью. Если две переменные получили один объект, присваивание не создаёт копию: обе переменные позволяют обратиться к одному объекту. Мутация его поля поэтому наблюдается через обе переменные. Проверка `left === right` для объектов отвечает именно на вопрос об общей идентичности.\n\nSpread-синтаксис для объекта или массива создаёт новый внешний контейнер, но копирует его свойства только на один уровень. Если свойство содержит вложенный объект, массив или функцию, в копию попадает то же объектное значение. Поэтому `{ ...source }` меняет внешнюю идентичность, но не делает вложенный граф независимым. Это и есть практическая граница shallow copy. Глубокое копирование — отдельная операция с отдельным контрактом; оно не является автоматической обязанностью spread и часто вообще не нужно.\n\nДля неизменяемого обновления сначала находят путь до изменяемого поля. Новый контейнер создают на каждом уровне этого пути. Ветви, которые не менялись, можно безопасно переиспользовать: это structural sharing. Например, при изменении города в `account.contact.city` нужны новый `account` и новый `contact`, но неизменившийся `account.permissions` может сохранить прежнюю ссылку. Такой подход одновременно сохраняет входные данные и не копирует весь граф без причины.\n\nВ UI state это важно по двум причинам. Во-первых, мутация прежнего состояния делает историю изменений ненадёжной: старый snapshot уже не описывает прошлое. Во-вторых, многие механизмы обновления и мемоизации используют смену ссылок как дешёвый сигнал. Новый внешний объект при прежней изменённой вложенной ссылке недостаточен; но и создание новых ссылок для всех ветвей создаёт лишнюю работу и скрывает реальную область изменения. React не требует глубокого клонирования: он требует относиться к state как к read-only и создавать новые значения для изменённых уровней.\n\nПеред кодом полезно проговорить контракт: какие входы нельзя мутировать, какие ссылки обязаны измениться, какие могут сохраниться и что произойдёт, если цель не найдена. Затем проверить не только итоговые поля, но и идентичность затронутых и незатронутых ветвей. Эта модель связывает значения и ссылки, shallow copy и предсказуемое обновление состояния без магии и без ненужного deep clone.",
+    "payload": {
+      "familyKey": "mutability.reference-boundaries",
+      "learningOutcomeKeys": [
+        "mutability.explain.shared-identity",
+        "mutability.explain.shallow-boundary",
+        "mutability.plan.changed-path"
+      ],
+      "misconceptionTags": [
+        "mutability.assignment-clones-object",
+        "mutability.spread-deep-copies",
+        "mutability.all-branches-need-copy"
+      ],
+      "contrastSiblingKeys": ["cs.mutability.training.primitive-object-contrast"],
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures",
+        "https://developer.mozilla.org/docs/Glossary/Shallow_copy",
+        "https://react.dev/learn/updating-objects-in-state"
+      ]
+    },
+    "status": "draft"
+  },
+  {
+    "stableKey": "cs.mutability.training.worked-contact-update",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "WORKED_EXAMPLE",
+    "title": "Worked example: обновление одной вложенной ветви",
+    "bodyMarkdown": "Нужно изменить город, не мутируя `account`, и сохранить ссылку на неизменившиеся права. Сначала отмечаем путь `account → contact → city`. Новая ссылка нужна для `account` и `contact`; ветвь `permissions` не меняется.\n\n```js\nfunction moveAccount(account, city) {\n  return {\n    ...account,\n    contact: {\n      ...account.contact,\n      city,\n    },\n  };\n}\n```\n\nПроверка контракта включает три независимых факта: исходный `account.contact.city` прежний, `result !== account` и `result.contact !== account.contact`, а `result.permissions === account.permissions`. Последнее равенство не ошибка, а безопасное structural sharing. Этот пример показывает процесс выбора границ; он не является ответом к последующим заданиям, где структура и edge cases другие.",
+    "payload": {
+      "familyKey": "mutability.reference-boundaries",
+      "learningOutcomeKeys": ["mutability.apply.changed-path-copy"],
+      "misconceptionTags": ["mutability.every-branch-needs-copy"],
+      "contrastSiblingKeys": ["cs.mutability.training.shallow-copy-mistake"],
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Spread_syntax",
+        "https://react.dev/learn/updating-objects-in-state"
+      ]
+    },
+    "status": "draft"
+  },
+  {
+    "stableKey": "cs.mutability.training.primitive-object-contrast",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "CONTRAST_PAIR",
+    "title": "Contrast pair: новое значение и общая идентичность",
+    "bodyMarkdown": "Сравни два присваивания. В первом `const copiedLimit = limit` связывает имя с тем же неизменяемым числовым значением; последующее присваивание другой переменной не может изменить `limit`. Во втором `const alias = filter` не создаёт новый объект. Изменение `alias.query` меняет общий объект и видно через `filter`.\n\nКлючевой контраст не в словах «копируется» или «передаётся», а в наблюдаемом контракте: примитив нельзя мутировать, а объект имеет идентичность и изменяемые свойства. Чтобы получить независимую внешнюю идентичность объекта, копию нужно создать явно. Чтобы сделать независимой вложенную ветвь, одного внешнего spread недостаточно.",
+    "payload": {
+      "familyKey": "mutability.reference-boundaries",
+      "learningOutcomeKeys": ["mutability.contrast.primitive-object-assignment"],
+      "misconceptionTags": [
+        "mutability.objects-copy-on-assignment",
+        "mutability.primitive-has-mutable-box"
+      ],
+      "contrastSiblingKeys": ["cs.mutability.training.canonical-boundaries"],
+      "documentationUrls": [
+        "https://tc39.es/ecma262/#sec-ecmascript-language-types",
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ]
+    },
+    "status": "draft"
+  },
+  {
+    "stableKey": "cs.mutability.training.shallow-copy-mistake",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "COMMON_MISTAKE",
+    "title": "Common mistake: новый внешний объект после внутренней мутации",
+    "bodyMarkdown": "Распространённая ошибка выглядит убедительно: сначала создаётся `{ ...source }`, затем меняется поле во вложенном объекте. Внешняя ссылка действительно новая, но вложенная ссылка всё ещё общая, поэтому изменение уже затронуло `source`. Возврат нового контейнера не отменяет произошедшую мутацию.\n\nДиагностика проста: до изменения выпиши путь к полю и сравни ссылки на каждом уровне. Если изменяемый уровень всё ещё общий, сначала создай его копию. После операции отдельно проверь исходное значение, ссылки изменённого пути и ссылки незатронутых ветвей. Не заменяй этот анализ безусловным deep clone: он может потерять поддерживаемые типы, нарушить identity contract и сделать операцию дороже без необходимости.",
+    "payload": {
+      "familyKey": "mutability.reference-boundaries",
+      "learningOutcomeKeys": ["mutability.debug.outer-copy-after-mutation"],
+      "misconceptionTags": [
+        "mutability.new-outer-object-undoes-mutation",
+        "mutability.deep-clone-is-default-fix"
+      ],
+      "contrastSiblingKeys": ["cs.mutability.training.worked-contact-update"],
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Glossary/Shallow_copy",
+        "https://react.dev/learn/updating-arrays-in-state"
+      ]
+    },
+    "status": "draft"
+  }
+]

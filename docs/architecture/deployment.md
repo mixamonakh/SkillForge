@@ -18,7 +18,7 @@ Web проксирует `/api/v1` same-origin к `api:4000` во внутрен
 db healthy
 → api entrypoint: image-local prisma migrate deploy
 → ensure default local user
-→ validate/import configured content pack idempotently
+→ validate/import configured content packs idempotently
 → start API and become ready
 → web starts and proxy becomes usable
 ```
@@ -26,6 +26,8 @@ db healthy
 Автоматический destructive reset запрещён. Readiness API проверяет DB connection и применённость migrations; liveness не зависит от тяжёлых downstream checks.
 
 Runtime startup вызывает Prisma и content importer из уже установленных image-local binaries. Он не загружает pnpm/Corepack или другие пакеты из сети, поэтому обычный restart работает без registry access.
+
+Без override entrypoint импортирует `js-baseline-v1` и `js-prebaseline-v1` по очереди: старый fixed baseline остаётся доступным, а новый draft pre-baseline запускается только своим exact adaptive route. `SEED_CONTENT_PACKS` принимает comma-separated stable keys; legacy single `SEED_CONTENT_PACK` сохраняется как fallback. Draft training pack не добавляется в default startup до human approval.
 
 ## Images
 
@@ -39,7 +41,7 @@ Runtime startup вызывает Prisma и content importer из уже уста
 
 ## Configuration
 
-`.env.example` документирует безопасные defaults. `AI_MODE=manual`, `AI_MONTHLY_BUDGET_USD=0`, пустой `OPENAI_API_KEY` — штатный запуск. Секреты не встраиваются в image и не имеют `NEXT_PUBLIC_` prefix.
+`.env.example` документирует безопасные defaults. `AI_MODE=manual`, hard ledger limit `AI_MONTHLY_BUDGET_USD=10`, выключенные feature flags и пустой `OPENAI_API_KEY` — штатный запуск без provider calls. Секреты не встраиваются в image и не имеют `NEXT_PUBLIC_` prefix.
 
 Основные runtime limits: import 5 MiB, runner timeout 2000 ms, resume threshold 7 дней. Любое изменение лимита оценивается вместе с threat model.
 

@@ -3,6 +3,8 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
+  evaluationCoverageJsonSchema,
+  evaluationResultV2JsonSchema,
   exportBundleV1JsonSchema,
   runnerRequestJsonSchema,
   runnerResponseJsonSchema,
@@ -14,6 +16,8 @@ const schemaDirectory = resolve(packageRoot, 'schemas');
 
 await mkdir(schemaDirectory, { recursive: true });
 const schemas = [
+  ['evaluation-coverage.schema.json', evaluationCoverageJsonSchema],
+  ['evaluation-result-v2.schema.json', evaluationResultV2JsonSchema],
   ['export-bundle-v1.schema.json', exportBundleV1JsonSchema],
   ['skillforge-analysis-v1.schema.json', skillForgeAnalysisV1JsonSchema],
   ['runner-request.schema.json', runnerRequestJsonSchema],

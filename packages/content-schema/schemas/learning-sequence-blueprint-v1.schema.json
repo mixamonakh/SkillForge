@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0" },
+    "key": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 160,
+      "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+    },
+    "version": {
+      "type": "integer",
+      "exclusiveMinimum": 0,
+      "maximum": 9007199254740991
+    },
+    "topicKey": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 160,
+      "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+    },
+    "phase": {
+      "type": "string",
+      "enum": ["CALIBRATION", "ACQUISITION", "CONSOLIDATION", "TRANSFER"]
+    },
+    "estimatedMinutes": {
+      "type": "integer",
+      "exclusiveMinimum": 0,
+      "maximum": 9007199254740991
+    },
+    "steps": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "kind": { "type": "string", "const": "CONTENT" },
+              "contentItemKey": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 160,
+                "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+              },
+              "version": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": ["kind", "contentItemKey", "version"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": { "type": "string", "const": "TASK" },
+              "taskKey": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 160,
+                "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+              },
+              "version": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "purpose": { "type": "string", "minLength": 1, "maxLength": 80 }
+            },
+            "required": ["kind", "taskKey", "version", "purpose"],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "completionRule": {
+      "type": "object",
+      "properties": {
+        "requiredSteps": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "minimumNoHelpSuccesses": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": ["requiredSteps", "minimumNoHelpSuccesses"],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "key",
+    "version",
+    "topicKey",
+    "phase",
+    "estimatedMinutes",
+    "steps",
+    "completionRule"
+  ],
+  "additionalProperties": false
+}

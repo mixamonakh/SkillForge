@@ -1,0 +1,78 @@
+[
+  {
+    "stableKey": "cs.values-and-references.training.contrast-trace-001",
+    "version": 1,
+    "topicKey": "cs.values-and-references",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Напиши три строки, которые выведет код. Объяснение не требуется. Если не знаешь, ответ «Не знаю» допустим.\n\n```js\nlet count = 1;\nlet copiedCount = count;\ncopiedCount = 2;\n\nconst counter = { value: 1 };\nconst alias = counter;\nalias.value = 2;\n\nconsole.log(count);\nconsole.log(counter.value);\nconsole.log(counter === alias);\n```",
+    "expectedAnswer": {
+      "output": ["1", "2", "true"]
+    },
+    "rubric": {
+      "dimensions": {
+        "PREDICT_OUTPUT": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": ["Указаны три строки вывода в правильном порядке"],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["TRACE"],
+      "cognitiveLevel": "CANONICAL_MECHANISM",
+      "productionLoad": "NONE",
+      "transferLevel": "NONE",
+      "supportLevel": "NONE",
+      "familyKey": "mutability.reference-boundaries",
+      "learningOutcomeKeys": ["mutability.trace.primitive-object-contrast"],
+      "misconceptionTags": [
+        "mutability.object-assignment-clones",
+        "mutability.primitive-binding-mutates-source"
+      ],
+      "estimatedMinutes": 2,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ],
+      "mixedEvidence": false
+    }
+  },
+  {
+    "stableKey": "cs.values-and-references.training.shared-config-explain-001",
+    "version": 1,
+    "topicKey": "cs.values-and-references",
+    "kind": "EXPLAIN",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Функция получает объект настроек, присваивает его локальной переменной и меняет поле через эту переменную. После вызова поле изменилось и у объекта вызывающего кода. Объясни, почему локальное имя не изолировало данные, и назови один честный вариант контракта функции: явная мутация или возврат нового значения. Код писать не нужно.",
+    "rubric": {
+      "dimensions": {
+        "EXPLANATION": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указано, что локальная и внешняя переменные дают доступ к одному объекту",
+      "Присваивание не описывается как автоматическое копирование объекта",
+      "Назван явный контракт: документированная мутация или возврат нового значения"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["MECHANISM"],
+      "cognitiveLevel": "CANONICAL_MECHANISM",
+      "productionLoad": "NONE",
+      "transferLevel": "NONE",
+      "supportLevel": "NONE",
+      "familyKey": "mutability.reference-boundaries",
+      "learningOutcomeKeys": ["mutability.explain.shared-object-contract"],
+      "misconceptionTags": ["mutability.local-name-is-independent-copy"],
+      "estimatedMinutes": 3,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Data_structures"
+      ],
+      "mixedEvidence": false
+    }
+  }
+]

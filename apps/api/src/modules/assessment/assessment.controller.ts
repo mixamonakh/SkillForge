@@ -24,6 +24,31 @@ export class AssessmentController {
     return this.assessment.assessment(key);
   }
 
+  @Post('assessments/prebaseline/start')
+  @ApiOperation({ summary: 'Начать или продолжить adaptive JavaScript pre-baseline' })
+  @ApiObjectOk('Adaptive pre-baseline с текущим item или stop decision')
+  public startPrebaseline(): Promise<unknown> {
+    return this.assessment.startPrebaseline();
+  }
+
+  @Post('assessments/:runId/next')
+  @ApiOperation({ summary: 'Идемпотентно получить следующий pre-baseline item или stop decision' })
+  @ApiObjectOk('Adaptive routing decision')
+  public nextPrebaseline(
+    @Param('runId', ParseUUIDPipe) runId: string,
+  ): Promise<unknown> {
+    return this.assessment.nextPrebaseline(runId);
+  }
+
+  @Get('assessments/:runId/routing-profile')
+  @ApiOperation({ summary: 'RoutingProfile без mastery/pass-fail verdict' })
+  @ApiObjectOk('Strict pre-baseline RoutingProfile')
+  public prebaselineRoutingProfile(
+    @Param('runId', ParseUUIDPipe) runId: string,
+  ): Promise<unknown> {
+    return this.assessment.prebaselineRoutingProfile(runId);
+  }
+
   @Post('assessments/:key/runs')
   @ApiOperation({ summary: 'Создать durable assessment snapshot и linked session' })
   @ApiObjectOk('Assessment run с immutable snapshot')

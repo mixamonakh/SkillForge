@@ -11,7 +11,12 @@
         },
         "status": {
           "type": "string",
-          "enum": ["passed", "failed", "runtime-error", "timeout"]
+          "enum": [
+            "passed",
+            "failed",
+            "runtime-error",
+            "timeout"
+          ]
         },
         "tests": {
           "type": "array",
@@ -31,7 +36,10 @@
                 "maxLength": 16384
               }
             },
-            "required": ["name", "passed"],
+            "required": [
+              "name",
+              "passed"
+            ],
             "additionalProperties": false
           },
           "maxItems": 500
@@ -65,11 +73,20 @@
               "maxLength": 16384
             }
           },
-          "required": ["name", "message"],
+          "required": [
+            "name",
+            "message"
+          ],
           "additionalProperties": false
         }
       },
-      "required": ["requestId", "status", "tests", "console", "durationMs"],
+      "required": [
+        "requestId",
+        "status",
+        "tests",
+        "console",
+        "durationMs"
+      ],
       "additionalProperties": false
     }
   },

@@ -8,13 +8,15 @@ import { ContentValidationError } from './errors.js';
 import {
   AssessmentBlueprintSchema,
   ContentItemSchema,
+  LearningSequenceBlueprintSchema,
   ManifestSchema,
   TaskSchema,
   TopicSchema,
   TrackSchema,
   type AssessmentBlueprint,
-  type ContentItem,
   type ContentManifest,
+  type ContentItem,
+  type LearningSequenceBlueprint,
   type ContentTask,
   type ContentTopic,
   type ContentTrack,
@@ -23,6 +25,7 @@ import {
 export type VersionedContentTask = ContentTask & { checksum: string };
 export type VersionedContentItem = ContentItem & { checksum: string };
 export type VersionedAssessmentBlueprint = AssessmentBlueprint & { checksum: string };
+export type VersionedLearningSequenceBlueprint = LearningSequenceBlueprint & { checksum: string };
 
 export type LoadedContentPack = {
   rootPath: string;
@@ -32,6 +35,7 @@ export type LoadedContentPack = {
   contentItems: VersionedContentItem[];
   tasks: VersionedContentTask[];
   assessments: VersionedAssessmentBlueprint[];
+  sequences: VersionedLearningSequenceBlueprint[];
   checksum: string;
 };
 
@@ -100,9 +104,39 @@ async function loadDirectoryArrays<T>(directoryPath: string, schema: z.ZodType<T
   return arrays.flat();
 }
 
+function isMissingPathError(error: unknown): boolean {
+  return typeof error === 'object' && error !== null && 'code' in error && error.code === 'ENOENT';
+}
+
+async function loadOptionalDirectoryArrays<T>(
+  directoryPath: string,
+  schema: z.ZodType<T>,
+): Promise<{ items: T[]; directoryPresent: boolean }> {
+  let files: string[];
+  try {
+    files = (await readdir(directoryPath, { withFileTypes: true }))
+      .filter((entry) => entry.isFile() && entry.name.endsWith('.json'))
+      .map((entry) => path.join(directoryPath, entry.name))
+      .sort((left, right) => left.localeCompare(right));
+  } catch (error: unknown) {
+    if (isMissingPathError(error)) {
+      return { items: [], directoryPresent: false };
+    }
+    throw new ContentValidationError(`Не удалось прочитать каталог ${directoryPath}`, [
+      {
+        code: 'DIRECTORY_READ_ERROR',
+        message: error instanceof Error ? error.message : String(error),
+      },
+    ]);
+  }
+
+  const arrays = await Promise.all(files.map((filePath) => loadArrayFile(filePath, schema)));
+  return { items: arrays.flat(), directoryPresent: true };
+}
+
 export async function loadContentPack(rootPath: string): Promise<LoadedContentPack> {
   const absoluteRoot = path.resolve(rootPath);
-  const [manifest, tracks, topics, contentItems, taskSources, assessmentSources] =
+  const [manifest, tracks, topics, contentItems, taskSources, assessmentSources, sequenceSources] =
     await Promise.all([
       readJsonFile(path.join(absoluteRoot, 'manifest.json')).then((raw) =>
         parseFile(ManifestSchema, raw, path.join(absoluteRoot, 'manifest.json')),
@@ -111,14 +145,25 @@ export async function loadContentPack(rootPath: string): Promise<LoadedContentPa
       loadArrayFile(path.join(absoluteRoot, 'topics.json'), TopicSchema),
       loadArrayFile(path.join(absoluteRoot, 'theory.json'), ContentItemSchema),
       loadDirectoryArrays(path.join(absoluteRoot, 'tasks'), TaskSchema),
-      loadDirectoryArrays(path.join(absoluteRoot, 'assessments'), AssessmentBlueprintSchema),
+      loadOptionalDirectoryArrays(
+        path.join(absoluteRoot, 'assessments'),
+        AssessmentBlueprintSchema,
+      ),
+      loadOptionalDirectoryArrays(
+        path.join(absoluteRoot, 'sequences'),
+        LearningSequenceBlueprintSchema,
+      ),
     ]);
 
   const tasks = taskSources.map((task) => ({ ...task, checksum: sha256(task) }));
   const versionedContentItems = contentItems.map((item) => ({ ...item, checksum: sha256(item) }));
-  const assessments = assessmentSources.map((assessment) => ({
+  const assessments = assessmentSources.items.map((assessment) => ({
     ...assessment,
     checksum: sha256(assessment),
+  }));
+  const sequences = sequenceSources.items.map((sequence) => ({
+    ...sequence,
+    checksum: sha256(sequence),
   }));
   const checksum = sha256({
     manifest,
@@ -127,6 +172,9 @@ export async function loadContentPack(rootPath: string): Promise<LoadedContentPa
     contentItems: versionedContentItems,
     tasks,
     assessments,
+    ...(sequenceSources.directoryPresent || manifest.counts.sequences !== undefined
+      ? { sequences }
+      : {}),
   });
 
   return {
@@ -137,6 +185,7 @@ export async function loadContentPack(rootPath: string): Promise<LoadedContentPa
     contentItems: versionedContentItems,
     tasks,
     assessments,
+    sequences,
     checksum,
   };
 }

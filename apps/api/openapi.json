@@ -1,6 +1,166 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/api/v1/ai/attempts/{attemptId}/evaluate": {
+      "post": {
+        "operationId": "AiController_evaluate",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "AI evaluation draft",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Создать schema-validated AI evaluation draft и preview",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/v1/ai/evaluations/{draftId}": {
+      "get": {
+        "operationId": "AiController_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "AI evaluation draft, preview и allowed actions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/v1/ai/evaluations/{draftId}/apply": {
+      "post": {
+        "operationId": "AiController_apply",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Applied AI evaluation draft",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Идемпотентно применить AI draft через обычные Evaluation/Evidence",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/v1/ai/evaluations/{draftId}/reject": {
+      "post": {
+        "operationId": "AiController_reject",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Rejected AI evaluation draft",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Отклонить AI draft без knowledge-state mutation",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/v1/ai/evaluations/{draftId}/rollback": {
+      "post": {
+        "operationId": "AiController_rollback",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Rolled-back AI evaluation draft",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Компенсировать applied AI evaluation без удаления данных",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/v1/ai/attempts/{attemptId}/nudge": {
+      "post": {
+        "operationId": "AiController_nudge",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Persisted one nudge",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Получить и сохранить одну bounded AI-подсказку на Attempt",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/v1/ai/usage/current": {
+      "get": {
+        "operationId": "AiController_currentUsage",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "AI usage за текущий UTC month",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Текущий hard-budget ledger без answer bodies",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
     "/api/v1/profile": {
       "get": {
         "operationId": "ProfileController_getProfile",
@@ -183,6 +343,52 @@
         ]
       }
     },
+    "/api/v1/topics/{topicKey}/capability-profile": {
+      "get": {
+        "operationId": "CapabilityController_topicProfile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "TopicCapabilityProfile v1",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Capability profile темы без изменения TopicStatus",
+        "tags": [
+          "capability"
+        ]
+      }
+    },
+    "/api/v1/users/me/capability-summary": {
+      "get": {
+        "operationId": "CapabilityController_userSummary",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User capability summary v1",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Capability coverage локального пользователя",
+        "tags": [
+          "capability"
+        ]
+      }
+    },
     "/api/v1/assessments": {
       "get": {
         "operationId": "AssessmentController_catalog",
@@ -227,6 +433,75 @@
           }
         },
         "summary": "Описание assessment blueprint",
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/assessments/prebaseline/start": {
+      "post": {
+        "operationId": "AssessmentController_startPrebaseline",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Adaptive pre-baseline с текущим item или stop decision",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Начать или продолжить adaptive JavaScript pre-baseline",
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/assessments/{runId}/next": {
+      "post": {
+        "operationId": "AssessmentController_nextPrebaseline",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Adaptive routing decision",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Идемпотентно получить следующий pre-baseline item или stop decision",
+        "tags": [
+          "assessment"
+        ]
+      }
+    },
+    "/api/v1/assessments/{runId}/routing-profile": {
+      "get": {
+        "operationId": "AssessmentController_prebaselineRoutingProfile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Strict pre-baseline RoutingProfile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "RoutingProfile без mastery/pass-fail verdict",
         "tags": [
           "assessment"
         ]
@@ -487,7 +762,15 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Recommendation v2 с legacy topic/mode/load wrapper",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
           }
         },
         "summary": "Одна primary recommendation из pure learning engine",
@@ -516,11 +799,19 @@
         "operationId": "SessionsController_create",
         "parameters": [],
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "Learning session с ordered steps и legacy-compatible items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
           }
         },
-        "summary": "Создать session snapshot, items и attempts",
+        "summary": "Создать session snapshot, CONTENT/TASK steps и task attempts",
         "tags": [
           "sessions"
         ]
@@ -530,7 +821,18 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "История learning sessions с LearningPhase",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -544,7 +846,15 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Learning session с ordered CONTENT/TASK steps и legacy-compatible items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -557,8 +867,16 @@
         "operationId": "SessionsController_start",
         "parameters": [],
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "Запущенная или возобновлённая learning session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -571,10 +889,41 @@
         "operationId": "SessionsController_pause",
         "parameters": [],
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "Learning session на паузе",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
           }
         },
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/v1/sessions/{sessionId}/content-steps/{stepId}/complete": {
+      "post": {
+        "operationId": "SessionsController_completeContentStep",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Завершённый CONTENT step из immutable session snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "summary": "Идемпотентно завершить CONTENT step активной сессии",
         "tags": [
           "sessions"
         ]
@@ -585,8 +934,16 @@
         "operationId": "SessionsController_complete",
         "parameters": [],
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "Завершённая learning session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
           }
         },
         "tags": [

@@ -26,6 +26,13 @@ enum SessionMode {
   BATTLE
 }
 
+enum LearningPhase {
+  CALIBRATION
+  ACQUISITION
+  CONSOLIDATION
+  TRANSFER
+}
+
 enum LoadMode {
   MINIMAL
   NORMAL
@@ -105,6 +112,29 @@ enum ContentStatus {
   ARCHIVED
 }
 
+enum AiFeature {
+  ATTEMPT_EVALUATION
+  NUDGE
+  CONTENT_REVIEW
+  MISCONCEPTION_SYNTHESIS
+}
+
+enum AiInvocationStatus {
+  RESERVED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  REJECTED_BUDGET
+  CACHED
+}
+
+enum AiEvaluationDraftStatus {
+  PENDING
+  APPLIED
+  REJECTED
+  ROLLED_BACK
+}
+
 model User {
   id                String             @id @default(uuid()) @db.Uuid
   displayName       String
@@ -123,6 +153,8 @@ model User {
   exportBundles     ExportBundle[]
   importBatches     ImportBatch[]
   metricSnapshots   MetricSnapshot[]
+  aiInvocations     AiInvocation[]
+  aiBudgetPeriods   AiBudgetPeriod[]
 }
 
 model UserSettings {
@@ -172,24 +204,25 @@ model Track {
 }
 
 model Topic {
-  id                    String                  @id @default(uuid()) @db.Uuid
-  key                   String                  @unique
-  trackId               String                  @db.Uuid
+  id                    String                      @id @default(uuid()) @db.Uuid
+  key                   String                      @unique
+  trackId               String                      @db.Uuid
   title                 String
   shortDescription      String
   whyImportant          String
   atWork                String
   atInterview           String
   position              Int
-  defaultHalfLifeDays   Int                     @default(90)
-  status                ContentStatus           @default(ACTIVE)
+  defaultHalfLifeDays   Int                         @default(90)
+  status                ContentStatus               @default(ACTIVE)
   sourcePack            String
   sourceVersion         String
   metadata              Json?
-  track                 Track                   @relation(fields: [trackId], references: [id])
-  prerequisites         TopicDependency[]       @relation("TopicDependent")
-  dependents            TopicDependency[]       @relation("TopicPrerequisite")
+  track                 Track                       @relation(fields: [trackId], references: [id])
+  prerequisites         TopicDependency[]           @relation("TopicDependent")
+  dependents            TopicDependency[]           @relation("TopicPrerequisite")
   contentItems          ContentItem[]
+  learningSequences     LearningSequenceBlueprint[]
   tasks                 Task[]
   topicStates           TopicState[]
   evidence              Evidence[]
@@ -197,8 +230,8 @@ model Topic {
   misconceptionLinks    TopicMisconception[]
   externalArtifactLinks ExternalArtifactTopic[]
   targetRules           TargetTrackRule[]
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
+  createdAt             DateTime                    @default(now())
+  updatedAt             DateTime                    @updatedAt
 
   @@index([trackId, position])
   @@index([status])
@@ -241,23 +274,46 @@ model TopicState {
 }
 
 model ContentItem {
-  id            String        @id @default(uuid()) @db.Uuid
-  stableKey     String
-  version       Int
-  topicId       String        @db.Uuid
-  kind          String
-  title         String
-  bodyMarkdown  String?
-  payload       Json?
-  sourcePack    String
-  sourceVersion String
-  checksum      String
-  status        ContentStatus @default(ACTIVE)
-  topic         Topic         @relation(fields: [topicId], references: [id])
-  createdAt     DateTime      @default(now())
+  id                  String                       @id @default(uuid()) @db.Uuid
+  stableKey           String
+  version             Int
+  topicId             String                       @db.Uuid
+  kind                String
+  title               String
+  bodyMarkdown        String?
+  payload             Json?
+  sourcePack          String
+  sourceVersion       String
+  checksum            String
+  status              ContentStatus                @default(ACTIVE)
+  topic               Topic                        @relation(fields: [topicId], references: [id])
+  sessionContentSteps LearningSessionContentStep[]
+  createdAt           DateTime                     @default(now())
 
   @@unique([stableKey, version])
   @@index([topicId, kind])
+}
+
+model LearningSequenceBlueprint {
+  id               String        @id @default(uuid()) @db.Uuid
+  key              String
+  version          Int
+  topicId          String        @db.Uuid
+  schemaVersion    String
+  phase            LearningPhase
+  estimatedMinutes Int
+  steps            Json
+  completionRule   Json
+  sourcePack       String
+  sourceVersion    String
+  checksum         String
+  topic            Topic         @relation(fields: [topicId], references: [id])
+  createdAt        DateTime      @default(now())
+
+  @@unique([key, version])
+  @@index([topicId, phase])
+  @@index([checksum])
+  @@index([sourcePack, sourceVersion])
 }
 
 model Task {
@@ -298,6 +354,7 @@ model TaskVersion {
   blueprintItems     AssessmentBlueprintItem[]
   sessionItems       SessionItem[]
   attempts           Attempt[]
+  aiInvocations      AiInvocation[]
 
   @@unique([taskId, version])
   @@index([checksum])
@@ -376,25 +433,27 @@ model AssessmentRun {
 }
 
 model LearningSession {
-  id              String         @id @default(uuid()) @db.Uuid
-  userId          String         @db.Uuid
-  assessmentRunId String?        @unique @db.Uuid
+  id              String                       @id @default(uuid()) @db.Uuid
+  userId          String                       @db.Uuid
+  assessmentRunId String?                      @unique @db.Uuid
   mode            SessionMode
+  learningPhase   LearningPhase                @default(ACQUISITION)
   loadMode        LoadMode
   title           String
   goal            String
-  status          RunStatus      @default(DRAFT)
+  status          RunStatus                    @default(DRAFT)
   planSnapshot    Json
   startedAt       DateTime?
   pausedAt        DateTime?
   completedAt     DateTime?
-  durationSec     Int            @default(0)
+  durationSec     Int                          @default(0)
   loadFeedback    String?
   summary         String?
   lastStepLabel   String?
-  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  assessmentRun   AssessmentRun? @relation(fields: [assessmentRunId], references: [id])
+  user            User                         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assessmentRun   AssessmentRun?               @relation(fields: [assessmentRunId], references: [id])
   items           SessionItem[]
+  contentSteps    LearningSessionContentStep[]
   attempts        Attempt[]
 
   @@index([userId, status])
@@ -416,31 +475,50 @@ model SessionItem {
   @@index([taskVersionId])
 }
 
+model LearningSessionContentStep {
+  id               String          @id @default(uuid()) @db.Uuid
+  sessionId        String          @db.Uuid
+  contentItemId    String          @db.Uuid
+  sequencePosition Int
+  required         Boolean         @default(true)
+  snapshot         Json
+  completedAt      DateTime?
+  createdAt        DateTime        @default(now())
+  session          LearningSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  contentItem      ContentItem     @relation(fields: [contentItemId], references: [id])
+
+  @@unique([sessionId, sequencePosition])
+  @@index([contentItemId])
+  @@index([sessionId, completedAt])
+}
+
 model Attempt {
-  id              String          @id @default(uuid()) @db.Uuid
-  userId          String          @db.Uuid
-  sessionId       String          @db.Uuid
-  sessionItemId   String?         @db.Uuid
-  taskVersionId   String          @db.Uuid
-  sequence        Int             @default(1)
-  revision        Int             @default(0)
+  id              String              @id @default(uuid()) @db.Uuid
+  userId          String              @db.Uuid
+  sessionId       String              @db.Uuid
+  sessionItemId   String?             @db.Uuid
+  taskVersionId   String              @db.Uuid
+  sequence        Int                 @default(1)
+  revision        Int                 @default(0)
   answerText      String?
   answerCode      String?
   selectedOptions Json?
   runnerOutput    Json?
   selfRating      Int?
   confidence      Int?
-  helpLevel       HelpLevel       @default(NONE)
+  helpLevel       HelpLevel           @default(NONE)
   hintsUsed       Json?
   durationMs      Int?
   submittedAt     DateTime?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  session         LearningSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  sessionItem     SessionItem?    @relation(fields: [sessionItemId], references: [id])
-  taskVersion     TaskVersion     @relation(fields: [taskVersionId], references: [id])
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  user            User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session         LearningSession     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionItem     SessionItem?        @relation(fields: [sessionItemId], references: [id])
+  taskVersion     TaskVersion         @relation(fields: [taskVersionId], references: [id])
   evaluations     Evaluation[]
+  aiInvocations   AiInvocation[]
+  aiDrafts        AiEvaluationDraft[]
 
   @@unique([sessionId, sessionItemId, sequence])
   @@index([userId, taskVersionId])
@@ -471,6 +549,8 @@ model Evaluation {
   supersededBy          Evaluation?               @relation("EvaluationSupersession")
   evidence              Evidence[]
   misconceptionFindings EvaluationMisconception[]
+  appliedAiDraft        AiEvaluationDraft?        @relation("AiDraftAppliedEvaluation")
+  rollbackAiDraft       AiEvaluationDraft?        @relation("AiDraftRollbackEvaluation")
 
   @@unique([importBatchId, attemptId])
   @@index([attemptId, createdAt])
@@ -666,4 +746,102 @@ model TargetTrackRule {
   @@index([targetTrackId])
   @@index([trackId])
   @@index([topicId])
+}
+
+model AiPromptVersion {
+  id            String         @id @default(uuid()) @db.Uuid
+  key           String
+  version       Int
+  feature       AiFeature
+  systemPrompt  String
+  schemaVersion String
+  checksum      String
+  active        Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  invocations   AiInvocation[]
+
+  @@unique([key, version])
+  @@index([feature, active])
+  @@index([checksum])
+}
+
+model AiBudgetPeriod {
+  id          String         @id @default(uuid()) @db.Uuid
+  userId      String         @db.Uuid
+  period      String
+  limitUsd    Decimal        @db.Decimal(8, 2)
+  spentUsd    Decimal        @default(0) @db.Decimal(10, 6)
+  reservedUsd Decimal        @default(0) @db.Decimal(10, 6)
+  updatedAt   DateTime       @updatedAt
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invocations AiInvocation[]
+
+  @@unique([userId, period])
+  @@index([period])
+}
+
+model AiInvocation {
+  id                      String             @id @default(uuid()) @db.Uuid
+  userId                  String             @db.Uuid
+  feature                 AiFeature
+  status                  AiInvocationStatus
+  provider                String
+  model                   String
+  promptVersionId         String             @db.Uuid
+  promptKey               String
+  promptVersion           Int
+  inputHash               String
+  cacheKey                String?
+  cacheSourceInvocationId String?            @db.Uuid
+  budgetPeriodId          String             @db.Uuid
+  inputTokens             Int?
+  cachedInputTokens       Int?
+  outputTokens            Int?
+  estimatedCostUsd        Decimal            @default(0) @db.Decimal(10, 6)
+  actualCostUsd           Decimal?           @db.Decimal(10, 6)
+  latencyMs               Int?
+  relatedAttemptId        String?            @db.Uuid
+  relatedTaskVersionId    String?            @db.Uuid
+  errorCode               String?
+  createdAt               DateTime           @default(now())
+  completedAt             DateTime?
+  user                    User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  prompt                  AiPromptVersion    @relation(fields: [promptVersionId], references: [id], onDelete: Restrict)
+  budgetPeriod            AiBudgetPeriod     @relation(fields: [budgetPeriodId], references: [id], onDelete: Restrict)
+  relatedAttempt          Attempt?           @relation(fields: [relatedAttemptId], references: [id], onDelete: Cascade)
+  relatedTaskVersion      TaskVersion?       @relation(fields: [relatedTaskVersionId], references: [id], onDelete: Restrict)
+  cacheSourceInvocation   AiInvocation?      @relation("AiInvocationCacheSource", fields: [cacheSourceInvocationId], references: [id], onDelete: Restrict)
+  cacheHits               AiInvocation[]     @relation("AiInvocationCacheSource")
+  evaluationDraft         AiEvaluationDraft?
+
+  @@index([userId, createdAt])
+  @@index([feature, status])
+  @@index([cacheKey])
+  @@index([cacheSourceInvocationId])
+  @@index([budgetPeriodId])
+  @@index([promptVersionId])
+  @@index([relatedAttemptId])
+  @@index([relatedTaskVersionId])
+}
+
+model AiEvaluationDraft {
+  id                   String                  @id @default(uuid()) @db.Uuid
+  invocationId         String                  @unique @db.Uuid
+  attemptId            String                  @db.Uuid
+  status               AiEvaluationDraftStatus @default(PENDING)
+  normalizedJson       Json
+  preview              Json?
+  appliedEvaluationId  String?                 @unique @db.Uuid
+  rollbackEvaluationId String?                 @unique @db.Uuid
+  appliedAt            DateTime?
+  rejectedAt           DateTime?
+  rolledBackAt         DateTime?
+  createdAt            DateTime                @default(now())
+  invocation           AiInvocation            @relation(fields: [invocationId], references: [id], onDelete: Cascade)
+  attempt              Attempt                 @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  appliedEvaluation    Evaluation?             @relation("AiDraftAppliedEvaluation", fields: [appliedEvaluationId], references: [id], onDelete: Restrict)
+  rollbackEvaluation   Evaluation?             @relation("AiDraftRollbackEvaluation", fields: [rollbackEvaluationId], references: [id], onDelete: Restrict)
+
+  @@index([attemptId, createdAt])
+  @@index([status, createdAt])
 }

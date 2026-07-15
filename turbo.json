@@ -2,7 +2,12 @@
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": [
     "AI_MODE",
+    "AI_PROVIDER",
+    "AI_FAKE_PROVIDER_ENABLED",
     "AI_MONTHLY_BUDGET_USD",
+    "AI_ATTEMPT_REVIEW_ENABLED",
+    "AI_CONTENT_REVIEW_ENABLED",
+    "AI_NUDGE_ENABLED",
     "API_INTERNAL_URL",
     "APP_URL",
     "CODE_RUNNER_TIMEOUT_MS",
@@ -15,9 +20,22 @@
     "NODE_ENV",
     "PORT",
     "RESUME_THRESHOLD_DAYS",
-    "SEED_CONTENT_PACK"
+    "SEED_CONTENT_PACK",
+    "SEED_CONTENT_PACKS",
+    "OPENAI_MODEL_ATTEMPT_EVALUATION",
+    "OPENAI_MODEL_CONTENT_REVIEW",
+    "OPENAI_MODEL_NUDGE",
+    "OPENAI_MODEL_ESCALATION",
+    "OPENAI_PRICE_INPUT_USD_PER_MILLION",
+    "OPENAI_PRICE_CACHED_INPUT_USD_PER_MILLION",
+    "OPENAI_PRICE_OUTPUT_USD_PER_MILLION"
   ],
-  "globalPassThroughEnv": ["OPENAI_API_KEY", "SENTRY_DSN"],
+  "globalPassThroughEnv": [
+    "OPENAI_API_KEY",
+    "OPENAI_PROJECT_ID",
+    "OPENAI_ORGANIZATION_ID",
+    "SENTRY_DSN"
+  ],
   "tasks": {
     "dev": {
       "dependsOn": ["^build"],

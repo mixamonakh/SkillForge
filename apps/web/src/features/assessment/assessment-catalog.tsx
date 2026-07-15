@@ -6,7 +6,11 @@ import { CheckCircle2, Clock3, Layers3, Play } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { ErrorState, LoadingState } from '@/components/data-state';
 import { apiFetch, apiMutation } from '@/shared/api/client';
-import type { AssessmentCatalogItem, AssessmentRun } from '@/shared/api/types';
+import type {
+  AssessmentCatalogItem,
+  AssessmentRun,
+  PrebaselineNextResponse,
+} from '@/shared/api/types';
 
 export function AssessmentCatalog() {
   const router = useRouter();
@@ -16,6 +20,13 @@ export function AssessmentCatalog() {
   });
   const startMutation = useMutation({
     mutationFn: async (assessment: AssessmentCatalogItem) => {
+      if (assessment.flow === 'ADAPTIVE_PREBASELINE') {
+        const started = await apiMutation<PrebaselineNextResponse>(
+          '/api/v1/assessments/prebaseline/start',
+          'POST',
+        );
+        return started.runId;
+      }
       if (assessment.activeRun) {
         if (assessment.activeRun.status === 'PAUSED') {
           await apiMutation<AssessmentRun>(
@@ -56,10 +67,16 @@ export function AssessmentCatalog() {
         <SectionCard key={`${assessment.key}:${assessment.version}`} className="sf-assessment-card">
           <div className="sf-card-title-row">
             <div>
-              <p className="sf-eyebrow">Рабочая диагностика</p>
+              <p className="sf-eyebrow">
+                {assessment.flow === 'ADAPTIVE_PREBASELINE'
+                  ? 'Быстрая калибровка'
+                  : 'Рабочая диагностика'}
+              </p>
               <h2>{assessment.title}</h2>
             </div>
-            {assessment.activeRun ? (
+            {assessment.reviewState === 'NEEDS_HUMAN_REVIEW' ? (
+              <span className="sf-pill">Draft · нужен human review</span>
+            ) : assessment.activeRun ? (
               <span className="sf-pill">{assessment.activeRun.answered} ответов сохранено</span>
             ) : assessment.latestCompletedRun ? (
               <span className="sf-pill">Завершено прохождений: {assessment.completedRuns}</span>
@@ -72,7 +89,7 @@ export function AssessmentCatalog() {
               {assessment.totalBlocks} блока
             </span>
             <span>
-              <Clock3 aria-hidden="true" size={17} /> {assessment.estimatedMin}–150 минут суммарно
+              <Clock3 aria-hidden="true" size={17} /> около {assessment.estimatedMin} минут
             </span>
             <span>
               <CheckCircle2 aria-hidden="true" size={17} /> {assessment.taskKinds.length} типов
@@ -80,8 +97,9 @@ export function AssessmentCatalog() {
             </span>
           </div>
           <div className="sf-callout">
-            Код и точные ответы проверяются локально. Свободные объяснения останутся в состоянии
-            «ожидают внешнего анализа» до ручного import.
+            {assessment.reviewState === 'NEEDS_HUMAN_REVIEW'
+              ? 'Это локальный pre-release flow. Pack ещё не активирован: нужен human dry run, а свободные ответы останутся в состоянии «ожидают проверки».'
+              : 'Код и точные ответы проверяются локально. Свободные объяснения останутся в состоянии «ожидают внешнего анализа» до ручного import.'}
           </div>
           <PrimaryButton
             busy={startMutation.isPending}
@@ -90,9 +108,11 @@ export function AssessmentCatalog() {
             <Play aria-hidden="true" size={16} />
             {assessment.activeRun
               ? 'Продолжить'
-              : assessment.latestCompletedRun
+              : assessment.latestCompletedRun && assessment.flow !== 'ADAPTIVE_PREBASELINE'
                 ? 'Посмотреть результат'
-                : 'Начать'}
+                : assessment.flow === 'ADAPTIVE_PREBASELINE' && assessment.completedRuns > 0
+                  ? 'Начать новую калибровку'
+                  : 'Начать'}
           </PrimaryButton>
         </SectionCard>
       ))}

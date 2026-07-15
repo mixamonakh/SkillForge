@@ -2,7 +2,11 @@
 
 Этот документ описывает направления после обязательного MVP. Наличие пункта не означает, что функция реализована, включена в UI или имеет срок выпуска. Planned-возможности не должны маскироваться под рабочие кнопки.
 
-## Phase 2 — TypeScript и React
+## Текущая поставка — Learning System v2
+
+Capability Profile, pre-baseline, rule-based routing, sequence builder и bounded AI features входят в утверждённый [контракт Learning System v2](learning-system-v2.md). До завершения соответствующей фазы в `SFV2_EXECUTION_LOG.md` они не считаются работающими runtime-функциями.
+
+## Следующая предметная область — TypeScript и React
 
 - diagnostic packs для TypeScript и React/Next;
 - TypeScript compiler diagnostics;
@@ -10,7 +14,7 @@
 - rendering/debugging и architecture evidence;
 - версионированные source links.
 
-## Phase 3 — Algorithms / LeetCode
+## Algorithms / LeetCode
 
 - roadmap алгоритмических паттернов;
 - ручная привязка LeetCode solutions без хрупкого scraping;
@@ -18,39 +22,30 @@
 - spaced review паттернов;
 - interview mode с timed coding.
 
-## Phase 4 — Internet, servers и infrastructure
+## Internet, servers и infrastructure
 
 - HTTP labs и request inspector;
 - SQL, Docker, nginx/reverse proxy exercises;
 - backend fundamentals и terminal tasks.
 
-## Phase 5 — GitHub integration
+## GitHub integration
 
 - OAuth с явными разрешениями;
 - repository linking, commit/PR/diff evidence;
 - Codex task bundles и code review analysis;
 - приватные репозитории остаются opt-in, архитектура не зависит от одного repo.
 
-## Phase 6 — Ограниченный AI-assisted режим
-
-- provider abstraction и budget ledger;
-- rubric grading, одна подсказка, import normalization;
-- evaluator calibration и сравнение моделей;
-- hard monthly budget (ориентир $10), server-side secret, no chat-first redesign.
-
-Manual mode без API key остаётся полноценным и поддерживаемым.
-
-## Phase 7 — Адаптивная модель после накопления данных
+## Статистическая адаптивность после накопления данных
 
 - item difficulty calibration;
 - BKT/IRT только после проверяемого датасета;
-- misconception graph;
-- adaptive assessment, confidence intervals;
+- validated misconception graph;
+- calibrated probabilistic selection и confidence intervals;
 - оценка качества recommendation engine.
 
 Сложная статистическая модель не вводится без возможности калибровки и объяснения результата.
 
-## Phase 8 — Multi-user/cloud
+## Multi-user/cloud
 
 - authentication, Argon2id, secure sessions и CSRF;
 - row isolation, tenant/user scoping;

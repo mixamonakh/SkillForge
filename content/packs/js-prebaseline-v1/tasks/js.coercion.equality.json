@@ -1,0 +1,116 @@
+[
+  {
+    "stableKey": "js.coercion.equality.trace-default-operators-001",
+    "version": 1,
+    "topicKey": "js.coercion.equality",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Напиши две строки, которые выведет код. Объяснение не требуется. Если не знаешь, ответ «Не знаю» допустим.\n\n```js\nconst count = 0;\n\nconsole.log(count || 5);\nconsole.log(count ?? 5);\n```",
+    "expectedAnswer": {
+      "output": ["5", "0"]
+    },
+    "rubric": {
+      "dimensions": {
+        "PREDICT_OUTPUT": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указаны две строки: 5 и 0 в этом порядке"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["TRACE"],
+      "cognitiveLevel": "CANONICAL_MECHANISM",
+      "productionLoad": "NONE",
+      "transferLevel": "NONE",
+      "supportLevel": "NONE",
+      "familyKey": "coercion.default-operators",
+      "learningOutcomeKeys": ["coercion.trace.default-operators"],
+      "misconceptionTags": ["coercion.or-preserves-zero", "coercion.nullish-rejects-zero"],
+      "estimatedMinutes": 1,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Logical_OR",
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing"
+      ],
+      "mixedEvidence": false
+    }
+  },
+  {
+    "stableKey": "js.coercion.equality.debug-zero-default-001",
+    "version": 1,
+    "topicKey": "js.coercion.equality",
+    "kind": "FIND_BUG",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Функция должна показывать `нет данных` только для `null` или `undefined`. Сейчас `labelCount(0)` возвращает неправильный текст. Найди причину и исправь выражение. Если не знаешь, так и напиши: «Не знаю».\n\n```js\nfunction labelCount(count) {\n  return String(count || 'нет данных');\n}\n```",
+    "rubric": {
+      "dimensions": {
+        "DEBUGGING": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указано, что 0 является falsy и поэтому оператор || выбирает правую часть",
+      "Исправление использует nullish-проверку и сохраняет 0",
+      "Для null и undefined остаётся текст нет данных"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["DEBUG"],
+      "cognitiveLevel": "COMPOSITE_MECHANISM",
+      "productionLoad": "LOW",
+      "transferLevel": "NEAR",
+      "supportLevel": "NONE",
+      "familyKey": "coercion.default-operators",
+      "learningOutcomeKeys": ["coercion.debug.zero-default"],
+      "misconceptionTags": ["coercion.falsy-means-missing"],
+      "estimatedMinutes": 2,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing"
+      ],
+      "mixedEvidence": false
+    }
+  },
+  {
+    "stableKey": "js.coercion.equality.explain-strict-equality-001",
+    "version": 1,
+    "topicKey": "js.coercion.equality",
+    "kind": "EXPLAIN",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "В форме число пришло строкой: `const input = '5'`, а ожидаемое значение хранится как число: `const expected = 5`. Объясни, почему `input === expected` возвращает `false`, и как явно сравнить их как числа после проверки входа. Если не знаешь, так и напиши: «Не знаю».",
+    "rubric": {
+      "dimensions": {
+        "EXPLANATION": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указано, что строгое равенство не приводит string к number",
+      "Предложено явное преобразование и проверка результата перед сравнением",
+      "Ответ не предлагает заменить строгое равенство на нестрогое без проверки"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["MECHANISM"],
+      "cognitiveLevel": "CANONICAL_MECHANISM",
+      "productionLoad": "NONE",
+      "transferLevel": "NEAR",
+      "supportLevel": "NONE",
+      "familyKey": "coercion.strict-equality",
+      "learningOutcomeKeys": ["coercion.explain.strict-equality"],
+      "misconceptionTags": ["coercion.strict-equality-converts-types", "coercion.loose-equality-is-validation"],
+      "estimatedMinutes": 2,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Strict_equality",
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number"
+      ],
+      "mixedEvidence": false
+    }
+  }
+]

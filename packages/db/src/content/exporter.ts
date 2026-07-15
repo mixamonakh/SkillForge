@@ -1,7 +1,7 @@
 import type { PrismaClient } from '../../generated/client/client.js';
 
-export async function exportContentPackSnapshot(prisma: PrismaClient): Promise<unknown> {
-  const [packs, tracks, topics, contentItems, tasks, assessments] = await Promise.all([
+export async function exportContentPackSnapshot(prisma: PrismaClient) {
+  const [packs, tracks, topics, contentItems, tasks, assessments, sequences] = await Promise.all([
     prisma.contentPack.findMany({ orderBy: [{ key: 'asc' }, { version: 'asc' }] }),
     prisma.track.findMany({ orderBy: [{ position: 'asc' }, { key: 'asc' }] }),
     prisma.topic.findMany({
@@ -39,6 +39,10 @@ export async function exportContentPackSnapshot(prisma: PrismaClient): Promise<u
         },
       },
     }),
+    prisma.learningSequenceBlueprint.findMany({
+      orderBy: [{ key: 'asc' }, { version: 'asc' }],
+      include: { topic: { select: { key: true } } },
+    }),
   ]);
 
   return {
@@ -72,5 +76,12 @@ export async function exportContentPackSnapshot(prisma: PrismaClient): Promise<u
         taskVersion: undefined,
       })),
     })),
+    sequences: sequences.map((sequence) => ({
+      ...sequence,
+      topicKey: sequence.topic.key,
+      topic: undefined,
+    })),
   };
 }
+
+export type ContentPackSnapshot = Awaited<ReturnType<typeof exportContentPackSnapshot>>;

@@ -1,0 +1,234 @@
+[
+  {
+    "stableKey": "cs.mutability.training.cart-shallow-trace-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Сначала предскажи две строки вывода, не запуская код. Объяснение не требуется. После отправки ответ можно сверить с выполнением.\n\n```js\nconst cart = { items: [{ sku: 'A', quantity: 1 }] };\nconst nextCart = { ...cart };\nnextCart.items[0].quantity = 2;\n\nconsole.log(cart.items[0].quantity);\nconsole.log(nextCart.items === cart.items);\n```",
+    "expectedAnswer": {
+      "output": ["2", "true"]
+    },
+    "rubric": {
+      "dimensions": {
+        "PREDICT_OUTPUT": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": ["Указаны две строки вывода в правильном порядке"],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["TRACE"],
+      "cognitiveLevel": "CANONICAL_MECHANISM",
+      "productionLoad": "NONE",
+      "transferLevel": "NEAR",
+      "supportLevel": "NONE",
+      "familyKey": "mutability.reference-boundaries",
+      "learningOutcomeKeys": ["mutability.trace.shallow-array-boundary"],
+      "misconceptionTags": ["mutability.outer-spread-copies-array-elements"],
+      "estimatedMinutes": 2,
+      "documentationUrls": ["https://developer.mozilla.org/docs/Glossary/Shallow_copy"],
+      "mixedEvidence": false
+    }
+  },
+  {
+    "stableKey": "cs.mutability.training.board-mutation-debug-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "FIND_BUG",
+    "difficulty": "MEDIUM",
+    "status": "draft",
+    "promptMarkdown": "`closeTask` должна вернуть обновлённое состояние доски, не меняя `board`. После вызова задача в исходном `board` тоже становится закрытой. Найди границу общей ссылки, объясни причину и опиши исправление. Полный готовый код не обязателен.\n\n```js\nfunction closeTask(board, taskId) {\n  const nextBoard = { ...board };\n  const task = nextBoard.tasks.find((item) => item.id === taskId);\n  task.closed = true;\n  return nextBoard;\n}\n```",
+    "rubric": {
+      "dimensions": {
+        "DEBUGGING": 70,
+        "EDGE_CASES": 30
+      }
+    },
+    "hints": [
+      "Сравни отдельно ссылки на внешний объект, массив `tasks` и найденный объект задачи."
+    ],
+    "acceptanceCriteria": [
+      "Определено, что внешний spread не копирует массив и его элементы",
+      "Исправление создаёт новые ссылки на каждом изменяемом уровне",
+      "Учтён случай, когда задача с taskId не найдена",
+      "Не предлагается безусловный JSON deep clone"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["DEBUG", "MECHANISM"],
+      "cognitiveLevel": "COMPOSITE_MECHANISM",
+      "productionLoad": "LOW",
+      "transferLevel": "NEAR",
+      "supportLevel": "NONE",
+      "familyKey": "mutability.reference-boundaries",
+      "learningOutcomeKeys": ["mutability.debug.changed-array-path"],
+      "misconceptionTags": [
+        "mutability.new-outer-object-prevents-inner-mutation",
+        "mutability.deep-clone-is-only-fix"
+      ],
+      "estimatedMinutes": 4,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Glossary/Shallow_copy",
+        "https://react.dev/learn/updating-arrays-in-state"
+      ],
+      "mixedEvidence": true
+    }
+  },
+  {
+    "stableKey": "cs.mutability.training.update-locale-guided-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "CODE",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Дополни `updateLocale(settings, locale)`. Функция должна вернуть новые `settings` и `preferences`, изменить только `preferences.locale`, не мутировать вход и сохранить прежнюю ссылку на неизменившийся `profile`.",
+    "starterCode": "export function updateLocale(settings, locale) {\n  return {\n    ...settings,\n    preferences: {\n      // дополни обновление preferences\n    },\n  };\n}",
+    "language": "javascript",
+    "rubric": {
+      "dimensions": {
+        "CODE_CORRECTNESS": 80,
+        "EDGE_CASES": 20
+      }
+    },
+    "hints": [
+      "Создай копию именно той вложенной ветви, в которой находится `locale`, и сохрани её остальные поля."
+    ],
+    "acceptanceCriteria": [
+      "Возвращены новые внешние settings и preferences",
+      "Изменён только locale, остальные поля preferences сохранены",
+      "Входной объект не мутирован",
+      "Неизменившийся profile сохраняет прежнюю ссылку"
+    ],
+    "testCases": [
+      {
+        "name": "обновляет locale и сохраняет остальные данные",
+        "input": [
+          {
+            "profile": { "name": "Ира" },
+            "preferences": { "locale": "ru", "theme": "dark" }
+          },
+          "en"
+        ],
+        "expected": {
+          "profile": { "name": "Ира" },
+          "preferences": { "locale": "en", "theme": "dark" }
+        },
+        "testCode": "const input = { profile: { name: 'Ира' }, preferences: { locale: 'ru', theme: 'dark' } }; assert.deepEqual(updateLocale(input, 'en'), { profile: { name: 'Ира' }, preferences: { locale: 'en', theme: 'dark' } });",
+        "hidden": false,
+        "position": 1
+      },
+      {
+        "name": "соблюдает контракт ссылок и входа",
+        "testCode": "const input = { profile: { name: 'Ира' }, preferences: { locale: 'ru', theme: 'dark' } }; const snapshot = JSON.stringify(input); const result = updateLocale(input, 'en'); assert.notEqual(result, input); assert.notEqual(result.preferences, input.preferences); assert.equal(result.profile, input.profile); assert.equal(JSON.stringify(input), snapshot);",
+        "hidden": true,
+        "position": 2
+      }
+    ],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["CODE_PRODUCTION", "MECHANISM"],
+      "cognitiveLevel": "CONSTRAINED_PRODUCTION",
+      "productionLoad": "LOW",
+      "transferLevel": "NEAR",
+      "supportLevel": "STARTER_CODE",
+      "familyKey": "mutability.reference-boundaries",
+      "learningOutcomeKeys": ["mutability.code.copy-changed-object-path"],
+      "misconceptionTags": [
+        "mutability.nested-update-can-drop-sibling-fields",
+        "mutability.all-branches-need-new-reference"
+      ],
+      "estimatedMinutes": 6,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Spread_syntax",
+        "https://react.dev/learn/updating-objects-in-state"
+      ],
+      "mixedEvidence": true
+    }
+  },
+  {
+    "stableKey": "cs.mutability.training.increment-line-independent-001",
+    "version": 1,
+    "topicKey": "cs.mutability",
+    "kind": "CODE",
+    "difficulty": "MEDIUM",
+    "status": "draft",
+    "promptMarkdown": "Реализуй `incrementLineQuantity(state, lineId)`. Для найденной строки увеличь `quantity` на 1 и верни новые `state`, `lines` и изменённую строку. Не мутируй вход; неизменённые строки должны сохранить ссылки. Если `lineId` отсутствует, верни исходный `state` без новых копий.",
+    "starterCode": "export function incrementLineQuantity(state, lineId) {\n  // твой код\n}",
+    "language": "javascript",
+    "rubric": {
+      "dimensions": {
+        "CODE_CORRECTNESS": 70,
+        "EDGE_CASES": 30
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Количество найденной строки увеличено ровно на 1",
+      "Входные state, lines и строки не мутированы",
+      "Новые ссылки созданы только для изменённого пути",
+      "Неизменённые строки сохраняют ссылки",
+      "При отсутствующем lineId возвращён исходный state"
+    ],
+    "testCases": [
+      {
+        "name": "увеличивает количество выбранной строки",
+        "input": [
+          {
+            "orderId": "o1",
+            "lines": [
+              { "id": "a", "quantity": 1 },
+              { "id": "b", "quantity": 4 }
+            ]
+          },
+          "a"
+        ],
+        "expected": {
+          "orderId": "o1",
+          "lines": [
+            { "id": "a", "quantity": 2 },
+            { "id": "b", "quantity": 4 }
+          ]
+        },
+        "testCode": "const input = { orderId: 'o1', lines: [{ id: 'a', quantity: 1 }, { id: 'b', quantity: 4 }] }; assert.deepEqual(incrementLineQuantity(input, 'a'), { orderId: 'o1', lines: [{ id: 'a', quantity: 2 }, { id: 'b', quantity: 4 }] });",
+        "hidden": false,
+        "position": 1
+      },
+      {
+        "name": "сохраняет контракт ссылок изменённого пути",
+        "testCode": "const input = { orderId: 'o1', lines: [{ id: 'a', quantity: 1 }, { id: 'b', quantity: 4 }] }; const snapshot = JSON.stringify(input); const result = incrementLineQuantity(input, 'a'); assert.notEqual(result, input); assert.notEqual(result.lines, input.lines); assert.notEqual(result.lines[0], input.lines[0]); assert.equal(result.lines[1], input.lines[1]); assert.equal(JSON.stringify(input), snapshot);",
+        "hidden": true,
+        "position": 2
+      },
+      {
+        "name": "не создаёт состояние без целевой строки",
+        "testCode": "const input = { orderId: 'o1', lines: [{ id: 'a', quantity: 1 }] }; assert.equal(incrementLineQuantity(input, 'missing'), input);",
+        "hidden": true,
+        "position": 3
+      }
+    ],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["CODE_PRODUCTION", "MECHANISM"],
+      "cognitiveLevel": "CONSTRAINED_PRODUCTION",
+      "productionLoad": "MEDIUM",
+      "transferLevel": "NEAR",
+      "supportLevel": "STARTER_CODE",
+      "familyKey": "mutability.reference-boundaries",
+      "learningOutcomeKeys": ["mutability.code.update-array-item-independently"],
+      "misconceptionTags": [
+        "mutability.map-must-copy-every-item",
+        "mutability.missing-target-needs-empty-copy"
+      ],
+      "estimatedMinutes": 8,
+      "documentationUrls": [
+        "https://react.dev/learn/updating-arrays-in-state",
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/map"
+      ],
+      "mixedEvidence": true
+    }
+  }
+]

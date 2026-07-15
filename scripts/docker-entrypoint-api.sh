@@ -35,9 +35,27 @@ cd /app/packages/db
 echo "Ensuring the default local user exists"
 ./node_modules/.bin/tsx prisma/seed.ts
 
-content_pack="${SEED_CONTENT_PACK:-js-baseline-v1}"
-echo "Importing content pack ${content_pack} idempotently"
-./node_modules/.bin/tsx ../../scripts/content-import.ts --pack "$content_pack"
+if [ -n "${SEED_CONTENT_PACKS:-}" ]; then
+  content_packs="$SEED_CONTENT_PACKS"
+elif [ -n "${SEED_CONTENT_PACK:-}" ]; then
+  content_packs="$SEED_CONTENT_PACK"
+else
+  content_packs="js-baseline-v1,js-prebaseline-v1"
+fi
+
+previous_ifs="$IFS"
+IFS=','
+for content_pack in $content_packs; do
+  case "$content_pack" in
+    ''|*[!a-z0-9.-]*)
+      echo "Invalid content pack key in SEED_CONTENT_PACKS" >&2
+      exit 1
+      ;;
+  esac
+  echo "Importing content pack ${content_pack} idempotently"
+  ./node_modules/.bin/tsx ../../scripts/content-import.ts --pack "$content_pack"
+done
+IFS="$previous_ifs"
 
 cd /app
 exec "$@"

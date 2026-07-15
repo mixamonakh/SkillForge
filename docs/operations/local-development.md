@@ -17,6 +17,7 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d db
 pnpm db:migrate:deploy
 pnpm content:validate
 pnpm content:import -- --pack js-baseline-v1
+pnpm content:import -- --pack js-prebaseline-v1
 pnpm dev
 ```
 
@@ -36,11 +37,20 @@ Development override публикует PostgreSQL только на `127.0.0.1:
 
 ```dotenv
 AI_MODE=manual
-AI_MONTHLY_BUDGET_USD=0
+AI_MONTHLY_BUDGET_USD=10
 OPENAI_API_KEY=
 ```
 
-API key не нужен. Переменная с secret никогда не получает prefix `NEXT_PUBLIC_`.
+Hard limit 10 USD не включает AI сам по себе: все feature flags по умолчанию `false`, а `manual` не вызывает provider. API key не нужен. Переменная с secret никогда не получает prefix `NEXT_PUBLIC_`.
+
+Read-only usage и безопасный smoke для уже запущенного API:
+
+```bash
+pnpm ai:usage
+pnpm ai:smoke
+```
+
+По умолчанию smoke проверяет readiness и usage, поэтому работает и в `manual`. Для disposable fake-provider flow задайте `AI_MODE=api-assisted`, explicit `AI_PROVIDER=fake`, `AI_FAKE_PROVIDER_ENABLED=true` и нужные feature flags. Optional `AI_SMOKE_ATTEMPT_ID`/`AI_SMOKE_NUDGE_ATTEMPT_ID` должны ссылаться только на test-scoped attempts. CLI не печатает answer или hint body. Live OpenAI smoke дополнительно требует real key и актуальные explicit pricing env; он не входит в обязательные offline tests.
 
 ## Task graph
 
@@ -84,9 +94,27 @@ pnpm openapi:generate
 pnpm content:validate
 pnpm content:diff -- --pack js-baseline-v1
 pnpm content:import -- --pack js-baseline-v1
+pnpm content:ai-review -- --pack js-core-training-v1
 ```
 
+Последняя команда использует fake provider, создаёт advisory report вне pack и не активирует draft content.
+
 Если used TaskVersion отличается checksum, создайте новую version. `prisma db push` и ручная правка production-like DB не используются.
+
+### Изолированный pre-release flow training pack
+
+`js-core-training-v1` остаётся canonical DRAFT до human approval. Его Playwright-сценарий разрешён только на отдельном disposable Compose volume:
+
+```bash
+export COMPOSE_PROJECT_NAME=skillforge-sfv2-sequence
+export POSTGRES_VOLUME_NAME=skillforge_sfv2_sequence_data
+export SEED_CONTENT_PACKS=js-baseline-v1,js-prebaseline-v1,js-core-training-v1
+docker compose up -d --build
+E2E_EXPECT_CLEAN=1 pnpm --dir e2e test critical-flow.spec.ts
+docker compose down
+```
+
+Spec сначала проверяет canonical DRAFT manifest и только затем активирует в импортированном представлении ровно четыре acquisition tasks и четыре content items. Source JSON, review status, consolidation и transfer не изменяются. Не запускайте эту команду против volume с ценными answers/evidence.
 
 ## Перед передачей изменения
 

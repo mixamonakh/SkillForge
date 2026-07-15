@@ -10,11 +10,16 @@ skillforge/
 │   ├── contracts/            versioned public runtime contracts
 │   ├── learning-engine/      pure mastery/review/recommendation functions
 │   ├── content-schema/       JSON content validation
+│   ├── ai-provider/          bounded provider adapters/contracts (Phase 6 target)
 │   ├── ui/                   shared design tokens/components
 │   ├── eslint-config/        shared lint policy
 │   └── tsconfig/             shared strict TypeScript configs
-├── content/packs/
-│   └── js-baseline-v1/       Git source of truth baseline pack
+├── content/
+│   ├── packs/
+│   │   ├── js-baseline-v1/   immutable extended diagnostic
+│   │   ├── js-prebaseline-v1/ short calibration router (Phase 4 target)
+│   │   └── js-core-training-v1/ first acquisition sequence (Phase 5 target)
+│   └── evaluator-gold/       evaluator calibration fixtures (Phase 6 target)
 ├── docs/                     product, architecture, domain, operations, ADR
 ├── scripts/                  backup/restore и проверочные utilities
 ├── e2e/                      Playwright critical flows
@@ -54,16 +59,17 @@ Feature публикует понятный `index.ts`; исходники др�
 
 ## Ownership
 
-| Область                       | Owner/source of truth             |
-| ----------------------------- | --------------------------------- |
-| HTTP contract/OpenAPI         | `apps/api` + `packages/contracts` |
-| import/export schema version  | `packages/contracts`              |
-| persistence schema/migrations | `packages/db`                     |
-| mastery/readiness/review      | `packages/learning-engine`        |
-| curated prompts/tasks/theory  | `content/packs`                   |
-| design system                 | `packages/ui`                     |
-| user/server state             | API + PostgreSQL                  |
-| emergency unsynced draft      | browser storage, не canonical     |
+| Область                           | Owner/source of truth             |
+| --------------------------------- | --------------------------------- |
+| HTTP contract/OpenAPI             | `apps/api` + `packages/contracts` |
+| import/export schema version      | `packages/contracts`              |
+| persistence schema/migrations     | `packages/db`                     |
+| mastery/capability/routing/review | `packages/learning-engine`        |
+| curated prompts/tasks/theory      | `content/packs`                   |
+| provider contracts/adapters       | `packages/ai-provider`            |
+| design system                     | `packages/ui`                     |
+| user/server state                 | API + PostgreSQL                  |
+| emergency unsynced draft          | browser storage, не canonical     |
 
 ## Размер и связанность
 

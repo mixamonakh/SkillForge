@@ -29,6 +29,7 @@ WORKDIR /app
 
 COPY --from=production-dependencies --chown=node:node /app /app
 COPY --from=builder --chown=node:node /app/apps/api/dist /app/apps/api/dist
+COPY --from=builder --chown=node:node /app/packages/ai-provider/dist /app/packages/ai-provider/dist
 COPY --from=builder --chown=node:node /app/packages/contracts/dist /app/packages/contracts/dist
 COPY --from=builder --chown=node:node /app/packages/content-schema/dist /app/packages/content-schema/dist
 COPY --from=builder --chown=node:node /app/packages/db/dist /app/packages/db/dist

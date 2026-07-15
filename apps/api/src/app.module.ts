@@ -6,11 +6,13 @@ import { DatabaseModule } from './database/database.module.js';
 import { AiModule } from './modules/ai/ai.module.js';
 import { AssessmentModule } from './modules/assessment/assessment.module.js';
 import { BattleEvidenceModule } from './modules/battle-evidence/battle-evidence.module.js';
+import { CapabilityModule } from './modules/capability/capability.module.js';
 import { CurriculumModule } from './modules/curriculum/curriculum.module.js';
 import { HealthModule } from './modules/health/health.module.js';
 import { ImportExportModule } from './modules/import-export/import-export.module.js';
 import { MasteryModule } from './modules/mastery/mastery.module.js';
 import { MetricsModule } from './modules/metrics/metrics.module.js';
+import { aiRuntimeConfigFromEnvironment } from './modules/ai/ai-runtime-config.js';
 import { ProfileModule } from './modules/profile/profile.module.js';
 import { SessionsModule } from './modules/sessions/sessions.module.js';
 
@@ -25,11 +27,13 @@ function logRecord(value: unknown): Readonly<Record<string, unknown>> {
     ConfigModule.forRoot({
       isGlobal: true,
       validate(config: Record<string, unknown>) {
-        const aiMode = typeof config.AI_MODE === 'string' ? config.AI_MODE : 'manual';
-        if (aiMode !== 'manual') {
-          throw new Error('SkillForge MVP поддерживает только AI_MODE=manual');
-        }
-        return { ...config, AI_MODE: aiMode };
+        const environment = Object.fromEntries(
+          Object.entries(config).flatMap(([key, value]) =>
+            typeof value === 'string' ? [[key, value]] : [],
+          ),
+        );
+        const ai = aiRuntimeConfigFromEnvironment(environment);
+        return { ...config, AI_MODE: ai.mode, AI_PROVIDER: ai.provider };
       },
     }),
     LoggerModule.forRoot({
@@ -68,6 +72,7 @@ function logRecord(value: unknown): Readonly<Record<string, unknown>> {
     MasteryModule,
     ProfileModule,
     CurriculumModule,
+    CapabilityModule,
     AssessmentModule,
     SessionsModule,
     MetricsModule,

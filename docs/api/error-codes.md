@@ -38,7 +38,14 @@
 |  422 | `IMPORT_UNKNOWN_TOPIC`               | topicKey неизвестен; требуется mapping/rejection.              |
 |  422 | `CONTENT_PREREQUISITE_CYCLE`         | Graph content pack содержит цикл.                              |
 |  422 | `CODE_RUNNER_REQUEST_INVALID`        | Source/language/timeout не соответствует protocol.             |
-|  429 | `AI_BUDGET_EXCEEDED`                 | Future API-assisted budget hard limit; manual mode доступен.   |
+|  409 | `AI_INVOCATION_IN_PROGRESS`          | Идентичный provider request уже выполняется.                   |
+|  409 | `AI_PREVIEW_STALE`                   | Rubric coverage изменился после preview; создать новый draft.  |
+|  409 | `AI_DRAFT_TRANSITION_INVALID`        | Действие несовместимо с текущим draft status.                  |
+|  422 | `AI_REVIEW_NOT_REQUIRED`             | У Attempt нет pending dimensions для AI review.                |
+|  422 | `AI_NUDGE_NOT_AVAILABLE`             | Nudge уже использован или Attempt/session его не допускает.    |
+|  429 | `AI_BUDGET_EXCEEDED`                 | Atomic hard limit исчерпан; manual mode доступен.              |
+|  502 | `AI_RESULT_INVALID`                  | Structured result не прошёл local/domain validation.           |
+|  502 | `AI_PROVIDER_FAILED`                 | Provider недоступен; manual workflow продолжается.             |
 |  500 | `INTERNAL_ERROR`                     | Непредвиденная ошибка; показать requestId и retry.             |
 |  503 | `DATABASE_NOT_READY`                 | Readiness: БД/миграции недоступны.                             |
 |  503 | `CONTENT_NOT_READY`                  | Требуемый content pack не импортирован/невалиден.              |

@@ -1,0 +1,15 @@
+{
+  "key": "evaluator-gold-v1",
+  "version": 1,
+  "status": "DRAFT_NEEDS_HUMAN_REVIEW",
+  "reviewedBy": ["ai:codex-draft-author"],
+  "caseFiles": [
+    "js-values-mutability.json",
+    "js-types-coercion.json",
+    "js-scope-functions.json",
+    "js-closures-collections.json",
+    "js-async-fetch.json"
+  ],
+  "caseCount": 50,
+  "minimumHumanRangeAgreement": 0.9
+}

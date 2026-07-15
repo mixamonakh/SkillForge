@@ -28,6 +28,46 @@ const SessionSchema = z.looseObject({
     }),
   ),
 });
+const ContentStepSchema = z.looseObject({
+  kind: z.literal('CONTENT'),
+  id: z.uuid(),
+  position: z.number().int().nonnegative(),
+  required: z.boolean(),
+  completedAt: z.iso.datetime().nullable(),
+  content: z.looseObject({
+    stableKey: z.string(),
+    version: z.number().int().positive(),
+    checksum: z.string(),
+    kind: z.string(),
+    title: z.string(),
+    bodyMarkdown: z.string().nullable(),
+  }),
+});
+const TaskStepSchema = z.looseObject({
+  kind: z.literal('TASK'),
+  id: z.uuid(),
+  position: z.number().int().nonnegative(),
+  required: z.boolean(),
+  taskItem: z.looseObject({
+    id: z.uuid(),
+    position: z.number().int().nonnegative(),
+    attempt: AttemptSchema.nullable(),
+  }),
+});
+const SequenceSessionSchema = z.looseObject({
+  id: z.uuid(),
+  status: z.string(),
+  itemCount: z.number().int().nonnegative(),
+  stepCount: z.number().int().nonnegative(),
+  items: z.array(
+    z.looseObject({
+      id: z.uuid(),
+      position: z.number().int().nonnegative(),
+      attempt: AttemptSchema.nullable(),
+    }),
+  ),
+  steps: z.array(z.discriminatedUnion('kind', [ContentStepSchema, TaskStepSchema])),
+});
 const ApiErrorSchema = z.looseObject({
   error: z.object({
     code: z.string(),
@@ -52,6 +92,7 @@ describe('SkillForge API PostgreSQL flow', () => {
   let app: NestFastifyApplication;
   let server: FastifyInstance;
   const createdSessionIds: string[] = [];
+  const createdSequenceIds: string[] = [];
 
   beforeAll(async () => {
     process.env.LOG_LEVEL = 'silent';
@@ -62,6 +103,11 @@ describe('SkillForge API PostgreSQL flow', () => {
     if (createdSessionIds.length > 0) {
       await app.get(PrismaService).client.learningSession.deleteMany({
         where: { id: { in: createdSessionIds } },
+      });
+    }
+    if (createdSequenceIds.length > 0) {
+      await app.get(PrismaService).client.learningSequenceBlueprint.deleteMany({
+        where: { id: { in: createdSequenceIds } },
       });
     }
     await app.close();
@@ -210,5 +256,183 @@ describe('SkillForge API PostgreSQL flow', () => {
     );
     expect(['FIND_BUG', 'CODE']).toContain(returning.items[1]?.task.kind);
     expect(returning.items.every((sessionItem) => sessionItem.task.hints.length === 0)).toBe(true);
+  });
+
+  it('persists an interleaved CONTENT/TASK sequence completion across pause and restart', async () => {
+    const database = app.get(PrismaService).client;
+    const fixture = await database.topic.findFirst({
+      where: {
+        status: 'ACTIVE',
+        contentItems: { some: { status: 'ACTIVE' } },
+        tasks: {
+          some: {
+            status: 'ACTIVE',
+            kind: { not: 'CODE' },
+            versions: { some: {} },
+          },
+        },
+      },
+      select: {
+        id: true,
+        key: true,
+        contentItems: {
+          where: { status: 'ACTIVE' },
+          orderBy: [{ stableKey: 'asc' }, { version: 'desc' }],
+          take: 1,
+          select: {
+            stableKey: true,
+            version: true,
+            sourcePack: true,
+            sourceVersion: true,
+          },
+        },
+        tasks: {
+          where: { status: 'ACTIVE', kind: { not: 'CODE' } },
+          orderBy: { stableKey: 'asc' },
+          take: 1,
+          select: {
+            stableKey: true,
+            versions: {
+              orderBy: { version: 'desc' },
+              take: 1,
+              select: { version: true, sourcePack: true, sourceVersion: true },
+            },
+          },
+        },
+      },
+    });
+    expect(fixture).toBeDefined();
+    const content = fixture?.contentItems[0];
+    const task = fixture?.tasks[0];
+    const taskVersion = task?.versions[0];
+    expect(content).toBeDefined();
+    expect(taskVersion).toBeDefined();
+    if (!fixture || !content || !task || !taskVersion) return;
+    expect(taskVersion).toMatchObject({
+      sourcePack: content.sourcePack,
+      sourceVersion: content.sourceVersion,
+    });
+
+    const sequenceKey = `integration.sequence.${String(Date.now())}`;
+    const sequence = await database.learningSequenceBlueprint.create({
+      data: {
+        key: sequenceKey,
+        version: 1,
+        topicId: fixture.id,
+        schemaVersion: '1.0',
+        phase: 'ACQUISITION',
+        estimatedMinutes: 5,
+        steps: [
+          {
+            kind: 'CONTENT',
+            contentItemKey: content.stableKey,
+            version: content.version,
+          },
+          {
+            kind: 'TASK',
+            taskKey: task.stableKey,
+            version: taskVersion.version,
+            purpose: 'PREDICT',
+          },
+        ],
+        completionRule: { requiredSteps: 2, minimumNoHelpSuccesses: 0 },
+        sourcePack: content.sourcePack,
+        sourceVersion: content.sourceVersion,
+        checksum: 'f'.repeat(64),
+      },
+    });
+    createdSequenceIds.push(sequence.id);
+
+    const createResponse = await server.inject({
+      method: 'POST',
+      url: '/api/v1/sessions',
+      payload: {
+        mode: 'TRAINING',
+        learningPhase: 'ACQUISITION',
+        loadMode: 'MINIMAL',
+        topicKeys: [fixture.key],
+        documentationAllowed: true,
+        codeLanguage: 'javascript',
+        sequenceKey,
+        sequenceVersion: 1,
+      },
+    });
+    expect(createResponse.statusCode).toBe(201);
+    const created = SequenceSessionSchema.parse(JSON.parse(createResponse.body) as unknown);
+    createdSessionIds.push(created.id);
+    expect(created.itemCount).toBe(1);
+    expect(created.stepCount).toBe(2);
+    expect(created.items[0]?.position).toBe(1);
+    expect(created.steps.map((step) => [step.kind, step.position])).toEqual([
+      ['CONTENT', 0],
+      ['TASK', 1],
+    ]);
+    const contentStep = created.steps[0];
+    expect(contentStep?.kind).toBe('CONTENT');
+    if (contentStep?.kind !== 'CONTENT') return;
+    expect(contentStep.completedAt).toBeNull();
+
+    const beforeStart = await server.inject({
+      method: 'POST',
+      url: `/api/v1/sessions/${created.id}/content-steps/${contentStep.id}/complete`,
+    });
+    expect(beforeStart.statusCode).toBe(422);
+    expect(ApiErrorSchema.parse(JSON.parse(beforeStart.body) as unknown).error.code).toBe(
+      'SESSION_CONTENT_STEP_NOT_ACTIVE',
+    );
+
+    const startResponse = await server.inject({
+      method: 'POST',
+      url: `/api/v1/sessions/${created.id}/start`,
+    });
+    expect(startResponse.statusCode).toBe(201);
+
+    const firstComplete = await server.inject({
+      method: 'POST',
+      url: `/api/v1/sessions/${created.id}/content-steps/${contentStep.id}/complete`,
+    });
+    expect(firstComplete.statusCode).toBe(201);
+    const firstCompletedStep = ContentStepSchema.parse(JSON.parse(firstComplete.body) as unknown);
+    expect(firstCompletedStep.completedAt).not.toBeNull();
+
+    const idempotentComplete = await server.inject({
+      method: 'POST',
+      url: `/api/v1/sessions/${created.id}/content-steps/${contentStep.id}/complete`,
+    });
+    expect(idempotentComplete.statusCode).toBe(201);
+    expect(
+      ContentStepSchema.parse(JSON.parse(idempotentComplete.body) as unknown).completedAt,
+    ).toBe(firstCompletedStep.completedAt);
+
+    const pauseResponse = await server.inject({
+      method: 'POST',
+      url: `/api/v1/sessions/${created.id}/pause`,
+    });
+    expect(pauseResponse.statusCode).toBe(201);
+
+    await app.close();
+    ({ app, server } = await startApplication());
+
+    const persistedResponse = await server.inject({
+      method: 'GET',
+      url: `/api/v1/sessions/${created.id}`,
+    });
+    expect(persistedResponse.statusCode).toBe(200);
+    const persisted = SequenceSessionSchema.parse(JSON.parse(persistedResponse.body) as unknown);
+    expect(persisted.status).toBe('PAUSED');
+    const persistedContent = persisted.steps[0];
+    expect(persistedContent?.kind).toBe('CONTENT');
+    if (persistedContent?.kind === 'CONTENT') {
+      expect(persistedContent.completedAt).toBe(firstCompletedStep.completedAt);
+    }
+
+    const resumeResponse = await server.inject({
+      method: 'POST',
+      url: `/api/v1/sessions/${created.id}/start`,
+    });
+    expect(resumeResponse.statusCode).toBe(201);
+    expect(SequenceSessionSchema.parse(JSON.parse(resumeResponse.body) as unknown).status).toBe(
+      'ACTIVE',
+    );
   });
 });

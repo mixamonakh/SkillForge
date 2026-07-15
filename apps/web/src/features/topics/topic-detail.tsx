@@ -15,6 +15,7 @@ import { useRef, useState, type KeyboardEvent } from 'react';
 import { ErrorState, LoadingState } from '@/components/data-state';
 import { apiFetch } from '@/shared/api/client';
 import type { TopicSummary } from '@/shared/api/types';
+import { TopicCapabilityMatrix } from './topic-capability-matrix';
 
 type TopicDetailData = TopicSummary & {
   whyImportant: string;
@@ -163,7 +164,9 @@ export function TopicDetail({ topicKey }: { topicKey: string }) {
         <SectionCard>
           <h2>Надёжность оценки</h2>
           <strong className="sf-large-value">
-            {topic.evidenceCount > 0 ? `${Math.round(topic.masteryConfidence)}%` : '—'}
+            {topic.masteryEstimate === null
+              ? 'Не откалибровано'
+              : `${Math.round(topic.masteryConfidence)}%`}
           </strong>
           <p className="sf-muted">
             {topic.evidenceCount} evidence · {Object.keys(topic.evidenceByKind).length} типов
@@ -202,6 +205,7 @@ export function TopicDetail({ topicKey }: { topicKey: string }) {
           <p className="sf-muted">Время само по себе не понижает mastery.</p>
         </SectionCard>
       </div>
+      <TopicCapabilityMatrix topicKey={topicKey} />
       <div className="sf-tabs" role="tablist" aria-label="Разделы темы">
         {tabs.map((item, index) => (
           <button

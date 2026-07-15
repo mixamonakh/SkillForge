@@ -1,0 +1,132 @@
+[
+  {
+    "stableKey": "js.functions.basics.trace-callback-order-001",
+    "version": 1,
+    "topicKey": "js.functions.basics",
+    "kind": "PREDICT_OUTPUT",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Напиши две строки, которые выведет код. Объяснение не требуется. Если не знаешь, ответ «Не знаю» допустим.\n\n```js\nconst steps = [];\n\nfunction run(callback) {\n  steps.push('run');\n  const value = callback();\n  steps.push('done');\n  return value;\n}\n\nconst result = run(() => {\n  steps.push('callback');\n  return 3;\n});\n\nconsole.log(steps.join('>'));\nconsole.log(result);\n```",
+    "expectedAnswer": {
+      "output": ["run>callback>done", "3"]
+    },
+    "rubric": {
+      "dimensions": {
+        "PREDICT_OUTPUT": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указаны строки run>callback>done и 3 в этом порядке"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["TRACE"],
+      "cognitiveLevel": "CANONICAL_MECHANISM",
+      "productionLoad": "NONE",
+      "transferLevel": "NONE",
+      "supportLevel": "NONE",
+      "familyKey": "functions.callback-call",
+      "learningOutcomeKeys": ["functions.trace.callback-call"],
+      "misconceptionTags": ["functions.callback-runs-after-wrapper"],
+      "estimatedMinutes": 1,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Functions"
+      ],
+      "mixedEvidence": false
+    }
+  },
+  {
+    "stableKey": "js.functions.basics.code-active-names-001",
+    "version": 1,
+    "topicKey": "js.functions.basics",
+    "kind": "CODE",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "Реализуй `activeNames(users)`. Верни имена пользователей, у которых `active === true`, в исходном порядке. Не меняй входной массив и его объекты. Для пустого массива верни `[]`. Если решение пока неизвестно, можно не угадывать.",
+    "starterCode": "export function activeNames(users) {\n}\n",
+    "language": "javascript",
+    "rubric": {
+      "dimensions": {
+        "CODE_CORRECTNESS": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Возвращены только имена элементов с active === true",
+      "Исходный порядок сохранён",
+      "Входные данные не изменяются",
+      "Пустой массив даёт пустой массив"
+    ],
+    "testCases": [
+      {
+        "name": "выбирает активных пользователей в исходном порядке",
+        "testCode": "const users = [{ name: 'Анна', active: true }, { name: 'Борис', active: false }, { name: 'Ира', active: true }]; assert.deepEqual(activeNames(users), ['Анна', 'Ира']); assert.deepEqual(users, [{ name: 'Анна', active: true }, { name: 'Борис', active: false }, { name: 'Ира', active: true }]);",
+        "hidden": false,
+        "position": 1
+      },
+      {
+        "name": "обрабатывает пустой массив и не принимает truthy вместо true",
+        "testCode": "assert.deepEqual(activeNames([]), []); assert.deepEqual(activeNames([{ name: 'Лев', active: 1 }, { name: 'Майя', active: true }]), ['Майя']);",
+        "hidden": true,
+        "position": 2
+      }
+    ],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["CODE_PRODUCTION"],
+      "cognitiveLevel": "CONSTRAINED_PRODUCTION",
+      "productionLoad": "MEDIUM",
+      "transferLevel": "NEAR",
+      "supportLevel": "STARTER_CODE",
+      "familyKey": "functions.collection-callbacks",
+      "learningOutcomeKeys": ["functions.code.active-names"],
+      "misconceptionTags": ["functions.filter-returns-element", "functions.map-filters-elements"],
+      "estimatedMinutes": 3,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/filter",
+        "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/map"
+      ],
+      "mixedEvidence": false
+    }
+  },
+  {
+    "stableKey": "js.functions.basics.transfer-event-handler-001",
+    "version": 1,
+    "topicKey": "js.functions.basics",
+    "kind": "FIND_BUG",
+    "difficulty": "EASY",
+    "status": "draft",
+    "promptMarkdown": "При настройке кнопки `save` вызывается сразу, а по клику не работает. Найди причину и исправь код так, чтобы `save` вызывалась только после события `click`. Если не знаешь, так и напиши: «Не знаю».\n\n```js\nfunction bindSave(button, save) {\n  button.addEventListener('click', save());\n}\n```",
+    "rubric": {
+      "dimensions": {
+        "TRANSFER": 100
+      }
+    },
+    "hints": [],
+    "acceptanceCriteria": [
+      "Указано, что save() выполняется во время вызова bindSave",
+      "В addEventListener передаётся функция, а не результат её вызова",
+      "Исправление вызывает save только после события click"
+    ],
+    "testCases": [],
+    "metadata": {
+      "schemaVersion": "2.0",
+      "evidenceFamilies": ["TRANSFER"],
+      "cognitiveLevel": "TRANSFER_INTERVIEW",
+      "productionLoad": "LOW",
+      "transferLevel": "WORK_LIKE",
+      "supportLevel": "NONE",
+      "familyKey": "functions.event-handler",
+      "learningOutcomeKeys": ["functions.transfer.event-handler"],
+      "misconceptionTags": ["functions.handler-result-is-callback"],
+      "estimatedMinutes": 2,
+      "documentationUrls": [
+        "https://developer.mozilla.org/docs/Web/API/EventTarget/addEventListener",
+        "https://developer.mozilla.org/docs/Web/JavaScript/Guide/Functions"
+      ],
+      "mixedEvidence": false
+    }
+  }
+]

@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { ErrorState, LoadingState } from '@/components/data-state';
+import { AiReviewList } from '@/features/ai/ai-evaluation-review';
 import {
   ensureCurrentCodeResult,
   runAndPersistCurrentCode,
@@ -21,17 +22,23 @@ import {
 } from '@/features/runner/code-attempt';
 import { runCode } from '@/features/runner/run-code';
 import { apiFetch, apiMutation } from '@/shared/api/client';
-import type { AssessmentRun, RunnerResult } from '@/shared/api/types';
-import { deterministicResultLabel, summarizeAssessmentItems } from './assessment-results';
+import type { AdaptiveAssessmentRun, AssessmentRun, RunnerResult } from '@/shared/api/types';
+import {
+  deterministicResultLabel,
+  evaluationDimensionLabel,
+  summarizeAssessmentItems,
+} from './assessment-results';
 import { TaskAnswer } from './task-answer';
 import { useAttemptAutosave } from './use-attempt-autosave';
+import { ActivePrebaseline } from './active-prebaseline';
 
 export function ActiveAssessment({ runId }: { runId: string }) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const query = useQuery({
     queryKey: ['assessment-run', runId],
-    queryFn: () => apiFetch<AssessmentRun>(`/api/v1/assessment-runs/${runId}`),
+    queryFn: () =>
+      apiFetch<AssessmentRun | AdaptiveAssessmentRun>(`/api/v1/assessment-runs/${runId}`),
   });
   const run = query.data;
   const initialIndex = useMemo(() => {
@@ -51,10 +58,27 @@ export function ActiveAssessment({ runId }: { runId: string }) {
 
   if (query.isLoading) return <LoadingState count={4} />;
   if (query.error) return <ErrorState error={query.error} retry={() => void query.refetch()} />;
+  if (run?.flow === 'ADAPTIVE_PREBASELINE') {
+    return (
+      <ActivePrebaseline
+        run={run}
+        refresh={async () => {
+          await queryClient.invalidateQueries({ queryKey: ['assessment-run', runId] });
+        }}
+      />
+    );
+  }
   if (!run || run.items.length === 0)
     return <ErrorState error={new Error('Snapshot диагностики пуст.')} />;
 
-  if (run.status === 'COMPLETED') return <AssessmentCompleted run={run} />;
+  if (run.status === 'COMPLETED') {
+    return (
+      <AssessmentCompleted
+        run={run}
+        refresh={() => queryClient.invalidateQueries({ queryKey: ['assessment-run', runId] })}
+      />
+    );
+  }
   if (run.status === 'PAUSED') {
     return (
       <AssessmentPaused
@@ -81,6 +105,9 @@ export function ActiveAssessment({ runId }: { runId: string }) {
           await apiMutation(`/api/v1/assessment-runs/${run.id}/pause`, 'POST');
           router.push('/assessment');
         }}
+        onReviewChanged={() =>
+          queryClient.invalidateQueries({ queryKey: ['assessment-run', runId] })
+        }
       />
     );
   }
@@ -301,11 +328,13 @@ export function AssessmentBlockCompleted({
   blockIndex,
   onContinue,
   onPause,
+  onReviewChanged,
 }: {
   run: AssessmentRun;
   blockIndex: number;
   onContinue: () => void;
   onPause: () => Promise<void>;
+  onReviewChanged?: (() => unknown) | undefined;
 }) {
   const pauseMutation = useMutation({ mutationFn: onPause });
   const blockItems = run.items.filter((item) => item.blockIndex === blockIndex);
@@ -332,6 +361,11 @@ export function AssessmentBlockCompleted({
           Локальная проверка не подменяет оценку объяснений. Можно спокойно продолжить или вернуться
           позже.
         </p>
+        <AiReviewList
+          items={blockItems}
+          manualExportHref={`/import-export?mode=export&assessmentRunId=${run.id}`}
+          onLifecycleChange={onReviewChanged}
+        />
         {pauseMutation.error ? <ErrorState error={pauseMutation.error} /> : null}
         <div className="sf-actions">
           <PrimaryButton onClick={onContinue}>Продолжить следующий блок</PrimaryButton>
@@ -344,7 +378,13 @@ export function AssessmentBlockCompleted({
   );
 }
 
-function AssessmentCompleted({ run }: { run: AssessmentRun }) {
+function AssessmentCompleted({
+  run,
+  refresh,
+}: {
+  run: AssessmentRun;
+  refresh: () => Promise<unknown>;
+}) {
   const { coveredTopics, deterministicItems, pendingItems, totalTopics } = summarizeAssessmentItems(
     run.items,
   );
@@ -380,13 +420,21 @@ function AssessmentCompleted({ run }: { run: AssessmentRun }) {
             <ul className="sf-list">
               {pendingItems.map((item) => (
                 <li className="sf-list-row" key={item.id}>
-                  <span>{item.task.topicTitle}</span>
+                  <span>
+                    {item.task.topicTitle}
+                    <EvaluationCoverageDetails item={item} />
+                  </span>
                   <code>{item.task.stableKey}</code>
                 </li>
               ))}
             </ul>
           </div>
         ) : null}
+        <AiReviewList
+          items={run.items}
+          manualExportHref={`/import-export?mode=export&assessmentRunId=${run.id}`}
+          onLifecycleChange={refresh}
+        />
         <div className="sf-actions">
           <Link
             className="sf-button sf-button--primary"
@@ -411,10 +459,35 @@ function DeterministicResults({ items }: { items: AssessmentRun['items'] }) {
         {items.map((item) => (
           <li className="sf-list-row" key={item.id}>
             <code>{item.task.stableKey}</code>
-            <span>{deterministicResultLabel(item)}</span>
+            <span>
+              {deterministicResultLabel(item)}
+              <EvaluationCoverageDetails item={item} />
+            </span>
           </li>
         ))}
       </ul>
     </div>
+  );
+}
+
+function EvaluationCoverageDetails({ item }: { item: AssessmentRun['items'][number] }) {
+  const coverage = item.attempt?.evaluationCoverage;
+  if (!coverage || coverage.isFinal) return null;
+  return (
+    <>
+      {coverage.pendingDimensions.length > 0 ? (
+        <small className="sf-muted">
+          <br />
+          Ожидают проверки: {coverage.pendingDimensions.map(evaluationDimensionLabel).join(', ')}.
+        </small>
+      ) : null}
+      {coverage.unsupportedDimensions.length > 0 ? (
+        <small className="sf-muted">
+          <br />
+          Не покрыто локально:{' '}
+          {coverage.unsupportedDimensions.map(evaluationDimensionLabel).join(', ')}.
+        </small>
+      ) : null}
+    </>
   );
 }

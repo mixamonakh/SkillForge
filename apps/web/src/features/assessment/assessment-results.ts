@@ -26,7 +26,12 @@ export function summarizeAssessmentItems(items: TaskItem[]): {
   return {
     deterministicCount: deterministicItems.length,
     deterministicItems,
-    pendingItems: items.filter((item) => EXTERNAL_REVIEW_KINDS.has(item.task.kind)),
+    pendingItems: items.filter((item) => {
+      const coverage = item.attempt?.evaluationCoverage;
+      return coverage
+        ? coverage.pendingDimensions.length > 0
+        : EXTERNAL_REVIEW_KINDS.has(item.task.kind);
+    }),
     coveredTopics: new Set(
       items.filter((item) => item.attempt?.submittedAt).map((item) => item.task.topicKey),
     ).size,
@@ -34,12 +39,41 @@ export function summarizeAssessmentItems(items: TaskItem[]): {
   };
 }
 
+const DIMENSION_LABELS: Readonly<Record<string, string>> = {
+  RECALL: 'выбор ответа',
+  EXPLANATION: 'объяснение',
+  PREDICT_OUTPUT: 'вывод программы',
+  DEBUGGING: 'поиск причины',
+  CODE_CORRECTNESS: 'корректность кода',
+  EDGE_CASES: 'краевые случаи',
+  COMPLEXITY_REASONING: 'оценка сложности',
+  INTERVIEW_RESPONSE: 'интервью-ответ',
+  TRANSFER: 'перенос в новую задачу',
+  AI_REVIEW: 'review',
+  SELF_REPORT: 'самооценка',
+};
+
+export function evaluationDimensionLabel(dimension: string): string {
+  return DIMENSION_LABELS[dimension] ?? dimension;
+}
+
 export function deterministicResultLabel(item: TaskItem): string {
   const evaluation = item.attempt?.deterministicEvaluation;
-  if (evaluation?.rawScore !== null && evaluation?.rawScore !== undefined) {
-    return `${Math.round(evaluation.rawScore)} / 100${
+  if (evaluation?.coverage.isFinal && evaluation.score !== null) {
+    return `${Math.round(evaluation.score)} / 100${
       evaluation.passed === null ? '' : evaluation.passed ? ' · пройдено' : ' · не пройдено'
     }`;
+  }
+  if (evaluation) {
+    const checked = Object.entries(evaluation.dimensionScores)
+      .map(
+        ([dimension, score]) =>
+          `${evaluationDimensionLabel(dimension)}: ${Math.round(score)} / 100`,
+      )
+      .join('; ');
+    return checked
+      ? `${checked} · проверено частично`
+      : 'Локальная проверка не покрывает критерии ответа';
   }
   if (item.attempt?.runnerOutput) return `Worker: ${item.attempt.runnerOutput.status}`;
   return item.attempt?.submittedAt ? 'Проверено локально' : 'Результат ещё не сохранён';

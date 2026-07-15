@@ -1,0 +1,92 @@
+{
+  "$ref": "#/definitions/EvaluationResultV2",
+  "definitions": {
+    "EvaluationResultV2": {
+      "type": "object",
+      "properties": {
+        "evaluatorType": {
+          "type": "string"
+        },
+        "evaluatorVersion": {
+          "type": "string"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "passed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "dimensionScores": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "coverage": {
+          "type": "object",
+          "properties": {
+            "evaluatedDimensions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "pendingDimensions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "unsupportedDimensions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "isFinal": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "evaluatedDimensions",
+            "pendingDimensions",
+            "unsupportedDimensions",
+            "isFinal"
+          ],
+          "additionalProperties": false
+        },
+        "feedback": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "evaluatorType",
+        "evaluatorVersion",
+        "score",
+        "passed",
+        "dimensionScores",
+        "coverage",
+        "feedback"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

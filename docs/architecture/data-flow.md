@@ -26,13 +26,16 @@ Attempt source + public harness
 → timeout/network/output guards
 → RunnerResponse
 → submit/run result в API
-→ immutable Evaluation(EXACT_MATCH | TEST_RUNNER)
-→ Evidence с provenance
+→ immutable Evaluation(EXACT_MATCH | TEST_RUNNER) с EvaluationCoverage
+→ Evidence только для явно проверенной dimension, с provenance
 → learning-engine recompute affected topics
 → upsert TopicState + ReviewSchedule в transaction
 ```
 
 API не выполняет пользовательский код в собственном процессе. Hidden browser tests не считаются секретными.
+Если rubric содержит непроверенные criteria, evaluation хранит `score: null`, `passed: null` и
+отдельный `dimensionScores`; UI показывает «проверено частично», а не итоговый ноль. Свободное
+объяснение остаётся pending до внешней или AI-assisted проверки.
 
 ## Export
 
@@ -77,6 +80,19 @@ Unknown attempt/topic не создаёт mastery молча. Повтор check
 6. сохраняется algorithm version и explanation.
 
 Удаление cache не теряет знание: TopicState можно воспроизвести из evidence.
+
+## Capability projection
+
+```text
+user-scoped Evidence + Evaluation + latest submitted Attempt
+→ TaskVersion pedagogy metadata и pending rubric dimensions
+→ conservative family mapping
+→ pure computeTopicCapabilityProfile (capability-profile-v1.0)
+→ read-only topic profile / user summary
+→ доступная capability matrix в Web
+```
+
+Projection не создаёт materialized row, не вызывает mastery recompute и не записывает `TopicState`. Pending dimension имеет nullable score и нулевой вес. До достаточных независимых signals estimate не публикуется.
 
 ## Dashboard/read models
 

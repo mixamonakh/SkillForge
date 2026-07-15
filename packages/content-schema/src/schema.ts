@@ -39,6 +39,34 @@ export const EvidenceKindSchema = z.enum([
   'SELF_REPORT',
 ]);
 
+export const CapabilityFamilySchema = z.enum([
+  'TERM',
+  'MECHANISM',
+  'TRACE',
+  'DEBUG',
+  'CODE_PRODUCTION',
+  'TRANSFER',
+  'CALIBRATION',
+]);
+
+export const CognitiveLevelSchema = z.enum([
+  'LEXICON',
+  'CANONICAL_MECHANISM',
+  'COMPOSITE_MECHANISM',
+  'CONSTRAINED_PRODUCTION',
+  'TRANSFER_INTERVIEW',
+]);
+
+export const ProductionLoadSchema = z.enum(['NONE', 'LOW', 'MEDIUM', 'HIGH']);
+export const TransferLevelSchema = z.enum(['NONE', 'NEAR', 'WORK_LIKE', 'NOVEL']);
+export const SupportLevelSchema = z.enum(['NONE', 'STARTER_CODE', 'SCAFFOLDED', 'WORKED_EXAMPLE']);
+export const LearningPhaseSchema = z.enum([
+  'CALIBRATION',
+  'ACQUISITION',
+  'CONSOLIDATION',
+  'TRANSFER',
+]);
+
 const SourceSchema = z
   .object({
     title: z.string().min(1).max(200),
@@ -50,15 +78,16 @@ const PackCountsSchema = z
   .object({
     topics: z.number().int().positive(),
     tasks: z.number().int().positive(),
-    assessments: z.number().int().positive(),
+    assessments: z.number().int().nonnegative(),
+    sequences: z.number().int().nonnegative().optional(),
   })
   .strict();
 
 const PackRequirementsSchema = z
   .object({
-    baselineItems: z.number().int().positive(),
-    blocks: z.number().int().positive(),
-    itemsPerBlock: z.number().int().positive(),
+    baselineItems: z.number().int().nonnegative(),
+    blocks: z.number().int().nonnegative(),
+    itemsPerBlock: z.number().int().nonnegative(),
     minimumTaskKinds: z.number().int().positive(),
     minimumDeterministicTasks: z.number().int().nonnegative(),
     minimumExplanationTasks: z.number().int().nonnegative(),
@@ -124,7 +153,17 @@ export const ContentItemSchema = z
     stableKey: StableKeySchema,
     version: z.number().int().positive(),
     topicKey: StableKeySchema,
-    kind: z.enum(['THEORY', 'LINK', 'CHECKLIST']),
+    kind: z.enum([
+      'THEORY',
+      'LINK',
+      'CHECKLIST',
+      'CONCEPT_NOTE',
+      'WORKED_EXAMPLE',
+      'CONTRAST_PAIR',
+      'SUBGOAL_EXAMPLE',
+      'COMMON_MISTAKE',
+      'REFERENCE_LINK',
+    ]),
     title: z.string().min(1).max(200),
     bodyMarkdown: z.string().min(1).max(30_000).optional(),
     payload: z.record(z.string(), z.unknown()).optional(),
@@ -154,7 +193,7 @@ const RubricSchema = z
     }
   });
 
-const TaskMetadataSchema = z
+export const TaskMetadataV1Schema = z
   .object({
     yandexRelevance: z.number().int().min(1).max(5),
     estimatedMinutes: z.number().int().min(1).max(120),
@@ -162,6 +201,26 @@ const TaskMetadataSchema = z
     documentationUrls: z.array(z.url()).min(1),
   })
   .strict();
+
+export const TaskPedagogyMetadataV2Schema = z
+  .object({
+    schemaVersion: z.literal('2.0'),
+    evidenceFamilies: z.array(CapabilityFamilySchema).min(1),
+    cognitiveLevel: CognitiveLevelSchema,
+    productionLoad: ProductionLoadSchema,
+    transferLevel: TransferLevelSchema,
+    supportLevel: SupportLevelSchema,
+    familyKey: StableKeySchema,
+    learningOutcomeKeys: z.array(StableKeySchema).min(1),
+    misconceptionTags: z.array(StableKeySchema),
+    estimatedMinutes: z.number().int().min(1).max(120),
+    targetRelevance: z.record(StableKeySchema, z.number()).optional(),
+    documentationUrls: z.array(z.url()).min(1),
+    mixedEvidence: z.boolean(),
+  })
+  .strict();
+
+export const TaskMetadataSchema = z.union([TaskPedagogyMetadataV2Schema, TaskMetadataV1Schema]);
 
 export const TaskTestCaseSchema = z
   .object({
@@ -230,6 +289,69 @@ export const AssessmentBlueprintSchema = z
   })
   .strict();
 
+export const SequenceTaskPurposeSchema = z.string().min(1).max(80);
+
+export const LearningSequenceStepSchema = z.discriminatedUnion('kind', [
+  z
+    .object({
+      kind: z.literal('CONTENT'),
+      contentItemKey: StableKeySchema,
+      version: z.number().int().positive(),
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal('TASK'),
+      taskKey: StableKeySchema,
+      version: z.number().int().positive(),
+      purpose: SequenceTaskPurposeSchema,
+    })
+    .strict(),
+]);
+
+export const LearningSequenceBlueprintSchema = z
+  .object({
+    schemaVersion: z.literal('1.0'),
+    key: StableKeySchema,
+    version: z.number().int().positive(),
+    topicKey: StableKeySchema,
+    phase: LearningPhaseSchema,
+    estimatedMinutes: z.number().int().positive(),
+    steps: z.array(LearningSequenceStepSchema).min(1),
+    completionRule: z
+      .object({
+        requiredSteps: z.number().int().positive(),
+        minimumNoHelpSuccesses: z.number().int().nonnegative(),
+      })
+      .strict(),
+  })
+  .strict()
+  .superRefine((sequence, context) => {
+    if (sequence.completionRule.requiredSteps > sequence.steps.length) {
+      context.addIssue({
+        code: 'custom',
+        path: ['completionRule', 'requiredSteps'],
+        message: 'requiredSteps не может превышать количество steps',
+      });
+    }
+
+    const taskSteps = sequence.steps.filter((step) => step.kind === 'TASK').length;
+    if (sequence.completionRule.minimumNoHelpSuccesses > taskSteps) {
+      context.addIssue({
+        code: 'custom',
+        path: ['completionRule', 'minimumNoHelpSuccesses'],
+        message: 'minimumNoHelpSuccesses не может превышать количество TASK steps',
+      });
+    }
+    if (sequence.completionRule.minimumNoHelpSuccesses > sequence.completionRule.requiredSteps) {
+      context.addIssue({
+        code: 'custom',
+        path: ['completionRule', 'minimumNoHelpSuccesses'],
+        message: 'minimumNoHelpSuccesses не может превышать requiredSteps',
+      });
+    }
+  });
+
 export type ContentManifest = z.infer<typeof ManifestSchema>;
 export type ContentTrack = z.infer<typeof TrackSchema>;
 export type ContentTopic = z.infer<typeof TopicSchema>;
@@ -237,3 +359,14 @@ export type ContentItem = z.infer<typeof ContentItemSchema>;
 export type ContentTask = z.infer<typeof TaskSchema>;
 export type AssessmentBlueprint = z.infer<typeof AssessmentBlueprintSchema>;
 export type TaskKind = z.infer<typeof TaskKindSchema>;
+export type CapabilityFamily = z.infer<typeof CapabilityFamilySchema>;
+export type CognitiveLevel = z.infer<typeof CognitiveLevelSchema>;
+export type ProductionLoad = z.infer<typeof ProductionLoadSchema>;
+export type TransferLevel = z.infer<typeof TransferLevelSchema>;
+export type SupportLevel = z.infer<typeof SupportLevelSchema>;
+export type LearningPhase = z.infer<typeof LearningPhaseSchema>;
+export type TaskMetadataV1 = z.infer<typeof TaskMetadataV1Schema>;
+export type TaskPedagogyMetadataV2 = z.infer<typeof TaskPedagogyMetadataV2Schema>;
+export type TaskMetadata = z.infer<typeof TaskMetadataSchema>;
+export type LearningSequenceStep = z.infer<typeof LearningSequenceStepSchema>;
+export type LearningSequenceBlueprint = z.infer<typeof LearningSequenceBlueprintSchema>;

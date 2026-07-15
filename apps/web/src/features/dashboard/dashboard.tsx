@@ -25,7 +25,7 @@ function EmptyDashboard() {
         action={
           <>
             <Link className="sf-button sf-button--primary" href="/assessment">
-              Начать диагностику JavaScript
+              Начать короткую калибровку
             </Link>
             <Link className="sf-button sf-button--secondary" href="/roadmap">
               Посмотреть Roadmap
